@@ -731,6 +731,7 @@ std::string InputManager::configureEmulators() {
       command << " -p" << player+1 << "nbbuttons "  << playerInputConfig->getDeviceNbButtons();
       command << " -p" << player+1 << "nbhats "     << playerInputConfig->getDeviceNbHats();
       command << " -p" << player+1 << "nbaxes "     << playerInputConfig->getDeviceNbAxes();
+      command << " -p" << player+1 << "devicepath " <<  SDL_JoystickDevicePathById(playerInputConfig->getDeviceId());
       command << " ";
     }
   }
@@ -749,7 +750,7 @@ void InputManager::updateBatteryLevel(int id, std::string device, int level)
 		InputConfig* config = getInputConfigByDevice(joy.first);
 		if (config != NULL && config->isConfigured())
 		{
-			if (Utils::String::compareIgnoreCase(config->getDeviceGUIDString(), device) == 0)
+			if (device == SDL_JoystickDevicePathById(config->getDeviceId()))
 			{
 				config->updateBatteryLevel(level);
 				changed = true;
