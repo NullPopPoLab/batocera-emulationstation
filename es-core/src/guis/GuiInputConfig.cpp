@@ -46,8 +46,12 @@ void GuiInputConfig::initInputConfigStructure()
 		{ "left",             false, "LEFT",         ":/help/dpad_left.svg" },
 		{ "right",            false, "RIGHT",        ":/help/dpad_right.svg" },
 
-		{ "pageup",          true,  "L1",      ":/help/button_l.svg" },
-		{ "pagedown",        true,  "R1",     ":/help/button_r.svg" },
+		{ "a",                false, InputConfig::buttonLabel("a"),    InputConfig::buttonImage("a") },
+		{ "b",                true,  InputConfig::buttonLabel("b"),    InputConfig::buttonImage("b") },
+		{ "c",                true,  "C",    ":/help/button_c.svg" }, // NullPopPo
+		{ "x",                true,  "X",    ":/help/buttons_north.svg" },
+		{ "y",                true,  "Y",    ":/help/buttons_west.svg" },
+		{ "z",                true,  "Z",    ":/help/button_z.svg" }, // NullPopPo
 
 		{ "joystick1up",     true,  "LEFT ANALOG UP",     ":/help/analog_up.svg" },
 		{ "joystick1left",   true,  "LEFT ANALOG LEFT",   ":/help/analog_left.svg" },
@@ -58,7 +62,7 @@ void GuiInputConfig::initInputConfigStructure()
 		{ "r2",              true,  "R2",      ":/help/button_rt.svg" },
 		{ "l3",              true,  "L3",       ":/help/analog_thumb.svg" },
 		{ "r3",              true,  "R3",      ":/help/analog_thumb.svg" },
-
+ 		{ "menu",          true,  "MENU",      ":/help/button_menu.svg" }, // NullPopPo 
 		{ "hotkey",          true,  "HOTKEY",      ":/help/button_hotkey.svg" } // batocera
 	};
 }
