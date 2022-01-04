@@ -51,6 +51,10 @@ static std::map<std::string, std::string> defaults =
 	{ "global.ai_service_enabled", "0" },
 };
 
+static std::map<std::string, std::string> extrainits =
+{
+};
+
 std::string systemConfFile = "/userdata/system/batocera.conf";
 std::string systemConfFileTmp = "/userdata/system/batocera.conf.tmp";
 
@@ -80,6 +84,7 @@ bool SystemConf::loadSystemConf()
 
 	mWasChanged = false;
 
+    bool ret=false;
     std::string line;
     std::ifstream systemConf(systemConfFile);
     if (systemConf && systemConf.is_open()) {
@@ -93,14 +98,20 @@ bool SystemConf::loadSystemConf()
 			std::string value = line.substr(idx+1);
 			if (!key.empty() && !value.empty())
 				confMap[key] = line.substr(idx + 1);
-
+			ret=true;
         }
         systemConf.close();
     } else {
         LOG(LogError) << "Unable to open " << systemConfFile;
-        return false;
     }
-    return true;
+
+	for (auto& it : extrainits)
+	{
+		if (confMap.find(it.first) != confMap.cend())continue;
+		confMap[it.first]=it.second;
+	}
+
+    return ret;
 }
 
 bool SystemConf::saveSystemConf()
@@ -134,7 +145,7 @@ bool SystemConf::saveSystemConf()
 		filein.close();
 	}
 
-	static std::string removeID = "$^é(p$^mpv$êrpver$^vper$vper$^vper$vper$vper$^vperv^pervncvizn";
+	static std::string removeID = "$^Ep$^mpv$êrpver$^vper$vper$^vper$vper$vper$^vperv^pervncvizn";
 
 	int lastTime = SDL_GetTicks();
 
