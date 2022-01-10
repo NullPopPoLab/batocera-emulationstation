@@ -219,6 +219,7 @@
     <nom_es>Lucha</nom_es>
     <nom_pt>Luta</nom_pt>
     <altname>Fighter</altname>
+    <parent>10</parent>
   </genre>
   <genre>
     <id>2874</id>
