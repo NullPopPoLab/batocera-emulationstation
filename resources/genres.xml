@@ -18,6 +18,15 @@
     <parent>10</parent>
   </genre>
   <genre>
+    <id>1</id>
+    <nom_fr>Beat'em All</nom_fr>
+    <nom_de>Beat'em Up</nom_de>
+    <nom_en>Beat'em Up</nom_en>
+    <nom_es>Beat'em Up</nom_es>
+    <nom_pt>Briga de rua</nom_pt>
+    <parent>10</parent>
+  </genre>
+  <genre>
     <id>2917</id>
     <nom_fr>Casse briques</nom_fr>
     <nom_de>Breakout Spiele</nom_de>
@@ -47,170 +56,7 @@
     <altname>MAZE</altname>
     <parent>10</parent>
   </genre>
-  <genre>
-    <id>20688</id>
-    <nom_fr>Action RPG</nom_fr>
-    <nom_en>Action RPG</nom_en>
-    <nom_es>Juego de Rol de Acción</nom_es>
-    <nom_pt>Jogos de RPG</nom_pt>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>413</id>
-    <nom_fr>Adulte</nom_fr>
-    <nom_de>Erwachsene</nom_de>
-    <nom_en>Adult</nom_en>
-    <nom_es>Adulto</nom_es>
-    <nom_pt>Adulto</nom_pt>
-  </genre>
-  <genre>
-    <id>13</id>
-    <nom_fr>Aventure</nom_fr>
-    <nom_de>Abenteuer</nom_de>
-    <nom_en>Adventure</nom_en>
-    <nom_es>Aventura</nom_es>
-    <nom_pt>Aventura</nom_pt>
-  </genre>
-  <genre>
-    <id>20678</id>
-    <nom_fr>3D Temps Réel</nom_fr>
-    <nom_en>RealTime 3D</nom_en>
-    <nom_es>3D en Tiempo Real</nom_es>
-    <nom_pt>3D em Tempo Real</nom_pt>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20676</id>
-    <nom_fr>Film Interactif</nom_fr>
-    <nom_en>Interactive Movie</nom_en>
-    <nom_es>Película Interactiva</nom_es>
-    <nom_pt>Filme Interativo</nom_pt>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20672</id>
-    <nom_fr>Graphique</nom_fr>
-    <nom_en>Graphics</nom_en>
-    <nom_es>Gráficos</nom_es>
-    <nom_pt>Gráficos</nom_pt>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>3237</id>
-    <nom_fr>Point and Click</nom_fr>
-    <nom_de>Point und Klick</nom_de>
-    <nom_en>Point and Click</nom_en>
-    <nom_es>Point and Click</nom_es>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20674</id>
-    <nom_fr>Roman Visuel</nom_fr>
-    <nom_en>Visual Novel</nom_en>
-    <nom_es>Novela Visual</nom_es>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20680</id>
-    <nom_fr>Survie Horreur</nom_fr>
-    <nom_en>Survival Horror</nom_en>
-    <altname>Horror</altname>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20670</id>
-    <nom_fr>Texte</nom_fr>
-    <nom_en>Text</nom_en>
-    <nom_es>Texto</nom_es>
-    <nom_pt>Texto</nom_pt>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>1</id>
-    <nom_fr>Beat'em All</nom_fr>
-    <nom_de>Beat'em Up</nom_de>
-    <nom_en>Beat'em Up</nom_en>
-    <nom_es>Beat'em Up</nom_es>
-    <nom_pt>Briga de rua</nom_pt>
-  </genre>
-  <genre>
-    <id>320</id>
-    <nom_fr>Casino</nom_fr>
-    <nom_de>Casino</nom_de>
-    <nom_en>Casino</nom_en>
-    <nom_es>Casino</nom_es>
-    <nom_pt>Cassino</nom_pt>
-  </genre>
-  <genre>
-    <id>2872</id>
-    <nom_fr>Cartes</nom_fr>
-    <nom_de>Karten</nom_de>
-    <nom_en>Cards</nom_en>
-    <nom_es>Cartas</nom_es>
-    <nom_pt>Cartas</nom_pt>
-    <parent>320</parent>
-  </genre>
-  <genre>
-    <id>2950</id>
-    <nom_fr>Course</nom_fr>
-    <nom_de>Rennen</nom_de>
-    <nom_en>Race</nom_en>
-    <nom_es>Carreras</nom_es>
-    <nom_pt>Corrida</nom_pt>
-    <parent>320</parent>
-  </genre>
-  <genre>
-    <id>2932</id>
-    <nom_fr>Loterie</nom_fr>
-    <nom_de>Lotterie</nom_de>
-    <nom_en>Lottery</nom_en>
-    <nom_es>Lotería</nom_es>
-    <nom_pt>Loteria</nom_pt>
-    <parent>320</parent>
-  </genre>
-  <genre>
-    <id>2860</id>
-    <nom_fr>Machine a sous</nom_fr>
-    <nom_de>Slot Machine</nom_de>
-    <nom_en>Slot machine</nom_en>
-    <nom_es>Máquina tragaperras</nom_es>
-    <nom_pt>Caça-níqueis</nom_pt>
-    <parent>320</parent>
-  </genre>
-  <genre>
-    <id>2944</id>
-    <nom_fr>Roulette</nom_fr>
-    <nom_de>Roulette</nom_de>
-    <nom_en>Roulette</nom_en>
-    <nom_es>Ruleta</nom_es>
-    <nom_pt>Roleta</nom_pt>
-    <parent>320</parent>
-  </genre>
-  <genre>
-    <id>171</id>
-    <nom_fr>Casual Game</nom_fr>
-    <nom_de>Gelegenheitsspiel</nom_de>
-    <nom_en>Casual Game</nom_en>
-    <nom_es>Juego Casual</nom_es>
-    <nom_pt>Jogo casual</nom_pt>
-  </genre>
-  <genre>
-    <id>3192</id>
-    <nom_fr>Chasse</nom_fr>
-    <nom_de>Jagen</nom_de>
-    <nom_en>Hunting</nom_en>
-    <nom_es>Caza</nom_es>
-    <nom_pt>Caça</nom_pt>
-    <parent>2648</parent>
-  </genre>
-  <genre>
-    <id>2648</id>
-    <nom_fr>Chasse et Peche</nom_fr>
-    <nom_de>Jagen und Angeln</nom_de>
-    <nom_en>Hunting and Fishing</nom_en>
-    <nom_es>Caza y Pesca</nom_es>
-    <nom_pt>Caça e Pesca</nom_pt>
-  </genre>
+
   <genre>
     <id>14</id>
     <nom_fr>Combat</nom_fr>
@@ -275,32 +121,18 @@
     <nom_pt>Vertical</nom_pt>
     <parent>14</parent>
   </genre>
+
   <genre>
-    <id>34</id>
-    <nom_fr>Compilation</nom_fr>
-    <nom_de>Sammlung</nom_de>
-    <nom_en>Compilation</nom_en>
-    <nom_es>Compilación</nom_es>
-    <nom_pt>Compilação</nom_pt>
-    <altname>MULTIPLAY / MINI-GAMES</altname>
-    <altname>MINI-GAMES</altname>
-  </genre>
-  <genre>
-    <id>20682</id>
-    <nom_fr>Construction &amp; Management</nom_fr>
-    <nom_en>Build And Management</nom_en>
-    <nom_es>Construcción y Gestión</nom_es>
-    <nom_pt>Construção e Gestão</nom_pt>
-    <parent>40</parent>
-  </genre>
-  <genre>
-    <id>2918</id>
-    <nom_fr>Course de chevaux</nom_fr>
-    <nom_de>Pferderennen</nom_de>
-    <nom_en>Horses race</nom_en>
-    <nom_es>Carreras de caballos</nom_es>
-    <nom_pt>Corrida com Cavalos</nom_pt>
-    <parent>2650</parent>
+    <id>28</id>
+    <nom_fr>Course, Conduite</nom_fr>
+    <nom_de>Rennen, Fahren</nom_de>
+    <nom_en>Race, Driving</nom_en>
+    <nom_es>Carreras, Conducción</nom_es>
+    <nom_pt>Corrida, Pilotagem</nom_pt>
+    <altname>Racing</altname>
+    <altname>Course</altname>
+    <altname>Race</altname>
+    <altname>DRIVING</altname>
   </genre>
   <genre>
     <id>2973</id>
@@ -338,18 +170,6 @@
     <nom_es>Carreras 3ª persona</nom_es>
     <nom_pt>Corrida em 3ª pessoa</nom_pt>
     <parent>28</parent>
-  </genre>
-  <genre>
-    <id>28</id>
-    <nom_fr>Course, Conduite</nom_fr>
-    <nom_de>Rennen, Fahren</nom_de>
-    <nom_en>Race, Driving</nom_en>
-    <nom_es>Carreras, Conducción</nom_es>
-    <nom_pt>Corrida, Pilotagem</nom_pt>
-    <altname>Racing</altname>
-    <altname>Course</altname>
-    <altname>Race</altname>
-    <altname>DRIVING</altname>
   </genre>
   <genre>
     <id>2893</id>
@@ -396,57 +216,212 @@
     <nom_pt>Moto</nom_pt>
     <parent>28</parent>
   </genre>
+
   <genre>
-    <id>2974</id>
-    <nom_fr>Demo</nom_fr>
-    <nom_de>Demo</nom_de>
-    <nom_en>Demo</nom_en>
-    <nom_es>Demo</nom_es>
-    <nom_pt>Demo</nom_pt>
+    <id>13</id>
+    <nom_fr>Aventure</nom_fr>
+    <nom_de>Abenteuer</nom_de>
+    <nom_en>Adventure</nom_en>
+    <nom_es>Aventura</nom_es>
+    <nom_pt>Aventura</nom_pt>
   </genre>
   <genre>
-    <id>39</id>
-    <nom_fr>Divers</nom_fr>
-    <nom_de>Verschiedene</nom_de>
-    <nom_en>Various</nom_en>
-    <nom_es>Varios</nom_es>
-    <nom_pt>Variados</nom_pt>
+    <id>20678</id>
+    <nom_fr>3D Temps Réel</nom_fr>
+    <nom_en>RealTime 3D</nom_en>
+    <nom_es>3D en Tiempo Real</nom_es>
+    <nom_pt>3D em Tempo Real</nom_pt>
+    <parent>13</parent>
   </genre>
   <genre>
-    <id>2890</id>
-    <nom_fr>Electro-mecanique</nom_fr>
-    <nom_de>Elektromechanisch</nom_de>
-    <nom_en>Electro- Mechanical</nom_en>
-    <nom_es>Electromecánico</nom_es>
-    <nom_pt>Eletromecânico</nom_pt>
-    <parent>39</parent>
+    <id>20676</id>
+    <nom_fr>Film Interactif</nom_fr>
+    <nom_en>Interactive Movie</nom_en>
+    <nom_es>Película Interactiva</nom_es>
+    <nom_pt>Filme Interativo</nom_pt>
+    <parent>13</parent>
   </genre>
   <genre>
-    <id>2879</id>
-    <nom_fr>Print Club</nom_fr>
-    <nom_de>Print Club</nom_de>
-    <nom_en>Print Club</nom_en>
-    <nom_es>Print Club</nom_es>
-    <nom_pt>Print Club</nom_pt>
-    <parent>39</parent>
+    <id>20672</id>
+    <nom_fr>Graphique</nom_fr>
+    <nom_en>Graphics</nom_en>
+    <nom_es>Gráficos</nom_es>
+    <nom_pt>Gráficos</nom_pt>
+    <parent>13</parent>
   </genre>
   <genre>
-    <id>2855</id>
-    <nom_fr>Système</nom_fr>
-    <nom_de>System</nom_de>
-    <nom_en>System</nom_en>
-    <nom_es>Sistema</nom_es>
-    <nom_pt>Sistema</nom_pt>
-    <parent>39</parent>
+    <id>3237</id>
+    <nom_fr>Point and Click</nom_fr>
+    <nom_de>Point und Klick</nom_de>
+    <nom_en>Point and Click</nom_en>
+    <nom_es>Point and Click</nom_es>
+    <parent>13</parent>
   </genre>
   <genre>
-    <id>2904</id>
-    <nom_fr>Utilitaires</nom_fr>
-    <nom_de>Dienstprogramme</nom_de>
-    <nom_en>Utilities</nom_en>
-    <nom_es>Utilidades</nom_es>
-    <nom_pt>Utilitários</nom_pt>
-    <parent>39</parent>
+    <id>20674</id>
+    <nom_fr>Roman Visuel</nom_fr>
+    <nom_en>Visual Novel</nom_en>
+    <nom_es>Novela Visual</nom_es>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>20680</id>
+    <nom_fr>Survie Horreur</nom_fr>
+    <nom_en>Survival Horror</nom_en>
+    <altname>Horror</altname>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>20670</id>
+    <nom_fr>Texte</nom_fr>
+    <nom_en>Text</nom_en>
+    <nom_es>Texto</nom_es>
+    <nom_pt>Texto</nom_pt>
+    <parent>13</parent>
+  </genre>
+
+  <genre>
+    <id>320</id>
+    <nom_fr>Casino</nom_fr>
+    <nom_de>Casino</nom_de>
+    <nom_en>Casino</nom_en>
+    <nom_es>Casino</nom_es>
+    <nom_pt>Cassino</nom_pt>
+  </genre>
+  <genre>
+    <id>2872</id>
+    <nom_fr>Cartes</nom_fr>
+    <nom_de>Karten</nom_de>
+    <nom_en>Cards</nom_en>
+    <nom_es>Cartas</nom_es>
+    <nom_pt>Cartas</nom_pt>
+    <parent>320</parent>
+  </genre>
+  <genre>
+    <id>2950</id>
+    <nom_fr>Course</nom_fr>
+    <nom_de>Rennen</nom_de>
+    <nom_en>Race</nom_en>
+    <nom_es>Carreras</nom_es>
+    <nom_pt>Corrida</nom_pt>
+    <parent>320</parent>
+  </genre>
+  <genre>
+    <id>2932</id>
+    <nom_fr>Loterie</nom_fr>
+    <nom_de>Lotterie</nom_de>
+    <nom_en>Lottery</nom_en>
+    <nom_es>Lotería</nom_es>
+    <nom_pt>Loteria</nom_pt>
+    <parent>320</parent>
+  </genre>
+  <genre>
+    <id>2860</id>
+    <nom_fr>Machine a sous</nom_fr>
+    <nom_de>Slot Machine</nom_de>
+    <nom_en>Slot machine</nom_en>
+    <nom_es>Máquina tragaperras</nom_es>
+    <nom_pt>Caça-níqueis</nom_pt>
+    <parent>320</parent>
+  </genre>
+  <genre>
+    <id>2944</id>
+    <nom_fr>Roulette</nom_fr>
+    <nom_de>Roulette</nom_de>
+    <nom_en>Roulette</nom_en>
+    <nom_es>Ruleta</nom_es>
+    <nom_pt>Roleta</nom_pt>
+    <parent>320</parent>
+  </genre>
+
+  <genre>
+    <id>2648</id>
+    <nom_fr>Chasse et Peche</nom_fr>
+    <nom_de>Jagen und Angeln</nom_de>
+    <nom_en>Hunting and Fishing</nom_en>
+    <nom_es>Caza y Pesca</nom_es>
+    <nom_pt>Caça e Pesca</nom_pt>
+  </genre>
+  <genre>
+    <id>3192</id>
+    <nom_fr>Chasse</nom_fr>
+    <nom_de>Jagen</nom_de>
+    <nom_en>Hunting</nom_en>
+    <nom_es>Caza</nom_es>
+    <nom_pt>Caça</nom_pt>
+    <parent>2648</parent>
+  </genre>
+  <genre>
+    <id>2895</id>
+    <nom_fr>Peche</nom_fr>
+    <nom_de>Angeln</nom_de>
+    <nom_en>Fishing</nom_en>
+    <nom_es>Pesca</nom_es>
+    <nom_pt>Pesca</nom_pt>
+    <parent>2648</parent>
+  </genre>
+
+  <genre>
+    <id>42</id>
+    <nom_fr>Jeu de cartes</nom_fr>
+    <nom_de>Kartenspiele</nom_de>
+    <nom_en>Playing cards</nom_en>
+    <nom_es>Juegos de cartas</nom_es>
+    <nom_pt>Jogo de cartas</nom_pt>
+  </genre>
+  <genre>
+    <id>33</id>
+    <nom_fr>Jeu de societe / plateau</nom_fr>
+    <nom_de>Brettspiele</nom_de>
+    <nom_en>Board game</nom_en>
+    <nom_es>Juegos de mesa</nom_es>
+    <nom_pt>Jogo de tabuleiro</nom_pt>
+    <altname>Jeu de societe</altname>
+    <altname>TABLETOP</altname>
+  </genre>
+
+  <genre>
+    <id>31</id>
+    <nom_fr>Flipper</nom_fr>
+    <nom_de>Flipper</nom_de>
+    <nom_en>Pinball</nom_en>
+    <nom_es>Pinball</nom_es>
+    <nom_pt>Pinball</nom_pt>
+  </genre>
+  <genre>
+    <id>2965</id>
+    <nom_fr>Pachinko</nom_fr>
+  </genre>
+
+  <genre>
+    <id>8</id>
+    <nom_fr>Jeu de rôles</nom_fr>
+    <nom_de>Rollenspiele</nom_de>
+    <nom_en>Role playing games</nom_en>
+    <nom_es>Juegos de rol</nom_es>
+    <nom_pt>Jogos de RPG</nom_pt>
+  </genre>
+  <genre>
+    <id>20696</id>
+    <nom_fr>Jeu de Rôle Japonais</nom_fr>
+    <nom_en>Japanese RPG</nom_en>
+    <nom_es>Juego de Rol Japonés</nom_es>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20694</id>
+    <nom_fr>Jeu de Rôle Tactique</nom_fr>
+    <nom_en>Tactical RPG</nom_en>
+    <nom_es>Juego de Rol Táctico</nom_es>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20688</id>
+    <nom_fr>Action RPG</nom_fr>
+    <nom_en>Action RPG</nom_en>
+    <nom_es>Juego de Rol de Acción</nom_es>
+    <nom_pt>Jogos de RPG</nom_pt>
+    <parent>8</parent>
   </genre>
   <genre>
     <id>20692</id>
@@ -456,12 +431,36 @@
     <parent>8</parent>
   </genre>
   <genre>
-    <id>31</id>
-    <nom_fr>Flipper</nom_fr>
-    <nom_de>Flipper</nom_de>
-    <nom_en>Pinball</nom_en>
-    <nom_es>Pinball</nom_es>
-    <nom_pt>Pinball</nom_pt>
+    <id>20698</id>
+    <nom_fr>Jeu de rôles en équipe</nom_fr>
+    <nom_en>Team-as-one RPG</nom_en>
+    <nom_es>Juego de Rol en Equipo</nom_es>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20690</id>
+    <nom_fr>MMORPG</nom_fr>
+    <nom_en>Massive Multiplayer Online RPG</nom_en>
+    <nom_es>MMORPG</nom_es>
+    <parent>8</parent>
+  </genre>
+
+  <genre>
+    <id>2647</id>
+    <nom_fr>Jeu de societe asiatique</nom_fr>
+    <nom_de>Asiatische Brettspiele</nom_de>
+    <nom_en>Asiatic board game</nom_en>
+    <nom_es>Juegos de mesa asiático</nom_es>
+    <nom_pt>Jogo de tabuleiro Asiático</nom_pt>
+  </genre>
+  <genre>
+    <id>2869</id>
+    <nom_fr>Mahjong</nom_fr>
+    <nom_de>Mahjong</nom_de>
+    <nom_en>Mahjong</nom_en>
+    <nom_es>Mahjong</nom_es>
+    <nom_pt>Mahjong</nom_pt>
+    <parent>2647</parent>
   </genre>
   <genre>
     <id>2958</id>
@@ -482,103 +481,6 @@
     <parent>2647</parent>
   </genre>
   <genre>
-    <id>42</id>
-    <nom_fr>Jeu de cartes</nom_fr>
-    <nom_de>Kartenspiele</nom_de>
-    <nom_en>Playing cards</nom_en>
-    <nom_es>Juegos de cartas</nom_es>
-    <nom_pt>Jogo de cartas</nom_pt>
-  </genre>
-  <genre>
-    <id>20696</id>
-    <nom_fr>Jeu de Rôle Japonais</nom_fr>
-    <nom_en>Japanese RPG</nom_en>
-    <nom_es>Juego de Rol Japonés</nom_es>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>20694</id>
-    <nom_fr>Jeu de Rôle Tactique</nom_fr>
-    <nom_en>Tactical RPG</nom_en>
-    <nom_es>Juego de Rol Táctico</nom_es>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>8</id>
-    <nom_fr>Jeu de rôles</nom_fr>
-    <nom_de>Rollenspiele</nom_de>
-    <nom_en>Role playing games</nom_en>
-    <nom_es>Juegos de rol</nom_es>
-    <nom_pt>Jogos de RPG</nom_pt>
-  </genre>
-  <genre>
-    <id>20698</id>
-    <nom_fr>Jeu de rôles en équipe</nom_fr>
-    <nom_en>Team-as-one RPG</nom_en>
-    <nom_es>Juego de Rol en Equipo</nom_es>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>33</id>
-    <nom_fr>Jeu de societe / plateau</nom_fr>
-    <nom_de>Brettspiele</nom_de>
-    <nom_en>Board game</nom_en>
-    <nom_es>Juegos de mesa</nom_es>
-    <nom_pt>Jogo de tabuleiro</nom_pt>
-    <altname>Jeu de societe</altname>
-    <altname>TABLETOP</altname>
-  </genre>
-  <genre>
-    <id>2647</id>
-    <nom_fr>Jeu de societe asiatique</nom_fr>
-    <nom_de>Asiatische Brettspiele</nom_de>
-    <nom_en>Asiatic board game</nom_en>
-    <nom_es>Juegos de mesa asiático</nom_es>
-    <nom_pt>Jogo de tabuleiro Asiático</nom_pt>
-  </genre>
-  <genre>
-    <id>30</id>
-    <nom_fr>Ludo-Educatif</nom_fr>
-    <nom_de>Lernspiel</nom_de>
-    <nom_en>Educational</nom_en>
-    <nom_es>Educacional</nom_es>
-    <nom_pt>Educacional</nom_pt>
-  </genre>
-  <genre>
-    <id>2869</id>
-    <nom_fr>Mahjong</nom_fr>
-    <nom_de>Mahjong</nom_de>
-    <nom_en>Mahjong</nom_en>
-    <nom_es>Mahjong</nom_es>
-    <nom_pt>Mahjong</nom_pt>
-    <parent>2647</parent>
-  </genre>
-  <genre>
-    <id>20690</id>
-    <nom_fr>MMORPG</nom_fr>
-    <nom_en>Massive Multiplayer Online RPG</nom_en>
-    <nom_es>MMORPG</nom_es>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>425</id>
-    <nom_fr>Musique et Danse</nom_fr>
-    <nom_de>Musik und Tanz</nom_de>
-    <nom_en>Music and Dance</nom_en>
-    <nom_es>Música y Baile</nom_es>
-    <nom_pt>Música e dança</nom_pt>
-    <altname>Music</altname>
-  </genre>
-  <!--
-  <genre>
-    <id>323</id>
-    <nom_fr>N/A</nom_fr>
-    <nom_de>N/A</nom_de>
-    <nom_en>N/A</nom_en>
-    <nom_es>N/A</nom_es>
-    <nom_pt>N/A</nom_pt>
-  </genre>-->
-  <genre>
     <id>2949</id>
     <nom_fr>Othello</nom_fr>
     <nom_de>Othello</nom_de>
@@ -589,19 +491,43 @@
     <parent>2647</parent>
   </genre>
   <genre>
-    <id>2965</id>
-    <nom_fr>Pachinko</nom_fr>
-    <parent>2857</parent>
+    <id>2956</id>
+    <nom_fr>Renju</nom_fr>
+    <nom_de>Renju</nom_de>
+    <nom_en>Renju</nom_en>
+    <nom_es>Renju</nom_es>
+    <nom_pt>Renju</nom_pt>
+    <parent>2647</parent>
   </genre>
   <genre>
-    <id>2895</id>
-    <nom_fr>Peche</nom_fr>
-    <nom_de>Angeln</nom_de>
-    <nom_en>Fishing</nom_en>
-    <nom_es>Pesca</nom_es>
-    <nom_pt>Pesca</nom_pt>
-    <parent>2648</parent>
+    <id>2961</id>
+    <nom_fr>Shougi</nom_fr>
+    <nom_de>Shougi</nom_de>
+    <nom_en>Shougi</nom_en>
+    <nom_es>Shougi</nom_es>
+    <nom_pt>Shougi</nom_pt>
+    <parent>2647</parent>
   </genre>
+
+  <genre>
+    <id>425</id>
+    <nom_fr>Musique et Danse</nom_fr>
+    <nom_de>Musik und Tanz</nom_de>
+    <nom_en>Music and Dance</nom_en>
+    <nom_es>Música y Baile</nom_es>
+    <nom_pt>Música e dança</nom_pt>
+    <altname>Music</altname>
+  </genre>
+  <genre>
+    <id>2925</id>
+    <nom_fr>Rythme</nom_fr>
+    <nom_de>Rythmus</nom_de>
+    <nom_en>Rhythm</nom_en>
+    <nom_es>Rítmico</nom_es>
+    <nom_pt>Rítmico</nom_pt>
+    <parent>425</parent>
+  </genre>
+
   <genre>
     <id>7</id>
     <nom_fr>Plateforme</nom_fr>
@@ -646,6 +572,7 @@
     <nom_pt>Tiro com rolagem</nom_pt>
     <parent>7</parent>
   </genre>
+
   <genre>
     <id>26</id>
     <nom_fr>Puzzle-Game</nom_fr>
@@ -690,6 +617,7 @@
     <nom_pt>Queda</nom_pt>
     <parent>26</parent>
   </genre>
+
   <genre>
     <id>2649</id>
     <nom_fr>Quiz</nom_fr>
@@ -779,81 +707,7 @@
     <nom_pt>Musical Japonês</nom_pt>
     <parent>2649</parent>
   </genre>
-  <genre>
-    <id>3511</id>
-    <nom_fr>Réflexion</nom_fr>
-    <nom_de>Überlegung</nom_de>
-    <nom_en>Reflection</nom_en>
-    <nom_es>Reflexión</nom_es>
-    <nom_pt>Reflexão</nom_pt>
-  </genre>
-  <genre>
-    <id>2956</id>
-    <nom_fr>Renju</nom_fr>
-    <nom_de>Renju</nom_de>
-    <nom_en>Renju</nom_en>
-    <nom_es>Renju</nom_es>
-    <nom_pt>Renju</nom_pt>
-    <parent>2647</parent>
-  </genre>
-  <genre>
-    <id>2925</id>
-    <nom_fr>Rythme</nom_fr>
-    <nom_de>Rythmus</nom_de>
-    <nom_en>Rhythm</nom_en>
-    <nom_es>Rítmico</nom_es>
-    <nom_pt>Rítmico</nom_pt>
-    <parent>425</parent>
-  </genre>
-  <genre>
-    <id>79</id>
-    <nom_fr>Shoot'em Up</nom_fr>
-    <nom_de>Shoot'em Up</nom_de>
-    <nom_en>Shoot'em Up</nom_en>
-    <nom_es>Shoot'em Up</nom_es>
-    <nom_pt>Shoot'em Up</nom_pt>
-  </genre>
-  <genre>
-    <id>2955</id>
-    <nom_fr>Diagonal</nom_fr>
-    <nom_de>Diagonal</nom_de>
-    <nom_en>Diagonal</nom_en>
-    <nom_es>Diagonal</nom_es>
-    <nom_pt>Diagonal</nom_pt>
-    <parent>79</parent>
-  </genre>
-  <genre>
-    <id>2870</id>
-    <nom_fr>Horizontal</nom_fr>
-    <nom_de>Horizontal</nom_de>
-    <nom_en>Horizontal</nom_en>
-    <nom_es>Horizontal</nom_es>
-    <nom_pt>Horizontal</nom_pt>
-    <parent>79</parent>
-  </genre>
-  <genre>
-    <id>2851</id>
-    <nom_fr>Vertical</nom_fr>
-    <nom_de>Vertikal</nom_de>
-    <nom_en>Vertical</nom_en>
-    <nom_es>Vertical</nom_es>
-    <nom_pt>Vertical</nom_pt>
-    <parent>79</parent>
-  </genre>
-  <genre>
-    <id>2844</id>
-    <nom_fr>Shooter Small</nom_fr>
-    <parent>2843</parent>
-  </genre>
-  <genre>
-    <id>2961</id>
-    <nom_fr>Shougi</nom_fr>
-    <nom_de>Shougi</nom_de>
-    <nom_en>Shougi</nom_en>
-    <nom_es>Shougi</nom_es>
-    <nom_pt>Shougi</nom_pt>
-    <parent>2647</parent>
-  </genre>
+
   <genre>
     <id>40</id>
     <nom_fr>Simulation</nom_fr>
@@ -861,6 +715,23 @@
     <nom_en>Simulation</nom_en>
     <nom_es>Simulación</nom_es>
     <nom_pt>Simulação</nom_pt>    
+  </genre>
+  <genre>
+    <id>27</id>
+    <nom_fr>Stratégie</nom_fr>
+    <nom_de>Strategie</nom_de>
+    <nom_en>Strategy</nom_en>
+    <nom_es>Estrategia</nom_es>
+    <nom_pt>Estratégia</nom_pt>
+    <parent>40</parent>
+  </genre>
+  <genre>
+    <id>20682</id>
+    <nom_fr>Construction &amp; Management</nom_fr>
+    <nom_en>Build And Management</nom_en>
+    <nom_es>Construcción y Gestión</nom_es>
+    <nom_pt>Construção e Gestão</nom_pt>
+    <parent>40</parent>
   </genre>
   <genre>
     <id>20702</id>
@@ -885,6 +756,7 @@
     <nom_es>Vida</nom_es>
     <parent>40</parent>
   </genre>
+
   <genre>
     <id>685</id>
     <nom_fr>Sport</nom_fr>
@@ -1130,6 +1002,7 @@
     <nom_pt>Voleibol</nom_pt>
     <parent>685</parent>
   </genre>
+
   <genre>
     <id>2650</id>
     <nom_fr>Sport avec animaux</nom_fr>
@@ -1139,13 +1012,51 @@
     <nom_pt>Esporte com animais</nom_pt>
   </genre>
   <genre>
-    <id>27</id>
-    <nom_fr>Stratégie</nom_fr>
-    <nom_de>Strategie</nom_de>
-    <nom_en>Strategy</nom_en>
-    <nom_es>Estrategia</nom_es>
-    <nom_pt>Estratégia</nom_pt>
+    <id>2918</id>
+    <nom_fr>Course de chevaux</nom_fr>
+    <nom_de>Pferderennen</nom_de>
+    <nom_en>Horses race</nom_en>
+    <nom_es>Carreras de caballos</nom_es>
+    <nom_pt>Corrida com Cavalos</nom_pt>
+    <parent>2650</parent>
   </genre>
+
+  <genre>
+    <id>79</id>
+    <nom_fr>Shoot'em Up</nom_fr>
+    <nom_de>Shoot'em Up</nom_de>
+    <nom_en>Shoot'em Up</nom_en>
+    <nom_es>Shoot'em Up</nom_es>
+    <nom_pt>Shoot'em Up</nom_pt>
+  </genre>
+  <genre>
+    <id>2955</id>
+    <nom_fr>Diagonal</nom_fr>
+    <nom_de>Diagonal</nom_de>
+    <nom_en>Diagonal</nom_en>
+    <nom_es>Diagonal</nom_es>
+    <nom_pt>Diagonal</nom_pt>
+    <parent>79</parent>
+  </genre>
+  <genre>
+    <id>2870</id>
+    <nom_fr>Horizontal</nom_fr>
+    <nom_de>Horizontal</nom_de>
+    <nom_en>Horizontal</nom_en>
+    <nom_es>Horizontal</nom_es>
+    <nom_pt>Horizontal</nom_pt>
+    <parent>79</parent>
+  </genre>
+  <genre>
+    <id>2851</id>
+    <nom_fr>Vertical</nom_fr>
+    <nom_de>Vertikal</nom_de>
+    <nom_en>Vertical</nom_en>
+    <nom_es>Vertical</nom_es>
+    <nom_pt>Vertical</nom_pt>
+    <parent>79</parent>
+  </genre>
+
   <genre>
     <id>2646</id>
     <nom_fr>Tir</nom_fr>
@@ -1301,11 +1212,128 @@
     <parent>2646</parent>
   </genre>
   <genre>
+    <id>2844</id>
+    <nom_fr>Shooter Small</nom_fr>
+    <parent>2646</parent>
+  </genre>
+  <genre>
     <id>32</id>
     <nom_fr>Tir avec accessoire</nom_fr>
     <nom_de>Lightgun Shooter</nom_de>
     <nom_en>Lightgun Shooter</nom_en>
     <nom_es>Lightgun Shooter</nom_es>
     <nom_pt>Tiro com acessórios</nom_pt>
+    <parent>2646</parent>
   </genre>
+
+  <genre>
+    <id>39</id>
+    <nom_fr>Divers</nom_fr>
+    <nom_de>Verschiedene</nom_de>
+    <nom_en>Various</nom_en>
+    <nom_es>Varios</nom_es>
+    <nom_pt>Variados</nom_pt>
+  </genre>
+  <genre>
+    <id>171</id>
+    <nom_fr>Casual Game</nom_fr>
+    <nom_de>Gelegenheitsspiel</nom_de>
+    <nom_en>Casual Game</nom_en>
+    <nom_es>Juego Casual</nom_es>
+    <nom_pt>Jogo casual</nom_pt>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>34</id>
+    <nom_fr>Compilation</nom_fr>
+    <nom_de>Sammlung</nom_de>
+    <nom_en>Compilation</nom_en>
+    <nom_es>Compilación</nom_es>
+    <nom_pt>Compilação</nom_pt>
+    <altname>MULTIPLAY / MINI-GAMES</altname>
+    <altname>MINI-GAMES</altname>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>2890</id>
+    <nom_fr>Electro-mecanique</nom_fr>
+    <nom_de>Elektromechanisch</nom_de>
+    <nom_en>Electro- Mechanical</nom_en>
+    <nom_es>Electromecánico</nom_es>
+    <nom_pt>Eletromecânico</nom_pt>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>2879</id>
+    <nom_fr>Print Club</nom_fr>
+    <nom_de>Print Club</nom_de>
+    <nom_en>Print Club</nom_en>
+    <nom_es>Print Club</nom_es>
+    <nom_pt>Print Club</nom_pt>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>2855</id>
+    <nom_fr>Système</nom_fr>
+    <nom_de>System</nom_de>
+    <nom_en>System</nom_en>
+    <nom_es>Sistema</nom_es>
+    <nom_pt>Sistema</nom_pt>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>2904</id>
+    <nom_fr>Utilitaires</nom_fr>
+    <nom_de>Dienstprogramme</nom_de>
+    <nom_en>Utilities</nom_en>
+    <nom_es>Utilidades</nom_es>
+    <nom_pt>Utilitários</nom_pt>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>3511</id>
+    <nom_fr>Réflexion</nom_fr>
+    <nom_de>Überlegung</nom_de>
+    <nom_en>Reflection</nom_en>
+    <nom_es>Reflexión</nom_es>
+    <nom_pt>Reflexão</nom_pt>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>30</id>
+    <nom_fr>Ludo-Educatif</nom_fr>
+    <nom_de>Lernspiel</nom_de>
+    <nom_en>Educational</nom_en>
+    <nom_es>Educacional</nom_es>
+    <nom_pt>Educacional</nom_pt>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>2974</id>
+    <nom_fr>Demo</nom_fr>
+    <nom_de>Demo</nom_de>
+    <nom_en>Demo</nom_en>
+    <nom_es>Demo</nom_es>
+    <nom_pt>Demo</nom_pt>
+    <parent>39</parent>
+  </genre>
+
+  <genre>
+    <id>413</id>
+    <nom_fr>Adulte</nom_fr>
+    <nom_de>Erwachsene</nom_de>
+    <nom_en>Adult</nom_en>
+    <nom_es>Adulto</nom_es>
+    <nom_pt>Adulto</nom_pt>
+  </genre>
+
+  <!--
+  <genre>
+    <id>323</id>
+    <nom_fr>N/A</nom_fr>
+    <nom_de>N/A</nom_de>
+    <nom_en>N/A</nom_en>
+    <nom_es>N/A</nom_es>
+    <nom_pt>N/A</nom_pt>
+  </genre>-->
 </genres>
