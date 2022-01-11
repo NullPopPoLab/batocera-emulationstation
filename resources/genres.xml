@@ -62,6 +62,42 @@
     <altname>MAZE</altname>
     <parent>10</parent>
   </genre>
+  <genre>
+    <id>29040</id>
+    <nom_en>Destroyer</nom_en>
+    <nom_ja>殲滅系</nom_ja>
+    <parent>10</parent>
+  </genre>
+  <genre>
+    <id>29041</id>
+    <nom_en>Collector</nom_en>
+    <nom_ja>収集系</nom_ja>
+    <parent>10</parent>
+  </genre>
+  <genre>
+    <id>29042</id>
+    <nom_en>Dot Eating</nom_en>
+    <nom_ja>ドットイート</nom_ja>
+    <parent>10</parent>
+  </genre>
+  <genre>
+    <id>29043</id>
+    <nom_en>Bricks Crushing</nom_en>
+    <nom_ja>ブロックくずし</nom_ja>
+    <parent>10</parent>
+  </genre>
+  <genre>
+    <id>29044</id>
+    <nom_en>Rolling</nom_en>
+    <nom_ja>転がし系</nom_ja>
+    <parent>10</parent>
+  </genre>
+  <genre>
+    <id>29045</id>
+    <nom_en>Domination</nom_en>
+    <nom_ja>陣取り系</nom_ja>
+    <parent>10</parent>
+  </genre>
 
   <genre>
     <id>7</id>
@@ -194,16 +230,6 @@
     <nom_pt>Shoot'em Up</nom_pt>
   </genre>
   <genre>
-    <id>2955</id>
-    <nom_fr>Diagonal</nom_fr>
-    <nom_de>Diagonal</nom_de>
-    <nom_en>Diagonal</nom_en>
-    <nom_es>Diagonal</nom_es>
-    <nom_ja>斜</nom_ja>
-    <nom_pt>Diagonal</nom_pt>
-    <parent>79</parent>
-  </genre>
-  <genre>
     <id>2870</id>
     <nom_fr>Horizontal</nom_fr>
     <nom_de>Horizontal</nom_de>
@@ -224,6 +250,22 @@
     <parent>79</parent>
   </genre>
   <genre>
+    <id>2955</id>
+    <nom_fr>Diagonal</nom_fr>
+    <nom_de>Diagonal</nom_de>
+    <nom_en>Diagonal</nom_en>
+    <nom_es>Diagonal</nom_es>
+    <nom_ja>斜</nom_ja>
+    <nom_pt>Diagonal</nom_pt>
+    <parent>79</parent>
+  </genre>
+  <genre>
+    <id>29020</id>
+    <nom_en>Around</nom_en>
+    <nom_ja>全方向</nom_ja>
+    <parent>79</parent>
+  </genre>
+  <genre>
     <id>2945</id>
     <nom_fr>Missile Command Like</nom_fr>
     <nom_de>Wie Missile Command</nom_de>
@@ -239,9 +281,9 @@
     <nom_de>Wie Space Invaders</nom_de>
     <nom_en>Space Invaders Like</nom_en>
     <nom_es>Estilo Space Invader</nom_es>
-    <nom_ja>横移動系</nom_ja>
+    <nom_ja>線形移動系</nom_ja>
     <nom_pt>Estilo Space Invader</nom_pt>
-    <parent>2646</parent>
+    <parent>79</parent>
   </genre>
 
   <genre>
@@ -252,6 +294,33 @@
     <nom_es>Shooter</nom_es>
     <nom_ja>進行型シューティングゲーム</nom_ja>
     <nom_pt>Tiro</nom_pt>
+  </genre>
+  <genre>
+    <id>2876</id>
+    <nom_fr>Horizontal</nom_fr>
+    <nom_de>Horizontal</nom_de>
+    <nom_en>Horizontal</nom_en>
+    <nom_es>Horizontal</nom_es>
+    <nom_ja>横</nom_ja>
+    <nom_pt>Horizontal</nom_pt>
+    <parent>2646</parent>
+  </genre>
+  <genre>
+    <id>2889</id>
+    <nom_fr>Vertical</nom_fr>
+    <nom_de>Vertikal</nom_de>
+    <nom_en>Vertical</nom_en>
+    <nom_es>Vertical</nom_es>
+    <nom_ja>縦</nom_ja>
+    <nom_pt>Vertical</nom_pt>
+    <altname>Shooter / Flying Vertical</altname>
+    <parent>2646</parent>
+  </genre>
+  <genre>
+    <id>29030</id>
+    <nom_en>Diagonal</nom_en>
+    <nom_ja>斜</nom_ja>
+    <parent>2646</parent>
   </genre>
   <genre>
     <id>3024</id>
@@ -279,18 +348,8 @@
     <nom_de>Run and Shoot</nom_de>
     <nom_en>Run and Shoot</nom_en>
     <nom_es>Corre y Dispara</nom_es>
-    <nom_ja>走行</nom_ja>
+    <nom_ja>歩兵系</nom_ja>
     <nom_pt>Corra e Atire</nom_pt>
-    <parent>2646</parent>
-  </genre>
-  <genre>
-    <id>2928</id>
-    <nom_fr>Avion</nom_fr>
-    <nom_de>Flugzeug</nom_de>
-    <nom_en>Plane</nom_en>
-    <nom_es>Avión</nom_es>
-    <nom_ja>戦闘機</nom_ja>
-    <nom_pt>Avião</nom_pt>
     <parent>2646</parent>
   </genre>
   <genre>
@@ -315,13 +374,13 @@
     <parent>2646</parent>
   </genre>
   <genre>
-    <id>2876</id>
-    <nom_fr>Horizontal</nom_fr>
-    <nom_de>Horizontal</nom_de>
-    <nom_en>Horizontal</nom_en>
-    <nom_es>Horizontal</nom_es>
-    <nom_ja>横</nom_ja>
-    <nom_pt>Horizontal</nom_pt>
+    <id>2928</id>
+    <nom_fr>Avion</nom_fr>
+    <nom_de>Flugzeug</nom_de>
+    <nom_en>Plane</nom_en>
+    <nom_es>Avión</nom_es>
+    <nom_ja>戦闘機(その他)</nom_ja>
+    <nom_pt>Avião</nom_pt>
     <parent>2646</parent>
   </genre>
   <genre>
@@ -332,36 +391,6 @@
     <nom_es>Run and Gun</nom_es>
     <nom_ja>歩兵系</nom_ja>
     <nom_pt>Run and Gun</nom_pt>
-    <parent>2646</parent>
-  </genre>
-  <genre>
-    <id>2940</id>
-    <nom_fr>Véhicule, 1ere personne</nom_fr>
-    <nom_de>Fahrzeug, 1st Pers.</nom_de>
-    <nom_en>Vehicle, 1st person</nom_en>
-    <nom_es>Vehículo 1ª persona</nom_es>
-    <nom_ja>戦車(主観)</nom_ja>
-    <nom_pt>Carro 1ª Pessoa</nom_pt>
-    <parent>2646</parent>
-  </genre>
-  <genre>
-    <id>2910</id>
-    <nom_fr>Vehicule, 3eme personne</nom_fr>
-    <nom_de>Fahrzeug, 3rd. Pers.</nom_de>
-    <nom_en>Vehicle, 3rd person</nom_en>
-    <nom_es>Vehículo, 3ª persona</nom_es>
-    <nom_ja>戦車(俯瞰)</nom_ja>
-    <nom_pt>Carro 3ª Pessoa</nom_pt>
-    <parent>2646</parent>
-  </genre>
-  <genre>
-    <id>2934</id>
-    <nom_fr>Véhicule, Diagonal</nom_fr>
-    <nom_de>Fahrzeug, Diagonal</nom_de>
-    <nom_en>Vehicle, Diagonal</nom_en>
-    <nom_es>Vehículo, Diagonal</nom_es>
-    <nom_ja>戦車(斜)</nom_ja>
-    <nom_pt>Carro, Diagonal</nom_pt>
     <parent>2646</parent>
   </genre>
   <genre>
@@ -385,14 +414,33 @@
     <parent>2646</parent>
   </genre>
   <genre>
-    <id>2889</id>
-    <nom_fr>Vertical</nom_fr>
-    <nom_de>Vertikal</nom_de>
-    <nom_en>Vertical</nom_en>
-    <nom_es>Vertical</nom_es>
-    <nom_ja>飛行(縦)</nom_ja>
-    <nom_pt>Vertical</nom_pt>
-    <altname>Shooter / Flying Vertical</altname>
+    <id>2934</id>
+    <nom_fr>Véhicule, Diagonal</nom_fr>
+    <nom_de>Fahrzeug, Diagonal</nom_de>
+    <nom_en>Vehicle, Diagonal</nom_en>
+    <nom_es>Vehículo, Diagonal</nom_es>
+    <nom_ja>戦車(斜)</nom_ja>
+    <nom_pt>Carro, Diagonal</nom_pt>
+    <parent>2646</parent>
+  </genre>
+  <genre>
+    <id>2940</id>
+    <nom_fr>Véhicule, 1ere personne</nom_fr>
+    <nom_de>Fahrzeug, 1st Pers.</nom_de>
+    <nom_en>Vehicle, 1st person</nom_en>
+    <nom_es>Vehículo 1ª persona</nom_es>
+    <nom_ja>戦車(主観)</nom_ja>
+    <nom_pt>Carro 1ª Pessoa</nom_pt>
+    <parent>2646</parent>
+  </genre>
+  <genre>
+    <id>2910</id>
+    <nom_fr>Vehicule, 3eme personne</nom_fr>
+    <nom_de>Fahrzeug, 3rd. Pers.</nom_de>
+    <nom_en>Vehicle, 3rd person</nom_en>
+    <nom_es>Vehículo, 3ª persona</nom_es>
+    <nom_ja>戦車(俯瞰)</nom_ja>
+    <nom_pt>Carro 3ª Pessoa</nom_pt>
     <parent>2646</parent>
   </genre>
   <genre>
@@ -410,362 +458,6 @@
     <nom_es>Lightgun Shooter</nom_es>
     <nom_ja>射撃ゲーム</nom_ja>
     <nom_pt>Tiro com acessórios</nom_pt>
-  </genre>
-
-  <genre>
-    <id>425</id>
-    <nom_fr>Musique et Danse</nom_fr>
-    <nom_de>Musik und Tanz</nom_de>
-    <nom_en>Music and Dance</nom_en>
-    <nom_es>Música y Baile</nom_es>
-    <nom_ja>音楽ゲーム</nom_ja>
-    <nom_pt>Música e dança</nom_pt>
-    <altname>Music</altname>
-  </genre>
-  <genre>
-    <id>2925</id>
-    <nom_fr>Rythme</nom_fr>
-    <nom_de>Rythmus</nom_de>
-    <nom_en>Rhythm</nom_en>
-    <nom_es>Rítmico</nom_es>
-    <nom_ja>リズム</nom_ja>
-    <nom_pt>Rítmico</nom_pt>
-    <parent>425</parent>
-  </genre>
-
-  <genre>
-    <id>8</id>
-    <nom_fr>Jeu de rôles</nom_fr>
-    <nom_de>Rollenspiele</nom_de>
-    <nom_en>Role playing games</nom_en>
-    <nom_es>Juegos de rol</nom_es>
-    <nom_ja>ロールプレイングゲーム</nom_ja>
-    <nom_pt>Jogos de RPG</nom_pt>
-  </genre>
-  <genre>
-    <id>20696</id>
-    <nom_fr>Jeu de Rôle Japonais</nom_fr>
-    <nom_en>Japanese RPG</nom_en>
-    <nom_es>Juego de Rol Japonés</nom_es>
-    <nom_ja>ドラクエタイプ</nom_ja>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>20694</id>
-    <nom_fr>Jeu de Rôle Tactique</nom_fr>
-    <nom_en>Tactical RPG</nom_en>
-    <nom_es>Juego de Rol Táctico</nom_es>
-    <nom_ja>タクティカル</nom_ja>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>20688</id>
-    <nom_fr>Action RPG</nom_fr>
-    <nom_en>Action RPG</nom_en>
-    <nom_es>Juego de Rol de Acción</nom_es>
-    <nom_ja>アクションロールプレイング</nom_ja>
-    <nom_pt>Jogos de RPG</nom_pt>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>20692</id>
-    <nom_fr>Dungeon RPG</nom_fr>
-    <nom_en>Dungeon Crawler RPG</nom_en>
-    <nom_es>Juego de Rol de Calabozo</nom_es>
-    <nom_ja>ダンジョンクローラー</nom_ja>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>20698</id>
-    <nom_fr>Jeu de rôles en équipe</nom_fr>
-    <nom_en>Team-as-one RPG</nom_en>
-    <nom_es>Juego de Rol en Equipo</nom_es>
-    <nom_ja>MORPG</nom_ja>
-    <parent>8</parent>
-  </genre>
-  <genre>
-    <id>20690</id>
-    <nom_fr>MMORPG</nom_fr>
-    <nom_en>Massive Multiplayer Online RPG</nom_en>
-    <nom_es>MMORPG</nom_es>
-    <nom_ja>MMORPG</nom_ja>
-    <parent>8</parent>
-  </genre>
-
-  <genre>
-    <id>40</id>
-    <nom_fr>Simulation</nom_fr>
-    <nom_de>Simulation</nom_de>
-    <nom_en>Simulation</nom_en>
-    <nom_es>Simulación</nom_es>
-    <nom_ja>シミュレーションゲーム</nom_ja>
-    <nom_pt>Simulação</nom_pt>
-  </genre>
-  <genre>
-    <id>27</id>
-    <nom_fr>Stratégie</nom_fr>
-    <nom_de>Strategie</nom_de>
-    <nom_en>Strategy</nom_en>
-    <nom_es>Estrategia</nom_es>
-    <nom_ja>戦略系</nom_ja>
-    <nom_pt>Estratégia</nom_pt>
-    <parent>40</parent>
-  </genre>
-  <genre>
-    <id>20682</id>
-    <nom_fr>Construction &amp; Management</nom_fr>
-    <nom_en>Build And Management</nom_en>
-    <nom_es>Construcción y Gestión</nom_es>
-    <nom_ja>造成系</nom_ja>
-    <nom_pt>Construção e Gestão</nom_pt>
-    <parent>40</parent>
-  </genre>
-  <genre>
-    <id>20702</id>
-    <nom_fr>Science Fiction</nom_fr>
-    <nom_en>SciFi</nom_en>
-    <nom_es>Ciencia Ficción</nom_es>
-    <nom_ja>科学系</nom_ja>
-    <parent>40</parent>
-  </genre>
-  <genre>
-    <id>20700</id>
-    <nom_fr>Véhicules</nom_fr>
-    <nom_en>Vehicle</nom_en>
-    <nom_es>Vehículos</nom_es>
-    <nom_ja>運転系</nom_ja>
-    <altname>VEHICLE SIMULATION</altname>
-    <parent>40</parent>
-  </genre>
-  <genre>
-    <id>20684</id>
-    <nom_fr>Vie</nom_fr>
-    <nom_de>Lebenssimulation</nom_de>
-    <nom_en>Life</nom_en>
-    <nom_es>Vida</nom_es>
-    <nom_ja>人生系</nom_ja>
-    <parent>40</parent>
-  </genre>
-
-  <genre>
-    <id>13</id>
-    <nom_fr>Aventure</nom_fr>
-    <nom_de>Abenteuer</nom_de>
-    <nom_en>Adventure</nom_en>
-    <nom_es>Aventura</nom_es>
-    <nom_ja>アドベンチャーゲーム</nom_ja>
-    <nom_pt>Aventura</nom_pt>
-  </genre>
-  <genre>
-    <id>20678</id>
-    <nom_fr>3D Temps Réel</nom_fr>
-    <nom_en>RealTime 3D</nom_en>
-    <nom_es>3D en Tiempo Real</nom_es>
-    <nom_ja>3Dシーン探索系</nom_ja>
-    <nom_pt>3D em Tempo Real</nom_pt>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20676</id>
-    <nom_fr>Film Interactif</nom_fr>
-    <nom_en>Interactive Movie</nom_en>
-    <nom_es>Película Interactiva</nom_es>
-    <nom_ja>インタラクティブムービー</nom_ja>
-    <nom_pt>Filme Interativo</nom_pt>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20672</id>
-    <nom_fr>Graphique</nom_fr>
-    <nom_en>Graphics</nom_en>
-    <nom_es>Gráficos</nom_es>
-    <nom_ja>止め絵系</nom_ja>
-    <nom_pt>Gráficos</nom_pt>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>3237</id>
-    <nom_fr>Point and Click</nom_fr>
-    <nom_de>Point und Klick</nom_de>
-    <nom_en>Point and Click</nom_en>
-    <nom_es>Point and Click</nom_es>
-    <nom_ja>クリッカブル</nom_ja>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20674</id>
-    <nom_fr>Roman Visuel</nom_fr>
-    <nom_en>Visual Novel</nom_en>
-    <nom_es>Novela Visual</nom_es>
-    <nom_ja>ビジュアルノベル</nom_ja>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20670</id>
-    <nom_fr>Texte</nom_fr>
-    <nom_en>Text</nom_en>
-    <nom_es>Texto</nom_es>
-    <nom_ja>文字入力系</nom_ja>
-    <nom_pt>Texto</nom_pt>
-    <parent>13</parent>
-  </genre>
-  <genre>
-    <id>20680</id>
-    <nom_fr>Survie Horreur</nom_fr>
-    <nom_en>Survival Horror</nom_en>
-    <nom_ja>サバイバルホラー</nom_ja>
-    <altname>Horror</altname>
-    <parent>13</parent>
-  </genre>
-
-  <genre>
-    <id>26</id>
-    <nom_fr>Puzzle-Game</nom_fr>
-    <nom_de>Puzzle</nom_de>
-    <nom_en>Puzzle-Game</nom_en>
-    <nom_es>Puzzle</nom_es>
-    <nom_ja>パズルゲーム</nom_ja>
-    <nom_pt>Quebra-cabeças</nom_pt>
-  </genre>
-  <genre>
-    <id>2864</id>
-    <nom_fr>Egaler</nom_fr>
-    <nom_de>Partie</nom_de>
-    <nom_en>Equalize</nom_en>
-    <nom_es>Igualar</nom_es>
-    <nom_ja>ピクチャパズル</nom_ja>
-    <nom_pt>Igualar</nom_pt>
-    <parent>26</parent>
-  </genre>
-  <genre>
-    <id>2891</id>
-    <nom_fr>Glisser</nom_fr>
-    <nom_de>Gleiten</nom_de>
-    <nom_en>Glide</nom_en>
-    <nom_es>Deslizar</nom_es>
-    <nom_ja>スライドパズル</nom_ja>
-    <nom_pt>Rolar</nom_pt>
-    <parent>26</parent>
-  </genre>
-  <genre>
-    <id>2923</id>
-    <nom_fr>Lancer</nom_fr>
-    <nom_de>Werfen</nom_de>
-    <nom_en>Throw</nom_en>
-    <nom_es>Lanzar</nom_es>
-    <nom_ja>投げパズル</nom_ja>
-    <nom_pt>Lançar</nom_pt>
-    <parent>26</parent>
-  </genre>
-  <genre>
-    <id>2912</id>
-    <nom_fr>Tomber</nom_fr>
-    <nom_de>Fallen</nom_de>
-    <nom_en>Fall</nom_en>
-    <nom_es>Caída</nom_es>
-    <nom_ja>落ちパズル</nom_ja>
-    <nom_pt>Queda</nom_pt>
-    <parent>26</parent>
-  </genre>
-
-  <genre>
-    <id>2649</id>
-    <nom_fr>Quiz</nom_fr>
-    <nom_de>Quiz</nom_de>
-    <nom_en>Quiz</nom_en>
-    <nom_es>Quiz</nom_es>
-    <nom_ja>クイズ</nom_ja>
-    <nom_pt>Quiz</nom_pt>
-  </genre>
-  <genre>
-    <id>2954</id>
-    <nom_fr>Allemand</nom_fr>
-    <nom_de>Deutsch</nom_de>
-    <nom_en>German</nom_en>
-    <nom_es>Alemán</nom_es>
-    <nom_ja>ドイツ語</nom_ja>
-    <nom_pt>Alemão</nom_pt>
-    <parent>2649</parent>
-  </genre>
-  <genre>
-    <id>2931</id>
-    <nom_fr>Anglais</nom_fr>
-    <nom_de>Englisch</nom_de>
-    <nom_en>English</nom_en>
-    <nom_es>Inglés</nom_es>
-    <nom_ja>英語</nom_ja>
-    <nom_pt>Inglês</nom_pt>
-    <parent>2649</parent>
-  </genre>
-  <genre>
-    <id>2951</id>
-    <nom_fr>Coréen</nom_fr>
-    <nom_de>Koreanisch</nom_de>
-    <nom_en>Korean</nom_en>
-    <nom_es>Coreano</nom_es>
-    <nom_ja>韓国語</nom_ja>
-    <nom_pt>Coreano</nom_pt>
-    <parent>2649</parent>
-  </genre>
-  <genre>
-    <id>2962</id>
-    <nom_fr>Espagnol</nom_fr>
-    <nom_de>Spanisch</nom_de>
-    <nom_en>Spanish</nom_en>
-    <nom_es>Español</nom_es>
-    <nom_ja>スペイン語</nom_ja>
-    <nom_pt>Espanhol</nom_pt>
-    <parent>2649</parent>
-  </genre>
-  <genre>
-    <id>2969</id>
-    <nom_fr>Français</nom_fr>
-    <nom_de>Französisches</nom_de>
-    <nom_en>French</nom_en>
-    <nom_es>Francés</nom_es>
-    <nom_ja>フランス語</nom_ja>
-    <nom_pt>Francês</nom_pt>
-    <parent>2649</parent>
-  </genre>
-  <genre>
-    <id>2952</id>
-    <nom_fr>Italien</nom_fr>
-    <nom_de>Italienisch</nom_de>
-    <nom_en>Italian</nom_en>
-    <nom_es>Italiano</nom_es>
-    <nom_ja>イタリア語</nom_ja>
-    <nom_pt>Italiano</nom_pt>
-    <parent>2649</parent>
-  </genre>
-  <genre>
-    <id>2894</id>
-    <nom_fr>Japonais</nom_fr>
-    <nom_de>Japanisch</nom_de>
-    <nom_en>Japanese</nom_en>
-    <nom_es>Japonés</nom_es>
-    <nom_ja>日本語</nom_ja>
-    <nom_pt>Japonês</nom_pt>
-    <parent>2649</parent>
-  </genre>
-  <genre>
-    <id>2964</id>
-    <nom_fr>Musical Anglais</nom_fr>
-    <nom_de>Englische Musik</nom_de>
-    <nom_en>Music English</nom_en>
-    <nom_es>Música Inglés</nom_es>
-    <nom_ja>英語歌詞</nom_ja>
-    <nom_pt>Musical Inglês</nom_pt>
-    <parent>2649</parent>
-  </genre>
-  <genre>
-    <id>2967</id>
-    <nom_fr>Musical Japonais</nom_fr>
-    <nom_de>Japanische Musik</nom_de>
-    <nom_en>Music Japanese</nom_en>
-    <nom_es>Música Japonés</nom_es>
-    <nom_ja>日本語歌詞</nom_ja>
-    <nom_pt>Musical Japonês</nom_pt>
-    <parent>2649</parent>
   </genre>
 
   <genre>
@@ -872,6 +564,488 @@
     <nom_pt>Corrida em 3ª pessoa</nom_pt>
     <parent>28</parent>
   </genre>
+  <genre>
+    <id>29000</id>
+    <nom_en>Time Trial</nom_en>
+    <nom_ja>タイムトライアル</nom_ja>
+    <parent>28</parent>
+  </genre>
+  <genre>
+    <id>29001</id>
+    <nom_en>Free Driving</nom_en>
+    <nom_ja>フリードライビング</nom_ja>
+    <parent>28</parent>
+  </genre>
+  <genre>
+    <id>29002</id>
+    <nom_en>Tunable</nom_en>
+    <nom_ja>チューナブル</nom_ja>
+    <parent>28</parent>
+  </genre>
+
+  <genre>
+    <id>425</id>
+    <nom_fr>Musique et Danse</nom_fr>
+    <nom_de>Musik und Tanz</nom_de>
+    <nom_en>Music and Dance</nom_en>
+    <nom_es>Música y Baile</nom_es>
+    <nom_ja>音楽ゲーム</nom_ja>
+    <nom_pt>Música e dança</nom_pt>
+    <altname>Music</altname>
+  </genre>
+  <genre>
+    <id>2925</id>
+    <nom_fr>Rythme</nom_fr>
+    <nom_de>Rythmus</nom_de>
+    <nom_en>Rhythm</nom_en>
+    <nom_es>Rítmico</nom_es>
+    <nom_ja>リズム</nom_ja>
+    <nom_pt>Rítmico</nom_pt>
+    <parent>425</parent>
+  </genre>
+  <genre>
+    <id>29010</id>
+    <nom_en>Instrument</nom_en>
+    <nom_ja>楽器演奏</nom_ja>
+    <parent>425</parent>
+  </genre>
+
+  <genre>
+    <id>8</id>
+    <nom_fr>Jeu de rôles</nom_fr>
+    <nom_de>Rollenspiele</nom_de>
+    <nom_en>Role playing games</nom_en>
+    <nom_es>Juegos de rol</nom_es>
+    <nom_ja>ロールプレイングゲーム</nom_ja>
+    <nom_pt>Jogos de RPG</nom_pt>
+  </genre>
+  <genre>
+    <id>20696</id>
+    <nom_fr>Jeu de Rôle Japonais</nom_fr>
+    <nom_en>Japanese RPG</nom_en>
+    <nom_es>Juego de Rol Japonés</nom_es>
+    <nom_ja>ドラクエタイプ</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>29050</id>
+    <nom_en>1st Person World View</nom_en>
+    <nom_ja>ウィザードリィタイプ</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20692</id>
+    <nom_fr>Dungeon RPG</nom_fr>
+    <nom_en>Dungeon Crawler RPG</nom_en>
+    <nom_es>Juego de Rol de Calabozo</nom_es>
+    <nom_ja>ローグタイプ</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20694</id>
+    <nom_fr>Jeu de Rôle Tactique</nom_fr>
+    <nom_en>Tactical RPG</nom_en>
+    <nom_es>Juego de Rol Táctico</nom_es>
+    <nom_ja>タクティクス</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20688</id>
+    <nom_fr>Action RPG</nom_fr>
+    <nom_en>Action RPG</nom_en>
+    <nom_es>Juego de Rol de Acción</nom_es>
+    <nom_ja>アクションロールプレイング</nom_ja>
+    <nom_pt>Jogos de RPG</nom_pt>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20698</id>
+    <nom_fr>Jeu de rôles en équipe</nom_fr>
+    <nom_en>Team-as-one RPG</nom_en>
+    <nom_es>Juego de Rol en Equipo</nom_es>
+    <nom_ja>MORPG</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20690</id>
+    <nom_fr>MMORPG</nom_fr>
+    <nom_en>Massive Multiplayer Online RPG</nom_en>
+    <nom_es>MMORPG</nom_es>
+    <nom_ja>MMORPG</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>29051</id>
+    <nom_en>Simple Battle</nom_en>
+    <nom_ja>シンプルバトル</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>29052</id>
+    <nom_en>Tactical Battle</nom_en>
+    <nom_ja>タクティカルバトル</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>29053</id>
+    <nom_en>Real Time Battle</nom_en>
+    <nom_ja>リアルタイムバトル</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>29054</id>
+    <nom_en>Encounterless</nom_en>
+    <nom_ja>エンカウンターレス</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>29055</id>
+    <nom_en>Open World</nom_en>
+    <nom_ja>オープンワールド</nom_ja>
+    <parent>8</parent>
+  </genre>
+
+  <genre>
+    <id>40</id>
+    <nom_fr>Simulation</nom_fr>
+    <nom_de>Simulation</nom_de>
+    <nom_en>Simulation</nom_en>
+    <nom_es>Simulación</nom_es>
+    <nom_ja>シミュレーションゲーム</nom_ja>
+    <nom_pt>Simulação</nom_pt>
+  </genre>
+  <genre>
+    <id>27</id>
+    <nom_fr>Stratégie</nom_fr>
+    <nom_de>Strategie</nom_de>
+    <nom_en>Strategy</nom_en>
+    <nom_es>Estrategia</nom_es>
+    <nom_ja>戦略系</nom_ja>
+    <nom_pt>Estratégia</nom_pt>
+    <parent>40</parent>
+  </genre>
+  <genre>
+    <id>29062</id>
+    <nom_en>Conquest</nom_en>
+    <nom_ja>征服系</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20682</id>
+    <nom_fr>Construction &amp; Management</nom_fr>
+    <nom_en>Build And Management</nom_en>
+    <nom_es>Construcción y Gestión</nom_es>
+    <nom_ja>運営系</nom_ja>
+    <nom_pt>Construção e Gestão</nom_pt>
+    <parent>40</parent>
+  </genre>
+  <genre>
+    <id>29060</id>
+    <nom_en>World Creation</nom_en>
+    <nom_ja>創世系</nom_ja>
+    <parent>8</parent>
+  </genre>
+  <genre>
+    <id>20702</id>
+    <nom_fr>Science Fiction</nom_fr>
+    <nom_en>SciFi</nom_en>
+    <nom_es>Ciencia Ficción</nom_es>
+    <nom_ja>科学系</nom_ja>
+    <parent>40</parent>
+  </genre>
+  <genre>
+    <id>20700</id>
+    <nom_fr>Véhicules</nom_fr>
+    <nom_en>Vehicle</nom_en>
+    <nom_es>Vehículos</nom_es>
+    <nom_ja>運転系</nom_ja>
+    <altname>VEHICLE SIMULATION</altname>
+    <parent>40</parent>
+  </genre>
+  <genre>
+    <id>20684</id>
+    <nom_fr>Vie</nom_fr>
+    <nom_de>Lebenssimulation</nom_de>
+    <nom_en>Life</nom_en>
+    <nom_es>Vida</nom_es>
+    <nom_ja>人生系</nom_ja>
+    <parent>40</parent>
+  </genre>
+  <genre>
+    <id>29061</id>
+    <nom_en>Breeding</nom_en>
+    <nom_ja>飼育系</nom_ja>
+    <parent>8</parent>
+  </genre>
+
+  <genre>
+    <id>13</id>
+    <nom_fr>Aventure</nom_fr>
+    <nom_de>Abenteuer</nom_de>
+    <nom_en>Adventure</nom_en>
+    <nom_es>Aventura</nom_es>
+    <nom_ja>アドベンチャーゲーム</nom_ja>
+    <nom_pt>Aventura</nom_pt>
+  </genre>
+  <genre>
+    <id>20678</id>
+    <nom_fr>3D Temps Réel</nom_fr>
+    <nom_en>RealTime 3D</nom_en>
+    <nom_es>3D en Tiempo Real</nom_es>
+    <nom_ja>3Dシーン探索系</nom_ja>
+    <nom_pt>3D em Tempo Real</nom_pt>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>20676</id>
+    <nom_fr>Film Interactif</nom_fr>
+    <nom_en>Interactive Movie</nom_en>
+    <nom_es>Película Interactiva</nom_es>
+    <nom_ja>インタラクティブムービー</nom_ja>
+    <nom_pt>Filme Interativo</nom_pt>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>20672</id>
+    <nom_fr>Graphique</nom_fr>
+    <nom_en>Graphics</nom_en>
+    <nom_es>Gráficos</nom_es>
+    <nom_ja>止め絵系</nom_ja>
+    <nom_pt>Gráficos</nom_pt>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>3237</id>
+    <nom_fr>Point and Click</nom_fr>
+    <nom_de>Point und Klick</nom_de>
+    <nom_en>Point and Click</nom_en>
+    <nom_es>Point and Click</nom_es>
+    <nom_ja>クリッカブル</nom_ja>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>20674</id>
+    <nom_fr>Roman Visuel</nom_fr>
+    <nom_en>Visual Novel</nom_en>
+    <nom_es>Novela Visual</nom_es>
+    <nom_ja>ビジュアルノベル</nom_ja>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>20670</id>
+    <nom_fr>Texte</nom_fr>
+    <nom_en>Text</nom_en>
+    <nom_es>Texto</nom_es>
+    <nom_ja>文字入力系</nom_ja>
+    <nom_pt>Texto</nom_pt>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>29070</id>
+    <nom_en>Command Option</nom_en>
+    <nom_ja>コマンド選択系</nom_ja>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>29071</id>
+    <nom_en>Exploration</nom_en>
+    <nom_ja>場面探索系</nom_ja>
+    <parent>13</parent>
+  </genre>
+  <genre>
+    <id>20680</id>
+    <nom_fr>Survie Horreur</nom_fr>
+    <nom_en>Survival Horror</nom_en>
+    <nom_ja>サバイバルホラー</nom_ja>
+    <altname>Horror</altname>
+    <parent>13</parent>
+  </genre>
+
+  <genre>
+    <id>26</id>
+    <nom_fr>Puzzle-Game</nom_fr>
+    <nom_de>Puzzle</nom_de>
+    <nom_en>Puzzle-Game</nom_en>
+    <nom_es>Puzzle</nom_es>
+    <nom_ja>パズルゲーム</nom_ja>
+    <nom_pt>Quebra-cabeças</nom_pt>
+  </genre>
+  <genre>
+    <id>2864</id>
+    <nom_fr>Egaler</nom_fr>
+    <nom_de>Partie</nom_de>
+    <nom_en>Equalize</nom_en>
+    <nom_es>Igualar</nom_es>
+    <nom_ja>ピクチャパズル</nom_ja>
+    <nom_pt>Igualar</nom_pt>
+    <parent>26</parent>
+  </genre>
+  <genre>
+    <id>2891</id>
+    <nom_fr>Glisser</nom_fr>
+    <nom_de>Gleiten</nom_de>
+    <nom_en>Glide</nom_en>
+    <nom_es>Deslizar</nom_es>
+    <nom_ja>スライドパズル</nom_ja>
+    <nom_pt>Rolar</nom_pt>
+    <parent>26</parent>
+  </genre>
+  <genre>
+    <id>2923</id>
+    <nom_fr>Lancer</nom_fr>
+    <nom_de>Werfen</nom_de>
+    <nom_en>Throw</nom_en>
+    <nom_es>Lanzar</nom_es>
+    <nom_ja>投げパズル</nom_ja>
+    <nom_pt>Lançar</nom_pt>
+    <parent>26</parent>
+  </genre>
+  <genre>
+    <id>2912</id>
+    <nom_fr>Tomber</nom_fr>
+    <nom_de>Fallen</nom_de>
+    <nom_en>Fall</nom_en>
+    <nom_es>Caída</nom_es>
+    <nom_ja>落ちパズル</nom_ja>
+    <nom_pt>Queda</nom_pt>
+    <parent>26</parent>
+  </genre>
+  <genre>
+    <id>29080</id>
+    <nom_en>Logical</nom_en>
+    <nom_ja>理論系</nom_ja>
+    <parent>26</parent>
+  </genre>
+  <genre>
+    <id>29081</id>
+    <nom_en>Ordering</nom_en>
+    <nom_ja>指示系</nom_ja>
+    <parent>26</parent>
+  </genre>
+  <genre>
+    <id>29082</id>
+    <nom_en>Planning</nom_en>
+    <nom_ja>計画系</nom_ja>
+    <parent>26</parent>
+  </genre>
+  <genre>
+    <id>29083</id>
+    <nom_en>Tidying</nom_en>
+    <nom_ja>片付け系</nom_ja>
+    <parent>26</parent>
+  </genre>
+  <genre>
+    <id>29084</id>
+    <nom_en>Discovery</nom_en>
+    <nom_ja>発見系</nom_ja>
+    <parent>29998</parent>
+  </genre>
+  <genre>
+    <id>29085</id>
+    <nom_en>Pencil Puzzle</nom_en>
+    <nom_ja>ペンシルパズル</nom_ja>
+    <parent>29998</parent>
+  </genre>
+
+  <genre>
+    <id>2649</id>
+    <nom_fr>Quiz</nom_fr>
+    <nom_de>Quiz</nom_de>
+    <nom_en>Quiz</nom_en>
+    <nom_es>Quiz</nom_es>
+    <nom_ja>クイズ</nom_ja>
+    <nom_pt>Quiz</nom_pt>
+  </genre>
+  <genre>
+    <id>2954</id>
+    <nom_fr>Allemand</nom_fr>
+    <nom_de>Deutsch</nom_de>
+    <nom_en>German</nom_en>
+    <nom_es>Alemán</nom_es>
+    <nom_ja>ドイツ語</nom_ja>
+    <nom_pt>Alemão</nom_pt>
+    <parent>2649</parent>
+  </genre>
+  <genre>
+    <id>2931</id>
+    <nom_fr>Anglais</nom_fr>
+    <nom_de>Englisch</nom_de>
+    <nom_en>English</nom_en>
+    <nom_es>Inglés</nom_es>
+    <nom_ja>英語</nom_ja>
+    <nom_pt>Inglês</nom_pt>
+    <parent>2649</parent>
+  </genre>
+  <genre>
+    <id>2951</id>
+    <nom_fr>Coréen</nom_fr>
+    <nom_de>Koreanisch</nom_de>
+    <nom_en>Korean</nom_en>
+    <nom_es>Coreano</nom_es>
+    <nom_ja>韓国語</nom_ja>
+    <nom_pt>Coreano</nom_pt>
+    <parent>2649</parent>
+  </genre>
+  <genre>
+    <id>2962</id>
+    <nom_fr>Espagnol</nom_fr>
+    <nom_de>Spanisch</nom_de>
+    <nom_en>Spanish</nom_en>
+    <nom_es>Español</nom_es>
+    <nom_ja>スペイン語</nom_ja>
+    <nom_pt>Espanhol</nom_pt>
+    <parent>2649</parent>
+  </genre>
+  <genre>
+    <id>2969</id>
+    <nom_fr>Français</nom_fr>
+    <nom_de>Französisches</nom_de>
+    <nom_en>French</nom_en>
+    <nom_es>Francés</nom_es>
+    <nom_ja>フランス語</nom_ja>
+    <nom_pt>Francês</nom_pt>
+    <parent>2649</parent>
+  </genre>
+  <genre>
+    <id>2952</id>
+    <nom_fr>Italien</nom_fr>
+    <nom_de>Italienisch</nom_de>
+    <nom_en>Italian</nom_en>
+    <nom_es>Italiano</nom_es>
+    <nom_ja>イタリア語</nom_ja>
+    <nom_pt>Italiano</nom_pt>
+    <parent>2649</parent>
+  </genre>
+  <genre>
+    <id>2894</id>
+    <nom_fr>Japonais</nom_fr>
+    <nom_de>Japanisch</nom_de>
+    <nom_en>Japanese</nom_en>
+    <nom_es>Japonés</nom_es>
+    <nom_ja>日本語</nom_ja>
+    <nom_pt>Japonês</nom_pt>
+    <parent>2649</parent>
+  </genre>
+  <genre>
+    <id>2964</id>
+    <nom_fr>Musical Anglais</nom_fr>
+    <nom_de>Englische Musik</nom_de>
+    <nom_en>Music English</nom_en>
+    <nom_es>Música Inglés</nom_es>
+    <nom_ja>英語歌詞</nom_ja>
+    <nom_pt>Musical Inglês</nom_pt>
+    <parent>2649</parent>
+  </genre>
+  <genre>
+    <id>2967</id>
+    <nom_fr>Musical Japonais</nom_fr>
+    <nom_de>Japanische Musik</nom_de>
+    <nom_en>Music Japanese</nom_en>
+    <nom_es>Música Japonés</nom_es>
+    <nom_ja>日本語歌詞</nom_ja>
+    <nom_pt>Musical Japonês</nom_pt>
+    <parent>2649</parent>
+  </genre>
 
   <genre>
     <id>29998</id>
@@ -898,6 +1072,36 @@
     <nom_pt>Jogo de tabuleiro</nom_pt>
     <altname>Jeu de societe</altname>
     <altname>TABLETOP</altname>
+    <parent>29998</parent>
+  </genre>
+  <genre>
+    <id>29102</id>
+    <nom_en>Chess</nom_en>
+    <nom_ja>チェス</nom_ja>
+    <parent>29998</parent>
+  </genre>
+  <genre>
+    <id>29090</id>
+    <nom_en>Solitaire</nom_en>
+    <nom_ja>ソリティア</nom_ja>
+    <parent>29998</parent>
+  </genre>
+  <genre>
+    <id>29091</id>
+    <nom_en>Collectable Card</nom_en>
+    <nom_ja>トレーディングカード</nom_ja>
+    <parent>29998</parent>
+  </genre>
+  <genre>
+    <id>29092</id>
+    <nom_en>Sugoroku</nom_en>
+    <nom_ja>双六</nom_ja>
+    <parent>29998</parent>
+  </genre>
+  <genre>
+    <id>29093</id>
+    <nom_en>Monopoly Like</nom_en>
+    <nom_ja>モノポリータイプ</nom_ja>
     <parent>29998</parent>
   </genre>
 
@@ -1053,6 +1257,12 @@
     <nom_en>Japanese Pinball</nom_en>
     <nom_fr>Pachinko</nom_fr>
     <nom_ja>パチンコ</nom_ja>
+    <parent>29997</parent>
+  </genre>
+  <genre>
+    <id>29101</id>
+    <nom_en>Japanese Slot</nom_en>
+    <nom_ja>パチスロ</nom_ja>
     <parent>29997</parent>
   </genre>
   <genre>
@@ -1293,11 +1503,29 @@
     <nom_pt>Sumô</nom_pt>
     <parent>3034</parent>
   </genre>
+  <genre>
+    <id>29100</id>
+    <nom_en>Judo</nom_en>
+    <nom_ja>柔道</nom_ja>
+    <parent>3034</parent>
+  </genre>
 
   <genre>
     <id>29993</id>
     <nom_en>Field and Track</nom_en>
     <nom_ja>陸上競技</nom_ja>
+  </genre>
+  <genre>
+    <id>29110</id>
+    <nom_en>Field Sports</nom_en>
+    <nom_ja>フィールド競技</nom_ja>
+    <parent>29993</parent>
+  </genre>
+  <genre>
+    <id>29111</id>
+    <nom_en>Track Sports</nom_en>
+    <nom_ja>トラック競技</nom_ja>
+    <parent>29993</parent>
   </genre>
   <genre>
     <id>2877</id>
@@ -1471,16 +1699,6 @@
     <parent>39</parent>
   </genre>
   <genre>
-    <id>30</id>
-    <nom_fr>Ludo-Educatif</nom_fr>
-    <nom_de>Lernspiel</nom_de>
-    <nom_en>Educational</nom_en>
-    <nom_es>Educacional</nom_es>
-    <nom_ja>教育系</nom_ja>
-    <nom_pt>Educacional</nom_pt>
-    <parent>39</parent>
-  </genre>
-  <genre>
     <id>2974</id>
     <nom_fr>Demo</nom_fr>
     <nom_de>Demo</nom_de>
@@ -1488,6 +1706,18 @@
     <nom_es>Demo</nom_es>
     <nom_ja>鑑賞系</nom_ja>
     <nom_pt>Demo</nom_pt>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>29200</id>
+    <nom_en>Document</nom_en>
+    <nom_ja>ドキュメント</nom_ja>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>29201</id>
+    <nom_en>Fortun Telling</nom_en>
+    <nom_ja>占い</nom_ja>
     <parent>39</parent>
   </genre>
 
@@ -1504,6 +1734,16 @@
     <nom_es>Adulto</nom_es>
     <nom_ja>アダルト</nom_ja>
     <nom_pt>Adulto</nom_pt>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>30</id>
+    <nom_fr>Ludo-Educatif</nom_fr>
+    <nom_de>Lernspiel</nom_de>
+    <nom_en>Educational</nom_en>
+    <nom_es>Educacional</nom_es>
+    <nom_ja>教育系</nom_ja>
+    <nom_pt>Educacional</nom_pt>
     <parent>29999</parent>
   </genre>
 
