@@ -226,7 +226,7 @@
     <nom_de>Shoot'em Up</nom_de>
     <nom_en>Shoot'em Up</nom_en>
     <nom_es>Shoot'em Up</nom_es>
-    <nom_ja>固定型シューティングゲーム</nom_ja>
+    <nom_ja>防衛型シューティングゲーム</nom_ja>
     <nom_pt>Shoot'em Up</nom_pt>
   </genre>
   <genre>
@@ -292,7 +292,7 @@
     <nom_de>Shooter</nom_de>
     <nom_en>Shooter</nom_en>
     <nom_es>Shooter</nom_es>
-    <nom_ja>進行型シューティングゲーム</nom_ja>
+    <nom_ja>侵攻型シューティングゲーム</nom_ja>
     <nom_pt>Tiro</nom_pt>
   </genre>
   <genre>
@@ -728,7 +728,7 @@
     <id>29062</id>
     <nom_en>Conquest</nom_en>
     <nom_ja>征服系</nom_ja>
-    <parent>8</parent>
+    <parent>40</parent>
   </genre>
   <genre>
     <id>20682</id>
@@ -743,7 +743,7 @@
     <id>29060</id>
     <nom_en>World Creation</nom_en>
     <nom_ja>創世系</nom_ja>
-    <parent>8</parent>
+    <parent>40</parent>
   </genre>
   <genre>
     <id>20702</id>
@@ -775,7 +775,7 @@
     <id>29061</id>
     <nom_en>Breeding</nom_en>
     <nom_ja>飼育系</nom_ja>
-    <parent>8</parent>
+    <parent>40</parent>
   </genre>
 
   <genre>
@@ -938,13 +938,13 @@
     <id>29084</id>
     <nom_en>Discovery</nom_en>
     <nom_ja>発見系</nom_ja>
-    <parent>29998</parent>
+    <parent>26</parent>
   </genre>
   <genre>
     <id>29085</id>
     <nom_en>Pencil Puzzle</nom_en>
     <nom_ja>ペンシルパズル</nom_ja>
-    <parent>29998</parent>
+    <parent>26</parent>
   </genre>
 
   <genre>
@@ -1240,7 +1240,6 @@
     <id>29997</id>
     <nom_en>Public Gamespace</nom_en>
     <nom_ja>公衆遊戯</nom_ja>
-    <parent>29997</parent>
   </genre>
   <genre>
     <id>31</id>
@@ -1440,7 +1439,7 @@
     <nom_es>Tenis</nom_es>
     <nom_ja>テニス</nom_ja>
     <nom_pt>Tênis</nom_pt>
-    <parent>685</parent>
+    <parent>29995</parent>
   </genre>
   <genre>
     <id>2883</id>
@@ -1450,7 +1449,7 @@
     <nom_es>Voleibol</nom_es>
     <nom_ja>バレーボール</nom_ja>
     <nom_pt>Voleibol</nom_pt>
-    <parent>685</parent>
+    <parent>29995</parent>
   </genre>
 
   <genre>
