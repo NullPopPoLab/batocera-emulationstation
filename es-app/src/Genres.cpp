@@ -225,7 +225,7 @@ std::string& GameGenre::getLocalizedName()
 	if (locale == 4 && !nom_es.empty())
 		return nom_es;
 
-	if (locale == 5 && nom_ja.empty())
+	if (locale == 5 && !nom_ja.empty())
 		return nom_ja;
 
 	return nom_en;
