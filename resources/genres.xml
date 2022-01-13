@@ -746,14 +746,6 @@
     <parent>40</parent>
   </genre>
   <genre>
-    <id>20702</id>
-    <nom_fr>Science Fiction</nom_fr>
-    <nom_en>SciFi</nom_en>
-    <nom_es>Ciencia Ficción</nom_es>
-    <nom_ja>科学系</nom_ja>
-    <parent>40</parent>
-  </genre>
-  <genre>
     <id>20700</id>
     <nom_fr>Véhicules</nom_fr>
     <nom_en>Vehicle</nom_en>
@@ -1650,15 +1642,6 @@
     <parent>39</parent>
   </genre>
   <genre>
-    <id>2890</id>
-    <nom_fr>Electro-mecanique</nom_fr>
-    <nom_de>Elektromechanisch</nom_de>
-    <nom_en>Electro- Mechanical</nom_en>
-    <nom_es>Electromecánico</nom_es>
-    <nom_pt>Eletromecânico</nom_pt>
-    <parent>39</parent>
-  </genre>
-  <genre>
     <id>2879</id>
     <nom_fr>Print Club</nom_fr>
     <nom_de>Print Club</nom_de>
@@ -1743,6 +1726,90 @@
     <nom_es>Educacional</nom_es>
     <nom_ja>教育系</nom_ja>
     <nom_pt>Educacional</nom_pt>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>20702</id>
+    <nom_fr>Science Fiction</nom_fr>
+    <nom_en>SciFi</nom_en>
+    <nom_es>Ciencia Ficción</nom_es>
+    <nom_ja>SF</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>2890</id>
+    <nom_fr>Electro-mecanique</nom_fr>
+    <nom_de>Elektromechanisch</nom_de>
+    <nom_en>Electro- Mechanical</nom_en>
+    <nom_es>Electromecánico</nom_es>
+    <nom_ja>メカニカル</nom_ja>
+    <nom_pt>Eletromecânico</nom_pt>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29900</id>
+    <nom_en>Comical</nom_en>
+    <nom_ja>コミカル</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29901</id>
+    <nom_en>Fantasy</nom_en>
+    <nom_ja>ファンタジー</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29902</id>
+    <nom_en>Violence</nom_en>
+    <nom_ja>バイオレンス</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29903</id>
+    <nom_en>Military</nom_en>
+    <nom_ja>ミリタリー</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29904</id>
+    <nom_en>Historical</nom_en>
+    <nom_ja>ヒストリカル</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29905</id>
+    <nom_en>Natural</nom_en>
+    <nom_ja>ナチュラル</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29906</id>
+    <nom_en>Romance</nom_en>
+    <nom_ja>ロマンス</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29907</id>
+    <nom_en>Suspense</nom_en>
+    <nom_ja>サスペンス</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29908</id>
+    <nom_en>Horror</nom_en>
+    <nom_ja>ホラー</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29909</id>
+    <nom_en>Cosmic</nom_en>
+    <nom_ja>コズミック</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29910</id>
+    <nom_en>Cyberpunk</nom_en>
+    <nom_ja>サイバーパンク</nom_ja>
     <parent>29999</parent>
   </genre>
 
