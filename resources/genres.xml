@@ -629,7 +629,7 @@
   </genre>
   <genre>
     <id>29050</id>
-    <nom_en>1st Person World View</nom_en>
+    <nom_en>1st Person View</nom_en>
     <nom_ja>ウィザードリィタイプ</nom_ja>
     <parent>8</parent>
   </genre>
@@ -1691,6 +1691,12 @@
     <parent>39</parent>
   </genre>
   <genre>
+    <id>29202</id>
+    <nom_en>Art Collection</nom_en>
+    <nom_ja>画集</nom_ja>
+    <parent>39</parent>
+  </genre>
+  <genre>
     <id>29200</id>
     <nom_en>Document</nom_en>
     <nom_ja>ドキュメント</nom_ja>
@@ -1698,7 +1704,7 @@
   </genre>
   <genre>
     <id>29201</id>
-    <nom_en>Fortun Telling</nom_en>
+    <nom_en>Fortune Telling</nom_en>
     <nom_ja>占い</nom_ja>
     <parent>39</parent>
   </genre>
