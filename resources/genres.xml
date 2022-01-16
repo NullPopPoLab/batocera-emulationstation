@@ -1765,6 +1765,13 @@
     <parent>29999</parent>
   </genre>
   <genre>
+    <id>29912</id>
+    <nom_en>Fairy-tale</nom_en>
+    <nom_de>Märchen</nom_de>
+    <nom_ja>メルヘン</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
     <id>29902</id>
     <nom_en>Violence</nom_en>
     <nom_ja>バイオレンス</nom_ja>
@@ -1798,6 +1805,12 @@
     <id>29907</id>
     <nom_en>Suspense</nom_en>
     <nom_ja>サスペンス</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29911</id>
+    <nom_en>Hard-boiled</nom_en>
+    <nom_ja>ハードボイルド</nom_ja>
     <parent>29999</parent>
   </genre>
   <genre>
