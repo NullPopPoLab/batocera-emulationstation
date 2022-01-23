@@ -1287,6 +1287,12 @@
     <altname>Sports / Darts</altname>
     <parent>29997</parent>
   </genre>
+  <genre>
+    <id>29103</id>
+    <nom_en>Air Hockey</nom_en>
+    <nom_ja>エアホッケー</nom_ja>
+    <parent>29997</parent>
+  </genre>
 
   <genre>
     <id>2648</id>
