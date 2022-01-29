@@ -801,7 +801,7 @@ std::set<std::string> FileData::getContentFiles()
 					if(trim[0]=='*'){
 						// skip Advanced M3U attribute 
 						auto ep=trim.find(';');
-						if(ep==basic_string::npos)continue;
+						if(ep==std::basic_string::npos)continue;
 						if(trim.size()<=ep+1)continue;
 						trim=trim.substr(ep+1);
 					}
