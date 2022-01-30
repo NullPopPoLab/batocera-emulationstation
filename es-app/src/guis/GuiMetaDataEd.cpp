@@ -484,7 +484,7 @@ bool GuiMetaDataEd::save()
 			auto abs = Utils::FileSystem::resolveRelativePath(val, root, true);
 
 			auto cur = mMetaData->get(key, true);
-			if (abs != cur && !Utils::String::startsWith(abs, root))
+			if (abs != cur && !Utils::String::startsWith(abs, "/userdata/scraper/"))
 				externalFilesToCopy.insert(val);
 		}
 	}
