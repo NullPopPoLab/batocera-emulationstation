@@ -711,12 +711,12 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 	std::string subdirectory = system->getName();
 	std::string name = Utils::FileSystem::getStem(game->getPath());
 	auto path = std::string("/userdata/scraper/")+subdirectory+"/"+name+"/";
-	bool lacagy=false;
+	bool legacy=false;
 
 	if(!Utils::FileSystem::exists(path)){
 		name = Utils::FileSystem::getStem(game->getPath()) + "-" + suffix;
 		path = system->getRootFolder()->getPath() + "/" + folder + "/";
-		lacagy=true;
+		legacy=true;
 	}
 
 	if(!Utils::FileSystem::exists(path))
