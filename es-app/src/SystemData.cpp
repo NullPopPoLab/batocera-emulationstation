@@ -1204,7 +1204,7 @@ std::string SystemData::getGamelistPath(bool forWrite) const
 {
 	std::string filePath;
 
-	filePath = mRootFolder->getPath() + "/gamelist.xml";
+	filePath = std::string("/userdata/scraper/")+mMetadata.name+"/gamelist.xml";
 	if(Utils::FileSystem::exists(filePath))
 		return filePath;
 
