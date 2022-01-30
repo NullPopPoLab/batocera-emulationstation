@@ -135,6 +135,8 @@ const std::string FileData::getThumbnailPath()
 {
 	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
 
+	if (thumbnail.empty()) thumbnail = getMetadata(MetaDataId::TitleShot);
+
 	// no thumbnail, try image
 	if(thumbnail.empty())
 	{
