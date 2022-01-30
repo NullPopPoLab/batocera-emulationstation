@@ -480,11 +480,11 @@ bool GuiMetaDataEd::save()
 		auto val = ed->getValue();
 		if (mMetaData->getType(key) == MD_PATH && !val.empty())
 		{
-			auto root = mMetaData->getRelativeRootPath();
+			auto root = std::string("/userdata/scraper/")+mScraperParams.system->getName()+"/";
 			auto abs = Utils::FileSystem::resolveRelativePath(val, root, true);
 
 			auto cur = mMetaData->get(key, true);
-			if (abs != cur && !Utils::String::startsWith(abs, "/userdata/scraper/"))
+			if (abs != cur && !Utils::String::startsWith(abs, root))
 				externalFilesToCopy.insert(val);
 		}
 	}
