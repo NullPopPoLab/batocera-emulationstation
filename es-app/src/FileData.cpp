@@ -146,7 +146,7 @@ const std::string FileData::getThumbnailPath()
 			{
 				if(thumbnail.empty())
 				{
-					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-thumb" + extList[i];
+					std::string path = std::string('/userdata/scraper/')+ getSystem()->getName() + "/"+mMetadata.getName()+"/image" + extList[i];
 					if (Utils::FileSystem::exists(path))
 					{
 						setMetadata(MetaDataId::Thumbnail, path);
@@ -167,9 +167,7 @@ const std::string FileData::getThumbnailPath()
 			{
 				if (thumbnail.empty())
 				{
-					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-image" + extList[i];					
-					if (!Utils::FileSystem::exists(path))
-						path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + extList[i];
+					std::string path = std::string('/userdata/scraper/')+ getSystem()->getName() + "/"+mMetadata.getName()+"/image" + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 						thumbnail = path;
@@ -267,7 +265,7 @@ const std::string FileData::getVideoPath()
 	// no video, try to use local video
 	if(video.empty() && Settings::getInstance()->getBool("LocalArt"))
 	{
-		std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-video.mp4";
+		std::string path = std::string('/userdata/scraper/')+ getSystem()->getName() + "/"+mMetadata.getName()+"/video.mp4";
 		if (Utils::FileSystem::exists(path))
 		{
 			setMetadata(MetaDataId::Video, path);
@@ -302,7 +300,7 @@ const std::string FileData::getMarqueePath()
 		{
 			if(marquee.empty())
 			{
-				std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-marquee" + extList[i];
+				std::string path = std::string('/userdata/scraper/')+ getSystem()->getName() + "/"+mMetadata.getName()+"/marquee" + extList[i];
 				if (Utils::FileSystem::exists(path))
 				{
 					setMetadata(MetaDataId::Marquee, path);
@@ -332,9 +330,7 @@ const std::string FileData::getImagePath()
 			{
 				if (image.empty())
 				{
-					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-image" + extList[i];
-					if (!Utils::FileSystem::exists(path))
-						path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + extList[i];
+					std::string path = std::string('/userdata/scraper/')+ getSystem()->getName() + "/"+mMetadata.getName()+"/image" + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 					{
