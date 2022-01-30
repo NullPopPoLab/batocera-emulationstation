@@ -708,8 +708,8 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 
 	auto system = game->getSourceFileData()->getSystem();
 
-	const std::string subdirectory = system->getName();
-	const std::string name = Utils::FileSystem::getStem(game->getPath());
+	std::string subdirectory = system->getName();
+	std::string name = Utils::FileSystem::getStem(game->getPath());
 	auto path = std::string("/userdata/scraper/")+subdirectory+"/"+name+"/";
 	bool lacagy=false;
 
