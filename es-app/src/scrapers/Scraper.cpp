@@ -709,13 +709,15 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 	auto system = game->getSourceFileData()->getSystem();
 
 	const std::string subdirectory = system->getName();
-	const std::string name = Utils::FileSystem::getStem(game->getPath()) + "-" + suffix;
+	const std::string name = Utils::FileSystem::getStem(game->getPath()) /*+ "-" + suffix*/;
 
-	std::string path = system->getRootFolder()->getPath() + "/" + folder + "/";
+//	std::string path = system->getRootFolder()->getPath() + "/" + folder + "/";
+	auto path = std::string("/userdata/scraper/")+subdirectory+"/"+name+"/";
 
 	if(!Utils::FileSystem::exists(path))
 		Utils::FileSystem::createDirectory(path);
 
-	path += name + extension;
+//	path += name + extension;
+	path += suffix + extension;
 	return path;
 }
