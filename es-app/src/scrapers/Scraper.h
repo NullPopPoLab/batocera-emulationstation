@@ -227,7 +227,7 @@ public:
 
 	static std::vector<std::pair<std::string, Scraper*>> scrapers;
 
-	std::string getScraperDir();
+	static std::string getScraperDir();
 	
 	static Scraper* getScraper(const std::string name = "");
 	static std::string getScraperName(Scraper* scraper);
