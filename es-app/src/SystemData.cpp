@@ -22,6 +22,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include "SaveStateRepository.h"
+#include "scrapers/Scraper.h"
 
 #if WIN32
 #include "Win32ApiSystem.h"
