@@ -131,7 +131,7 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
-const std::string getScraperDir()
+const std::string FileData::getScraperDir()
 {
 	return getSystem()->getScraperDir()+Utils::FileSystem::getStem(getPath())+"/";
 }
