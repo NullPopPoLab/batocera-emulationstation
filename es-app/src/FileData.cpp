@@ -131,6 +131,21 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
+const std::string getScraperRootDir()
+{
+	return "/userdata/scraper/";
+}
+
+const std::string getScraperSystemDir()
+{
+	return getScraperRootDir()+getSystem()->getName() + "/";
+}
+
+const std::string getScraperGameDir()
+{
+	return getScraperSystemDir()+Utils::FileSystem::getStem(getPath())+"/";
+}
+
 const std::string FileData::getThumbnailPath()
 {
 	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
@@ -146,7 +161,7 @@ const std::string FileData::getThumbnailPath()
 			{
 				if(thumbnail.empty())
 				{
-					std::string path = std::string("/userdata/scraper/")+ getSystem()->getName() + "/"+Utils::FileSystem::getStem(getPath())+"/image" + extList[i];
+					std::string path = getScraperGameDir() + "image" + extList[i];
 					if (Utils::FileSystem::exists(path))
 					{
 						setMetadata(MetaDataId::Thumbnail, path);
@@ -167,7 +182,7 @@ const std::string FileData::getThumbnailPath()
 			{
 				if (thumbnail.empty())
 				{
-					std::string path = std::string("/userdata/scraper/")+ getSystem()->getName() + "/"+Utils::FileSystem::getStem(getPath())+"/image" + extList[i];
+					std::string path = getScraperGameDir() + "image" + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 						thumbnail = path;
@@ -265,7 +280,7 @@ const std::string FileData::getVideoPath()
 	// no video, try to use local video
 	if(video.empty() && Settings::getInstance()->getBool("LocalArt"))
 	{
-		std::string path = std::string("/userdata/scraper/")+ getSystem()->getName() + "/"+Utils::FileSystem::getStem(getPath())+"/video.mp4";
+		std::string path = getScraperGameDir() + "video.mp4";
 		if (Utils::FileSystem::exists(path))
 		{
 			setMetadata(MetaDataId::Video, path);
@@ -300,7 +315,7 @@ const std::string FileData::getMarqueePath()
 		{
 			if(marquee.empty())
 			{
-				std::string path = std::string("/userdata/scraper/")+ getSystem()->getName() + "/"+Utils::FileSystem::getStem(getPath())+"/marquee" + extList[i];
+				std::string path = getScraperGameDir() + "marquee" + extList[i];
 				if (Utils::FileSystem::exists(path))
 				{
 					setMetadata(MetaDataId::Marquee, path);
@@ -330,7 +345,7 @@ const std::string FileData::getImagePath()
 			{
 				if (image.empty())
 				{
-					std::string path = std::string("/userdata/scraper/")+ getSystem()->getName() + "/"+Utils::FileSystem::getStem(getPath())+"/image" + extList[i];
+					std::string path = getScraperGameDir() + "image" + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 					{
