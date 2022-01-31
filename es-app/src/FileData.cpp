@@ -198,7 +198,8 @@ const std::string FileData::getThumbnailPath()
 
 	}
 
-	return thumbnail;
+	if(thumbnail.empty())return thumbnail;
+	return Utils::FileSystem::resolveRelativePath(thumbnail, getSystem()->getScraperDir(), false);
 }
 
 const bool FileData::getFavorite()
@@ -290,7 +291,8 @@ const std::string FileData::getVideoPath()
 		}
 	}
 
-	return video;
+	if(video.empty())return video;
+	return Utils::FileSystem::resolveRelativePath(video, getSystem()->getScraperDir(), false);
 }
 
 const std::string FileData::getMarqueePath()
@@ -315,7 +317,8 @@ const std::string FileData::getMarqueePath()
 		}
 	}
 
-	return marquee;
+	if(marquee.empty())return marquee;
+	return Utils::FileSystem::resolveRelativePath(marquee, getSystem()->getScraperDir(), false);
 }
 
 const std::string FileData::getImagePath()
@@ -363,7 +366,43 @@ const std::string FileData::getImagePath()
 		}
 	}
 
-	return image;
+	if(image.empty())return image;
+	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
+}
+
+const std::string FileData::getTitleShotPath(){
+
+	std::string image = getMetadata(MetaDataId::TitleShot);
+	if(image.empty())return image;
+	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
+}
+
+const std::string FileData::getBoxArtPath(){
+
+	std::string image = getMetadata(MetaDataId::BoxArt);
+	if(image.empty())return image;
+	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
+}
+
+const std::string FileData::getFanArtPath(){
+
+	std::string image = getMetadata(MetaDataId::FanArt);
+	if(image.empty())return image;
+	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
+}
+
+const std::string FileData::getCartridgePath(){
+
+	std::string image = getMetadata(MetaDataId::Cartridge);
+	if(image.empty())return image;
+	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
+}
+
+const std::string FileData::getMixArtPath(){
+
+	std::string image = getMetadata(MetaDataId::Mix);
+	if(image.empty())return image;
+	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
 }
 
 std::string FileData::getKey() {
