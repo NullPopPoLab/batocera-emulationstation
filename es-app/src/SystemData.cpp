@@ -1200,11 +1200,16 @@ SystemData* SystemData::getPrev() const
 	return *it;
 }
 
+std::string SystemData::getScraperDir() const{
+
+	return Scraper::getScraperDir()+mMetadata.name+"/";
+}
+
 std::string SystemData::getGamelistPath(bool forWrite) const
 {
 	std::string filePath;
 
-	filePath = std::string("/userdata/scraper/")+mMetadata.name+"/gamelist.xml";
+	filePath = getScraperDir()+"/gamelist.xml";
 	if(Utils::FileSystem::exists(filePath))
 		return filePath;
 
