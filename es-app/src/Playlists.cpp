@@ -48,10 +48,10 @@ std::string SystemRandomPlaylist::getNextItem()
 					path = file->getMarqueePath();
 					break;
 				case FANART:
-					path = file->getMetadata(MetaDataId::FanArt);
+					path = file->getFanArtPath();
 					break;
 				case TITLESHOT:
-					path = file->getMetadata(MetaDataId::TitleShot);
+					path = file->getTitleShotPath();
 					break;
 				case VIDEO:
 					path = file->getVideoPath();

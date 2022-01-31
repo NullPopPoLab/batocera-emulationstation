@@ -81,6 +81,11 @@ public:
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();
 	virtual const std::string getImagePath();
+	virtual const std::string getTitleShotPath();
+	virtual const std::string getBoxArtPath();
+	virtual const std::string getFanArtPath();
+	virtual const std::string getCartridgePath();
+	virtual const std::string getMixArtPath();
 
 	virtual const std::string getCore(bool resolveDefault = true);
 	virtual const std::string getEmulator(bool resolveDefault = true);
