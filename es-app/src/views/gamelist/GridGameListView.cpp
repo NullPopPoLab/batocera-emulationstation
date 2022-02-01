@@ -119,22 +119,20 @@ const std::string GridGameListView::getImagePath(FileData* file)
 	if (src == ImageSource::IMAGE)
 		return file->getImagePath();
 
-	if (src == TITLESHOT && !file->getTitleShotPath().empty())
-		return file->getTitleShotPath();
-	else if (src == BOXART && !file->getBoxArtPath().empty())
-		return file->getBoxArtPath();
-	else if ((src == MARQUEE || src == ImageSource::MARQUEEORTEXT) && !file->getMarqueePath().empty())
-		return file->getMarqueePath();
-	else if (src == IMAGE && !file->getImagePath().empty())
-		return file->getImagePath();
-	else if (src == FANART && !file->getFanArtPath().empty())
-		return file->getFanArtPath();
-	else if (src == CARTRIDGE && !file->getCartridgePath().empty())
-		return file->getCartridgePath();
-	else if (src == MIX && !file->getMixArtPath().empty())
-		return file->getMixArtPath();
+	std::string path;
 
-	return file->getThumbnailPath();
+	switch(src){
+		case TITLESHOT: path = file->getMetaPath(MetaDataId::TitleShot); break;
+		case BOXART: path = file->getMetaPath(MetaDataId::BoxArt); break;
+		case MARQUEE: 
+		case ImageSource::MARQUEEORTEXT: path = file->getMarqueePath(); break;
+		case IMAGE: path = file->getImagePath(); break;
+		case FANART: path = file->getMetaPath(MetaDataId::FanArt); break;
+		case CARTRIDGE: path = file->getMetaPath(MetaDataId::Cartridge); break;
+		case MIX: path = file->getMetaPath(MetaDataId::Mix); break;
+	}
+	if(path.empty())path=file->getThumbnailPath();
+	return path;
 }
 
 const bool GridGameListView::isVirtualFolder(FileData* file)

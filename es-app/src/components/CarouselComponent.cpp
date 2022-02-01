@@ -614,23 +614,19 @@ void CarouselComponent::ensureLogo(IList<CarouselComponentData, FileData*>::Entr
 
 	std::string marqueePath;
 
-	if (mImageSource == TITLESHOT && !entry.object->getTitleShotPath().empty())
-		marqueePath = entry.object->getTitleShotPath();
-	else if (mImageSource == BOXART && !entry.object->getBoxArtPath().empty())
-		marqueePath = entry.object->getBoxArtPath();
-	else if (mImageSource == MARQUEE && !entry.object->getMarqueePath().empty())
-		marqueePath = entry.object->getMarqueePath();
-	else if ((mImageSource == THUMBNAIL || mImageSource == BOXART) && !entry.object->getThumbnailPath().empty())
-		marqueePath = entry.object->getThumbnailPath();
-	else if ((mImageSource == IMAGE || mImageSource == TITLESHOT) && !entry.object->getImagePath().empty())
-		marqueePath = entry.object->getImagePath();
-	else if (mImageSource == FANART && !entry.object->getFanArtPath().empty())
-		marqueePath = entry.object->getFanArtPath();
-	else if (mImageSource == CARTRIDGE && !entry.object->getCartridgePath().empty())
-		marqueePath = entry.object->getCartridgePath();
-	else if (mImageSource == MIX && !entry.object->getMetadata(MetaDataId::Mix).empty())
-		marqueePath = entry.object->getMetadata(MetaDataId::Mix);
-	else
+	switch(mImageSource){
+		case TITLESHOT: marqueePath = entry.object->getMetaPath(MetaDataId::TitleShot); break;
+		case BOXART: marqueePath = entry.object->getMetaPath(MetaDataId::BoxArt); break;
+		case MARQUEE: marqueePath = entry.object->getMarqueePath(); break;
+		case THUMBNAIL: 
+		case BOXART: marqueePath = entry.object->getThumbnailPath(); break;
+		case IMAGE: marqueePath = entry.object->getImagePath(); break;
+		case FANART: marqueePath = entry.object->getMetaPath(MetaDataId::FanArt); break;
+		case CARTRIDGE: marqueePath = entry.object->getMetaPath(MetaDataId::Cartridge); break;
+		case MIX: marqueePath = entry.object->getMetaPath(MetaDataId::Mix); break;
+	}
+
+	if (marqueePath.empty())
 		marqueePath = entry.object->getMarqueePath();
 
 	if (mImageSource != TEXT && Utils::FileSystem::exists(marqueePath))
