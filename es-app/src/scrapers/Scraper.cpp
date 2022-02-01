@@ -140,7 +140,7 @@ bool Scraper::hasMissingMedia(FileData* file)
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d))
-		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && (file->getThumbnailPath(MetaDataId::Thumbnail).empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::Thumbnail))))
+		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && (file->getThumbnailPath().empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::Thumbnail))))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Wheel) || isMediaSupported(ScraperMediaSource::Marquee))
