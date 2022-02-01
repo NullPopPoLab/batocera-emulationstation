@@ -618,8 +618,7 @@ void CarouselComponent::ensureLogo(IList<CarouselComponentData, FileData*>::Entr
 		case TITLESHOT: marqueePath = entry.object->getMetaPath(MetaDataId::TitleShot); break;
 		case BOXART: marqueePath = entry.object->getMetaPath(MetaDataId::BoxArt); break;
 		case MARQUEE: marqueePath = entry.object->getMarqueePath(); break;
-		case THUMBNAIL: 
-		case BOXART: marqueePath = entry.object->getThumbnailPath(); break;
+		case THUMBNAIL: marqueePath = entry.object->getThumbnailPath(); break;
 		case IMAGE: marqueePath = entry.object->getImagePath(); break;
 		case FANART: marqueePath = entry.object->getMetaPath(MetaDataId::FanArt); break;
 		case CARTRIDGE: marqueePath = entry.object->getMetaPath(MetaDataId::Cartridge); break;
