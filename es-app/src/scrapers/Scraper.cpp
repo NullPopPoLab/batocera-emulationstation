@@ -37,7 +37,7 @@ std::vector<std::pair<std::string, Scraper*>> Scraper::scrapers
 
 std::string Scraper::getScraperDir()
 {
-	return "/userdata/scraper/";
+	return "/userdata/scraper";
 }
 
 std::string Scraper::getScraperName(Scraper* scraper)
@@ -729,6 +729,6 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 	if(!Utils::FileSystem::exists(path))
 		Utils::FileSystem::createDirectory(path);
 
-	path += (legacy?name:suffix) + extension;
+	path += "/"+(legacy?name:suffix) + extension;
 	return path;
 }
