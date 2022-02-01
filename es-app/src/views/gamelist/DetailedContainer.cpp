@@ -559,23 +559,16 @@ void DetailedContainer::updateDetailsForFolder(FolderData* folder)
 
 				auto src = mVideo->getSnapshotSource();
 
-
-				if (src == TITLESHOT && Utils::FileSystem::exists(firstGameWithImage->getTitleShotPath()))
-					snapShot = firstGameWithImage->getTitleShotPath();
-				else if (src == BOXART && Utils::FileSystem::exists(firstGameWithImage->getBoxArtPath()))
-					snapShot = firstGameWithImage->getBoxArtPath();
-				else if (src == MARQUEE && !firstGameWithImage->getMarqueePath().empty())
-					snapShot = firstGameWithImage->getMarqueePath();
-				else if ((src == THUMBNAIL || src == BOXART) && !firstGameWithImage->getThumbnailPath().empty())
-					snapShot = firstGameWithImage->getThumbnailPath();
-				else if ((src == IMAGE || src == TITLESHOT) && !firstGameWithImage->getImagePath().empty())
-					snapShot = firstGameWithImage->getImagePath();
-				else if (src == FANART && Utils::FileSystem::exists(firstGameWithImage->getFanArtPath()))
-					snapShot = firstGameWithImage->getFanArtPath();
-				else if (src == CARTRIDGE && Utils::FileSystem::exists(firstGameWithImage->getCartridgePath()))
-					snapShot = firstGameWithImage->getCartridgePath();
-				else if (src == MIX && Utils::FileSystem::exists(firstGameWithImage->getMixArtPath()))
-					snapShot = firstGameWithImage->getMixArtPath();
+				switch(src){
+					case TITLESHOT: snapShot = firstGameWithImage->getMetaPath(MetaDataId::TitleShot); break;
+					case BOXART: snapShot = firstGameWithImage->getMetaPath(MetaDataId::BoxArt); break;
+					case MARQUEE: snapShot = firstGameWithImage->getMarqueePath(); break;
+					case THUMBNAIL: snapShot = firstGameWithImage->getThumbnailPath(); break;
+					case IMAGE: snapShot = firstGameWithImage->getImagePath(); break;
+					case FANART: snapShot = firstGameWithImage->getMetaPath(MetaDataId::FanArt); break;
+					case CARTRIDGE: snapShot = firstGameWithImage->getMetaPath(MetaDataId::Cartridge); break;
+					case MIX: snapShot = firstGameWithImage->getMetaPath(MetaDataId::Mix); break;
+				}
 
 				mVideo->setImage(snapShot);
 			}
@@ -641,22 +634,16 @@ void DetailedContainer::updateControls(FileData* file, bool isClearing, int move
 
 			auto src = mVideo->getSnapshotSource();
 
-			if (src == TITLESHOT && Utils::FileSystem::exists(file->getTitleShotPath()))
-				snapShot = file->getTitleShotPath();
-			else if (src == BOXART && Utils::FileSystem::exists(file->getBoxArtPath()))
-				snapShot = file->getBoxArtPath();
-			else if (src == MARQUEE && !file->getMarqueePath().empty())
-				snapShot = file->getMarqueePath();
-			else if ((src == THUMBNAIL || src == BOXART) && !file->getThumbnailPath().empty())
-				snapShot = file->getThumbnailPath();			
-			else if ((src == IMAGE || src == TITLESHOT) && !file->getImagePath().empty())
-				snapShot = file->getImagePath();
-			else if (src == FANART && Utils::FileSystem::exists(file->getFanArtPath()))
-				snapShot = file->getFanArtPath();
-			else if (src == CARTRIDGE && Utils::FileSystem::exists(file->getCartridgePath()))
-				snapShot = file->getCartridgePath();
-			else if (src == MIX && Utils::FileSystem::exists(file->getMixArtPath()))
-				snapShot = file->getMixArtPath();
+			switch(src){
+				case TITLESHOT: snapShot = file->getMetaPath(MetaDataId::TitleShot); break;
+				case BOXART: snapShot = file->getMetaPath(MetaDataId::BoxArt); break;
+				case MARQUEE: snapShot = file->getMarqueePath(); break;
+				case THUMBNAIL: snapShot = file->getThumbnailPath(); break;
+				case IMAGE: snapShot = file->getImagePath(); break;
+				case FANART: snapShot = file->getMetaPath(MetaDataId::FanArt); break;
+				case CARTRIDGE: snapShot = file->getMetaPath(MetaDataId::Cartridge); break;
+				case MIX: snapShot = file->getMetaPath(MetaDataId::Mix); break;
+			}
 			
 			mVideo->setImage(snapShot, false, mVideo->getMaxSizeInfo());
 		}

@@ -136,6 +136,24 @@ const std::string FileData::getScraperDir()
 	return getSystem()->getScraperDir()+Utils::FileSystem::getStem(getPath())+"/";
 }
 
+std::string FileData::getMetaPath(MetaDataId key){
+
+	auto path=getMetadata(key);
+	if(path.empty())return path;
+
+	path=Utils::FileSystem::resolveRelativePath(thumbnail, getSystem()->getScraperDir(), false);
+
+}
+
+bool std::string FileData::hasMetaFile(MetaDataId key){
+
+	auto path=getMetadata(key);
+	if(path.empty())return false;
+
+	path=Utils::FileSystem::resolveRelativePath(thumbnail, getSystem()->getScraperDir(), false);
+	Utils::FileSystem::exists(path)
+}
+
 const std::string FileData::getThumbnailPath()
 {
 	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
@@ -182,6 +200,7 @@ const std::string FileData::getThumbnailPath()
 			}
 		}
 
+#if 0
 		if (thumbnail.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
 		{
 			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
@@ -197,7 +216,7 @@ const std::string FileData::getThumbnailPath()
 					return ":/vid.jpg";
 			}
 		}
-
+#endif
 	}
 
 	if(thumbnail.empty())return thumbnail;
@@ -368,41 +387,6 @@ const std::string FileData::getImagePath()
 		}
 	}
 
-	if(image.empty())return image;
-	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
-}
-
-const std::string FileData::getTitleShotPath(){
-
-	std::string image = getMetadata(MetaDataId::TitleShot);
-	if(image.empty())return image;
-	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
-}
-
-const std::string FileData::getBoxArtPath(){
-
-	std::string image = getMetadata(MetaDataId::BoxArt);
-	if(image.empty())return image;
-	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
-}
-
-const std::string FileData::getFanArtPath(){
-
-	std::string image = getMetadata(MetaDataId::FanArt);
-	if(image.empty())return image;
-	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
-}
-
-const std::string FileData::getCartridgePath(){
-
-	std::string image = getMetadata(MetaDataId::Cartridge);
-	if(image.empty())return image;
-	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
-}
-
-const std::string FileData::getMixArtPath(){
-
-	std::string image = getMetadata(MetaDataId::Mix);
 	if(image.empty())return image;
 	return Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
 }
