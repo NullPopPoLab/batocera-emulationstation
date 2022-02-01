@@ -614,23 +614,19 @@ void CarouselComponent::ensureLogo(IList<CarouselComponentData, FileData*>::Entr
 
 	std::string marqueePath;
 
-	if (mImageSource == TITLESHOT && !entry.object->getMetaPath(MetaDataId::TitleShot).empty())
-		marqueePath = entry.object->getMetaPath(MetaDataId::TitleShot);
-	else if (mImageSource == BOXART && !entry.object->getMetaPath(MetaDataId::BoxArt).empty())
-		marqueePath = entry.object->getMetaPath(MetaDataId::BoxArt);
-	else if (mImageSource == MARQUEE && !entry.object->getMarqueePath().empty())
-		marqueePath = entry.object->getMarqueePath();
-	else if ((mImageSource == THUMBNAIL || mImageSource == BOXART) && !entry.object->getThumbnailPath().empty())
-		marqueePath = entry.object->getThumbnailPath();
-	else if ((mImageSource == IMAGE || mImageSource == TITLESHOT) && !entry.object->getImagePath().empty())
-		marqueePath = entry.object->getImagePath();
-	else if (mImageSource == FANART && !entry.object->getFanArtPath().empty())
-		marqueePath = entry.object->getFanArtPath();
-	else if (mImageSource == CARTRIDGE && !entry.object->getMetaPath(MetaDataId::Cartridge).empty())
-		marqueePath = entry.object->getMetaPath(MetaDataId::Cartridge);
-	else if (mImageSource == MIX && !entry.object->getMixImagePath().empty())
-		marqueePath = entry.object->getMixImagePath();
-	else
+	switch(mImageSource){
+		case TITLESHOT: marqueePath = entry.object->getMetaPath(MetaDataId::TitleShot); break;
+		case BOXART: marqueePath = entry.object->getMetaPath(MetaDataId::BoxArt); break;
+		case MARQUEE: marqueePath = entry.object->getMarqueePath(); break;
+		case THUMBNAIL: 
+		case BOXART: marqueePath = entry.object->getThumbnailPath(); break;
+		case IMAGE: marqueePath = entry.object->getImagePath(); break;
+		case FANART: marqueePath = entry.object->getMetaPath(MetaDataId::FanArt); break;
+		case CARTRIDGE: marqueePath = entry.object->getMetaPath(MetaDataId::Cartridge); break;
+		case MIX: marqueePath = entry.object->getMetaPath(MetaDataId::Mix); break;
+	}
+
+	if (marqueePath.empty())
 		marqueePath = entry.object->getMarqueePath();
 
 	if (mImageSource != TEXT && Utils::FileSystem::exists(marqueePath))

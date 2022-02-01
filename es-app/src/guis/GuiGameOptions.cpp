@@ -48,9 +48,9 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 	addChild(&mMenu);
 
 	bool isImageViewer = game->getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER);
-	bool hasManual = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && Utils::FileSystem::exists(game->getMetaPath(MetaDataId::Map));
-	bool hasMagazine = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && Utils::FileSystem::exists(game->getMetaPath(MetaDataId::Magazine));
-	bool hasMap = Utils::FileSystem::exists(game->getMetaPath(MetaDataId::Map));
+	bool hasManual = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && game->hasMetaFile(MetaDataId::Map);
+	bool hasMagazine = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && game->hasMetaFile(MetaDataId::Magazine);
+	bool hasMap = game->hasMetaFile(MetaDataId::Map);
 	bool hasVideo = Utils::FileSystem::exists(game->getVideoPath());
 	bool hasAlternateMedias = game->getSourceFileData()->getFileMedias().size() > 0;
 	bool hasCheevos = game->hasCheevos();
