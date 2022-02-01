@@ -145,13 +145,13 @@ std::string FileData::getMetaPath(MetaDataId key){
 	return Utils::FileSystem::exists(path)?path:std::string();
 }
 
-bool std::string FileData::hasMetaFile(MetaDataId key){
+bool FileData::hasMetaFile(MetaDataId key){
 
 	auto path=getMetadata(key);
 	if(path.empty())return false;
 
 	path=Utils::FileSystem::resolveRelativePath(path, getSystem()->getScraperDir(), false);
-	return  Utils::FileSystem::exists(path);
+	return Utils::FileSystem::exists(path);
 }
 
 const std::string FileData::getThumbnailPath()
