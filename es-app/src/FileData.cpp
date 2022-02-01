@@ -200,6 +200,7 @@ const std::string FileData::getThumbnailPath()
 			}
 		}
 
+#if 0
 		if (thumbnail.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
 		{
 			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
@@ -215,7 +216,7 @@ const std::string FileData::getThumbnailPath()
 					return ":/vid.jpg";
 			}
 		}
-
+#endif
 	}
 
 	if(thumbnail.empty())return thumbnail;
