@@ -1203,7 +1203,7 @@ SystemData* SystemData::getPrev() const
 
 std::string SystemData::getScraperDir() const{
 
-	return Scraper::getScraperDir()+mMetadata.name+"/";
+	return Scraper::getScraperDir()+"/"+mMetadata.name;
 }
 
 std::string SystemData::getGamelistPath(bool forWrite) const
@@ -1218,9 +1218,11 @@ std::string SystemData::getGamelistPath(bool forWrite) const
 	if (Utils::FileSystem::exists(localPath))
 		return localPath;
 
-	if (forWrite)
-		Utils::FileSystem::createDirectory(Utils::FileSystem::getParent(filePath));
-	
+	if (!forWrite){
+		return mRootFolder->getPath() + "/gamelist.xml";
+	}
+
+	Utils::FileSystem::createDirectory(Utils::FileSystem::getParent(filePath));
 	return filePath;
 }
 

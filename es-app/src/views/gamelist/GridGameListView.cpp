@@ -116,9 +116,6 @@ const std::string GridGameListView::getImagePath(FileData* file)
 {
 	ImageSource src = mGrid.getImageSource();
 
-	if (src == ImageSource::IMAGE)
-		return file->getImagePath();
-
 	std::string path;
 
 	switch(src){
@@ -126,7 +123,7 @@ const std::string GridGameListView::getImagePath(FileData* file)
 		case BOXART: path = file->getMetaPath(MetaDataId::BoxArt); break;
 		case MARQUEE: 
 		case ImageSource::MARQUEEORTEXT: path = file->getMarqueePath(); break;
-		case IMAGE: path = file->getImagePath(); break;
+		case IMAGE: case ImageSource::IMAGE: path = file->getImagePath(); break;
 		case FANART: path = file->getMetaPath(MetaDataId::FanArt); break;
 		case CARTRIDGE: path = file->getMetaPath(MetaDataId::Cartridge); break;
 		case MIX: path = file->getMetaPath(MetaDataId::Mix); break;
