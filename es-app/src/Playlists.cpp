@@ -45,13 +45,13 @@ std::string SystemRandomPlaylist::getNextItem()
 					path = file->getThumbnailPath();
 					break;
 				case MARQUEE:
-					path = file->getMarqueePath();
+					path = file->getMetaPath(MetaDataId::Marquee);
 					break;
 				case FANART:
-					path = file->getFanArtPath();
+					path = file->getMetaPath(MetaDataId::FanArt);
 					break;
 				case TITLESHOT:
-					path = file->getTitleShotPath();
+					path = file->getMetaPath(MetaDataId::TitleShot);
 					break;
 				case VIDEO:
 					path = file->getVideoPath();

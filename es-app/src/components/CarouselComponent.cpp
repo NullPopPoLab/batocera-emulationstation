@@ -614,10 +614,10 @@ void CarouselComponent::ensureLogo(IList<CarouselComponentData, FileData*>::Entr
 
 	std::string marqueePath;
 
-	if (mImageSource == TITLESHOT && !entry.object->getTitleShotPath().empty())
-		marqueePath = entry.object->getTitleShotPath();
-	else if (mImageSource == BOXART && !entry.object->getBoxArtPath().empty())
-		marqueePath = entry.object->getBoxArtPath();
+	if (mImageSource == TITLESHOT && !entry.object->getMetaPath(MetaDataId::TitleShot).empty())
+		marqueePath = entry.object->getMetaPath(MetaDataId::TitleShot);
+	else if (mImageSource == BOXART && !entry.object->getMetaPath(MetaDataId::BoxArt).empty())
+		marqueePath = entry.object->getMetaPath(MetaDataId::BoxArt);
 	else if (mImageSource == MARQUEE && !entry.object->getMarqueePath().empty())
 		marqueePath = entry.object->getMarqueePath();
 	else if ((mImageSource == THUMBNAIL || mImageSource == BOXART) && !entry.object->getThumbnailPath().empty())
@@ -626,10 +626,10 @@ void CarouselComponent::ensureLogo(IList<CarouselComponentData, FileData*>::Entr
 		marqueePath = entry.object->getImagePath();
 	else if (mImageSource == FANART && !entry.object->getFanArtPath().empty())
 		marqueePath = entry.object->getFanArtPath();
-	else if (mImageSource == CARTRIDGE && !entry.object->getCartridgePath().empty())
-		marqueePath = entry.object->getCartridgePath();
-	else if (mImageSource == MIX && !entry.object->getMetadata(MetaDataId::Mix).empty())
-		marqueePath = entry.object->getMetadata(MetaDataId::Mix);
+	else if (mImageSource == CARTRIDGE && !entry.object->getMetaPath(MetaDataId::Cartridge).empty())
+		marqueePath = entry.object->getMetaPath(MetaDataId::Cartridge);
+	else if (mImageSource == MIX && !entry.object->getMixImagePath().empty())
+		marqueePath = entry.object->getMixImagePath();
 	else
 		marqueePath = entry.object->getMarqueePath();
 

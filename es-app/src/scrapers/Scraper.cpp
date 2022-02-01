@@ -87,39 +87,39 @@ bool Scraper::isValidConfiguredScraper()
 bool Scraper::hasAnyMedia(FileData* file)
 {
 	if (isMediaSupported(ScraperMediaSource::Screenshot) || isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d) || isMediaSupported(ScraperMediaSource::Mix) || isMediaSupported(ScraperMediaSource::TitleShot) || isMediaSupported(ScraperMediaSource::FanArt))
-		if (!Settings::getInstance()->getString("ScrapperImageSrc").empty() && !file->getMetadata(MetaDataId::Image).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Image)))
+		if (!Settings::getInstance()->getString("ScrapperImageSrc").empty() && !file->getImagePath().empty() && Utils::FileSystem::exists(file->getImagePath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d))
-		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && !file->getMetadata(MetaDataId::Thumbnail).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Thumbnail)))
+		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && !file->getThumbnailPath().empty() && Utils::FileSystem::exists(file->getThumbnailPath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Wheel) || isMediaSupported(ScraperMediaSource::Marquee))
-		if (Settings::getInstance()->getString("ScrapperLogoSrc").empty() && !file->getMetadata(MetaDataId::Marquee).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Marquee)))
+		if (Settings::getInstance()->getString("ScrapperLogoSrc").empty() && !file->getMarqueePath().empty() && Utils::FileSystem::exists(file->getMarqueePath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Manual))
-		if (Settings::getInstance()->getBool("ScrapeManual") && !file->getMetadata(MetaDataId::Manual).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Manual)))
+		if (Settings::getInstance()->getBool("ScrapeManual") && !file->getMetaPath(MetaDataId::Map).empty() && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::Map)))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Map))
-		if (Settings::getInstance()->getBool("ScrapeMap") && !file->getMetadata(MetaDataId::Map).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Map)))
+		if (Settings::getInstance()->getBool("ScrapeMap") && !file->getMetaPath(MetaDataId::Map).empty() && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::Map)))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::FanArt))
-		if (Settings::getInstance()->getBool("ScrapeFanart") && !file->getFanArtPath().empty() && Utils::FileSystem::exists(file->getFanArtPath()))
+		if (Settings::getInstance()->getBool("ScrapeFanart") && !file->getMetaPath(MetaDataId::FanArt).empty() && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::FanArt)))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Video))
-		if (Settings::getInstance()->getBool("ScrapeVideos") && !file->getMetadata(MetaDataId::Video).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Video)))
+		if (Settings::getInstance()->getBool("ScrapeVideos") && !file->getVideoPath().empty() && Utils::FileSystem::exists(file->getVideoPath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::BoxBack))
-		if (Settings::getInstance()->getBool("ScrapeBoxBack") && !file->getMetadata(MetaDataId::BoxBack).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::BoxBack)))
+		if (Settings::getInstance()->getBool("ScrapeBoxBack") && !file->getMetaPath(MetaDataId::BoxBack).empty() && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::BoxBack)))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::TitleShot))
-		if (Settings::getInstance()->getBool("ScrapeTitleShot") && !file->getTitleShotPath().empty() && Utils::FileSystem::exists(file->getTitleShotPath()))
+		if (Settings::getInstance()->getBool("ScrapeTitleShot") && !file->getMetaPath(MetaDataId::TitleShot).empty() && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::TitleShot)))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Cartridge))
@@ -136,11 +136,11 @@ bool Scraper::hasAnyMedia(FileData* file)
 bool Scraper::hasMissingMedia(FileData* file)
 {
 	if (isMediaSupported(ScraperMediaSource::Screenshot) || isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d) || isMediaSupported(ScraperMediaSource::Mix) || isMediaSupported(ScraperMediaSource::TitleShot) || isMediaSupported(ScraperMediaSource::FanArt))
-		if (!Settings::getInstance()->getString("ScrapperImageSrc").empty() && (file->getMetadata(MetaDataId::Image).empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::Image))))
+		if (!Settings::getInstance()->getString("ScrapperImageSrc").empty() && (file->getImagePath().empty() || !Utils::FileSystem::exists(file->getImagePath())))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d))
-		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && (file->getMetadata(MetaDataId::Thumbnail).empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::Thumbnail))))
+		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && (file->getThumbnailPath(MetaDataId::Thumbnail).empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::Thumbnail))))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Wheel) || isMediaSupported(ScraperMediaSource::Marquee))
