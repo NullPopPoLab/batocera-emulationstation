@@ -35,6 +35,11 @@ std::vector<std::pair<std::string, Scraper*>> Scraper::scrapers
 	{ "ArcadeDB", new ArcadeDBScraper() }
 };
 
+std::string Scraper::getScraperDir()
+{
+	return "/userdata/scraper/";
+}
+
 std::string Scraper::getScraperName(Scraper* scraper)
 {
 	for (auto engine : scrapers)
@@ -102,7 +107,7 @@ bool Scraper::hasAnyMedia(FileData* file)
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::FanArt))
-		if (Settings::getInstance()->getBool("ScrapeFanart") && !file->getMetadata(MetaDataId::FanArt).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::FanArt)))
+		if (Settings::getInstance()->getBool("ScrapeFanart") && !file->getFanArtPath().empty() && Utils::FileSystem::exists(file->getFanArtPath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Video))
@@ -114,7 +119,7 @@ bool Scraper::hasAnyMedia(FileData* file)
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::TitleShot))
-		if (Settings::getInstance()->getBool("ScrapeTitleShot") && !file->getMetadata(MetaDataId::TitleShot).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::TitleShot)))
+		if (Settings::getInstance()->getBool("ScrapeTitleShot") && !file->getTitleShotPath().empty() && Utils::FileSystem::exists(file->getTitleShotPath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Cartridge))
@@ -151,7 +156,7 @@ bool Scraper::hasMissingMedia(FileData* file)
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::FanArt))
-		if (Settings::getInstance()->getBool("ScrapeFanart") && (file->getMetadata(MetaDataId::FanArt).empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::FanArt))))
+		if (Settings::getInstance()->getBool("ScrapeFanart") && (file->getFanArtPath().empty() || !Utils::FileSystem::exists(file->getFanArtPath())))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Video))
@@ -163,7 +168,7 @@ bool Scraper::hasMissingMedia(FileData* file)
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::TitleShot))
-		if (Settings::getInstance()->getBool("ScrapeTitleShot") && (file->getMetadata(MetaDataId::TitleShot).empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::TitleShot))))
+		if (Settings::getInstance()->getBool("ScrapeTitleShot") && (file->getTitleShotPath().empty() || !Utils::FileSystem::exists(file->getTitleShotPath())))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Cartridge))
@@ -710,7 +715,7 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 
 	std::string subdirectory = system->getName();
 	std::string name = Utils::FileSystem::getStem(game->getPath());
-	auto path = std::string("/userdata/scraper/")+subdirectory+"/"+name+"/";
+	auto path = game->getSourceFileData()->getScraperDir();
 	bool legacy=false;
 
 #if 0
