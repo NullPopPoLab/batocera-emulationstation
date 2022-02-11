@@ -131,6 +131,11 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
+const std::string getLegacyScraperDir()
+{
+	return getSystem()->getStartPath();
+}
+
 const std::string FileData::getScraperDir()
 {
 	return getSystem()->getScraperDir()+"/"+Utils::FileSystem::getStem(getPath());
@@ -138,10 +143,13 @@ const std::string FileData::getScraperDir()
 
 std::string FileData::getMetaPath(MetaDataId key){
 
-	auto path=getMetadata(key);
-	if(path.empty())return path;
+	auto name=getMetadata(key);
+	if(name.empty())return name;
 
-	path=Utils::FileSystem::resolveRelativePath(path, getScraperDir(), false);
+	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), false);
+	if(Utils::FileSystem::exists(path))return path;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false)
 	return Utils::FileSystem::exists(path)?path:std::string();
 }
 
