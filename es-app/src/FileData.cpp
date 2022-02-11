@@ -159,14 +159,17 @@ bool FileData::hasMetaFile(MetaDataId key){
 	if(path.empty())return false;
 
 	path=Utils::FileSystem::resolveRelativePath(path, getScraperDir(), false);
+	if(Utils::FileSystem::exists(path))return true;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false);
 	return Utils::FileSystem::exists(path);
 }
 
 const std::string FileData::getThumbnailPath()
 {
-	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
+	std::string thumbnail = getMetaPath(MetaDataId::Thumbnail);
 
-	if (thumbnail.empty()) thumbnail = getMetadata(MetaDataId::TitleShot);
+	if (thumbnail.empty()) thumbnail = getMetaPath(MetaDataId::TitleShot);
 
 	// no thumbnail, try image
 	if(thumbnail.empty())
@@ -294,7 +297,7 @@ const std::string& FileData::getName()
 
 const std::string FileData::getVideoPath()
 {
-	std::string video = getMetadata(MetaDataId::Video);
+	std::string video = getMetaPath(MetaDataId::Video);
 	
 	// no video, try to use local video
 	if(video.empty() && Settings::getInstance()->getBool("LocalArt"))
@@ -324,7 +327,7 @@ const std::string FileData::getVideoPath()
 
 const std::string FileData::getMarqueePath()
 {
-	std::string marquee = getMetadata(MetaDataId::Marquee);
+	std::string marquee = getMetaPath(MetaDataId::Marquee);
 
 	// no marquee, try to use local marquee
 	if (marquee.empty() && Settings::getInstance()->getBool("LocalArt"))
@@ -349,7 +352,7 @@ const std::string FileData::getMarqueePath()
 
 const std::string FileData::getImagePath()
 {
-	std::string image = getMetadata(MetaDataId::Image);
+	std::string image = getMetaPath(MetaDataId::Image);
 
 	// no image, try to use local image
 	if(image.empty())
