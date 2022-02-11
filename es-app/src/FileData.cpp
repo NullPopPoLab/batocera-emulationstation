@@ -131,7 +131,7 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
-const std::string getLegacyScraperDir()
+const std::string FileData::getLegacyScraperDir()
 {
 	return getSystem()->getStartPath();
 }
@@ -165,6 +165,8 @@ bool FileData::hasMetaFile(MetaDataId key){
 const std::string FileData::getThumbnailPath()
 {
 	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
+
+	if (thumbnail.empty()) thumbnail = getMetadata(MetaDataId::TitleShot);
 
 	// no thumbnail, try image
 	if(thumbnail.empty())
@@ -206,6 +208,7 @@ const std::string FileData::getThumbnailPath()
 			}
 		}
 
+#if 0
 		if (thumbnail.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
 		{
 			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
@@ -221,7 +224,7 @@ const std::string FileData::getThumbnailPath()
 					return ":/vid.jpg";
 			}
 		}
-
+#endif
 	}
 
 	return thumbnail;
@@ -825,6 +828,13 @@ std::set<std::string> FileData::getContentFiles()
 					if (trim[0] == '#' || trim[0] == '\\' || trim[0] == '/')
 						continue;
 
+					if(trim[0]=='*'){
+						// skip Advanced M3U attribute 
+						auto ep=trim.find(';');
+						if(ep==std::string::npos)continue;
+						if(trim.size()<=ep+1)continue;
+						trim=trim.substr(ep+1);
+					}
 					files.insert(path + "/" + trim);
 				}
 
