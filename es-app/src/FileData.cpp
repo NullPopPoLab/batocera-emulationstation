@@ -133,7 +133,7 @@ std::string FileData::getCleanName()
 
 const std::string FileData::getLegacyScraperDir()
 {
-	return getSystem()->getStartPath();
+	return getSystem()->getRootFolder()->getPath();
 }
 
 const std::string FileData::getScraperDir()
