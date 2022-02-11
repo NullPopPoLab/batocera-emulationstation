@@ -158,7 +158,7 @@ bool FileData::hasMetaFile(MetaDataId key){
 	auto name=getMetadata(key);
 	if(name.empty())return false;
 
-	path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), false);
+	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), false);
 	if(Utils::FileSystem::exists(path))return true;
 
 	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false);
