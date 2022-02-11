@@ -539,7 +539,7 @@ std::string MetaDataList::getRelativeRootPath()
 	return "";
 }
 
-std::string MetaDataList::getScraperDir(){
+std::string MetaDataList::getScraperDir() const{
 
 	return mRelativeTo()->GegetScraperDir()+"/"+mName;
 }
