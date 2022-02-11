@@ -131,7 +131,7 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
-const std::string getLegacyScraperDir()
+const std::string FileData::getLegacyScraperDir()
 {
 	return getSystem()->getStartPath();
 }
@@ -828,6 +828,13 @@ std::set<std::string> FileData::getContentFiles()
 					if (trim[0] == '#' || trim[0] == '\\' || trim[0] == '/')
 						continue;
 
+					if(trim[0]=='*'){
+						// skip Advanced M3U attribute 
+						auto ep=trim.find(';');
+						if(ep==std::string::npos)continue;
+						if(trim.size()<=ep+1)continue;
+						trim=trim.substr(ep+1);
+					}
 					files.insert(path + "/" + trim);
 				}
 
