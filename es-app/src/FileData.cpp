@@ -149,7 +149,7 @@ std::string FileData::getMetaPath(MetaDataId key){
 	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), false);
 	if(Utils::FileSystem::exists(path))return path;
 
-	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false)
+	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false);
 	return Utils::FileSystem::exists(path)?path:std::string();
 }
 
