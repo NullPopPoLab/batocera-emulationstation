@@ -216,10 +216,7 @@ const std::string FileData::getThumbnailPath()
 
 	}
 
-	if(thumbnail.empty())return thumbnail;
-	thumbnail=Utils::FileSystem::resolveRelativePath(thumbnail, getSystem()->getScraperDir(), false);
-	if(Utils::FileSystem::exists(thumbnail))return thumbnail;
-	return std::string();
+	return thumbnail;
 }
 
 const bool FileData::getFavorite()
@@ -311,10 +308,7 @@ const std::string FileData::getVideoPath()
 		}
 	}
 
-	if(video.empty())return video;
-	video=Utils::FileSystem::resolveRelativePath(video, getSystem()->getScraperDir(), false);
-	if(Utils::FileSystem::exists(video))return video;
-	return std::string();
+	return video;
 }
 
 const std::string FileData::getMarqueePath()
@@ -339,10 +333,7 @@ const std::string FileData::getMarqueePath()
 		}
 	}
 
-	if(marquee.empty())return marquee;
-	marquee=Utils::FileSystem::resolveRelativePath(marquee, getSystem()->getScraperDir(), false);
-	if(Utils::FileSystem::exists(marquee))return marquee;
-	return std::string();
+	return marquee;
 }
 
 const std::string FileData::getImagePath()
@@ -390,10 +381,7 @@ const std::string FileData::getImagePath()
 		}
 	}
 
-	if(image.empty())return image;
-	image=Utils::FileSystem::resolveRelativePath(image, getSystem()->getScraperDir(), false);
-	if(Utils::FileSystem::exists(image))return image;
-	return std::string();
+	return image;
 }
 
 std::string FileData::getKey() {
