@@ -211,7 +211,7 @@ MetaDataList MetaDataList::createFromXML(MetaDataListType type, pugi::xml_node& 
 			value = Utils::String::toLower(value);
 		
 		if (preloadMedias && mdd.type == MD_PATH && (mdd.id == MetaDataId::Image || mdd.id == MetaDataId::Thumbnail || mdd.id == MetaDataId::Marquee || mdd.id == MetaDataId::Video) &&
-			!Utils::FileSystem::exists(Utils::FileSystem::resolveRelativePath(value, relativeTo, true)))
+			!Utils::FileSystem::exists(Utils::FileSystem::resolveRelativePath(value, mdl.getScraperDir(), true)))
 			continue;
 		
 		// Players -> remove "1-"
@@ -301,7 +301,7 @@ void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, cons
 			if (mddIter->type == MD_PATH)
 			{
 				if (fullPaths && mRelativeTo != nullptr)
-					value = Utils::FileSystem::resolveRelativePath(value, mRelativeTo->getStartPath(), true);
+					value = Utils::FileSystem::resolveRelativePath(value, getScraperDir(), true);
 				else
 					value = Utils::FileSystem::createRelativePath(value, relativeTo, true);
 			}
@@ -371,7 +371,7 @@ void MetaDataList::set(MetaDataId id, const std::string& value)
 		return;
 
 	if (mGameTypeMap[id] == MD_PATH && mRelativeTo != nullptr) // if it's a path, resolve relative paths				
-		mMap[id] = Utils::FileSystem::createRelativePath(value, mRelativeTo->getStartPath(), true);
+		mMap[id] = Utils::FileSystem::createRelativePath(value, getScraperDir(), true);
 	else
 		mMap[id] = Utils::String::trim(value);
 
@@ -387,7 +387,7 @@ const std::string MetaDataList::get(MetaDataId id, bool resolveRelativePaths) co
 	if (it != mMap.end())
 	{
 		if (resolveRelativePaths && mGameTypeMap[id] == MD_PATH && mRelativeTo != nullptr) // if it's a path, resolve relative paths				
-			return Utils::FileSystem::resolveRelativePath(it->second, mRelativeTo->getStartPath(), true);
+			return Utils::FileSystem::resolveRelativePath(it->second, getScraperDir(), true);
 
 		return it->second;
 	}
@@ -537,6 +537,11 @@ std::string MetaDataList::getRelativeRootPath()
 		return mRelativeTo->getStartPath();
 
 	return "";
+}
+
+std::string MetaDataList::getScraperDir(){
+
+	return mRelativeTo()->GegetScraperDir()+"/"+mName;
 }
 
 void MetaDataList::setScrapeDate(const std::string& scraper)
