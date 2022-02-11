@@ -541,7 +541,7 @@ std::string MetaDataList::getRelativeRootPath()
 
 std::string MetaDataList::getScraperDir() const{
 
-	return mRelativeTo()->GegetScraperDir()+"/"+mName;
+	return mRelativeTo->getScraperDir()+"/"+mName;
 }
 
 void MetaDataList::setScrapeDate(const std::string& scraper)
