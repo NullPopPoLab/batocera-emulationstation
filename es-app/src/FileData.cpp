@@ -83,7 +83,7 @@ const std::string FileData::getBreadCrumbPath()
 
 const std::string FileData::getConfigurationName()
 {
-	std::string gameConf = Utils::FileSystem::getFileName(getPath());
+	std::string gameConf = Utils::FileSystem::getFileKey(getPath());
 	gameConf = Utils::String::replace(gameConf, "=", "");
 	gameConf = Utils::String::replace(gameConf, "#", "");
 	gameConf = getSourceFileData()->getSystem()->getName() + std::string("[\"") + gameConf + std::string("\"]");
@@ -112,7 +112,7 @@ FileData::~FileData()
 		mSystem->removeFromIndex(this);	
 }
 
-std::string FileData::getDirCaption(){
+std::string FileData::getDirKey(){
 
 	auto path=getPath();
 	auto dir=getSystem()->getStartPath();
@@ -124,7 +124,7 @@ std::string FileData::getDirCaption(){
 	return path;
 }
 
-std::string FileData::getFileCaption(){
+std::string FileData::getFileKey(){
 
 	return Utils::FileSystem::getStem(getPath());
 }
@@ -137,7 +137,7 @@ std::string& FileData::getDisplayName()
 		if (mSystem && mSystem->hasPlatformId(PlatformIds::ARCADE) || mSystem->hasPlatformId(PlatformIds::NEOGEO))
 			stem = MameNames::getInstance()->getRealName(stem);
 		else{
-			auto dir=getDirCaption();
+			auto dir=getDirKey();
 			if(!dir.empty())stem = dir+" ("+stem+")";
 		}
 
@@ -159,8 +159,8 @@ const std::string FileData::getLegacyScraperDir()
 
 const std::string FileData::getScraperDir()
 {
-	auto dn=getDirCaption();
-	auto fn=getFileCaption();
+	auto dn=getDirKey();
+	auto fn=getFileKey();
 	if(!dn.empty())fn+=dn+" ("+fn+")";
 
 	auto dir=getSystem()->getScraperDir();
