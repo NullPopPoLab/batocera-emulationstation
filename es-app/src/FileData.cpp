@@ -112,7 +112,7 @@ FileData::~FileData()
 		mSystem->removeFromIndex(this);	
 }
 
-std::string FileData::getDirName(){
+std::string FileData::getDirCaption(){
 
 	auto path=getPath();
 	auto dir=getSystem()->getStartPath();
@@ -124,7 +124,7 @@ std::string FileData::getDirName(){
 	return path;
 }
 
-std::string FileData::getFileName(){
+std::string FileData::getFileCaption(){
 
 	return Utils::FileSystem::getStem(getPath());
 }
@@ -137,7 +137,7 @@ std::string& FileData::getDisplayName()
 		if (mSystem && mSystem->hasPlatformId(PlatformIds::ARCADE) || mSystem->hasPlatformId(PlatformIds::NEOGEO))
 			stem = MameNames::getInstance()->getRealName(stem);
 		else{
-			auto dir=getDirName();
+			auto dir=getDirCaption();
 			if(!dir.empty())stem = dir+" ("+stem+")";
 		}
 
@@ -159,8 +159,8 @@ const std::string FileData::getLegacyScraperDir()
 
 const std::string FileData::getScraperDir()
 {
-	auto dn=getDirName();
-	auto fn=getFileName();
+	auto dn=getDirCaption();
+	auto fn=getFileCaption();
 	if(!dn.empty())fn+=dn+" ("+fn+")";
 
 	auto dir=getSystem()->getScraperDir();
