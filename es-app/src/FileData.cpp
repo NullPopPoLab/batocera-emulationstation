@@ -140,7 +140,7 @@ const std::string FileData::getScraperDir()
 {
 	auto path=mPath;
 	if(mParent){
-		auto pp=mParent.getPath();
+		auto pp=mParent->getPath();
 		if(path.size()>pp.size()+1)path=path.substr(pp.size()+1,path.size()-pp.size()-1);
 	}
 
