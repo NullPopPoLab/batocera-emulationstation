@@ -138,7 +138,19 @@ const std::string FileData::getLegacyScraperDir()
 
 const std::string FileData::getScraperDir()
 {
-	return getSystem()->getScraperDir()+"/"+Utils::FileSystem::getStem(getPath());
+	auto path=mPath;
+	if(mParent){
+		auto pp=mParent.getPath();
+		if(path.size()>pp.size()+1)path=path.substr(pp.size()+1,path.size()-pp.size()-1);
+	}
+
+	if(!path.empty()){
+		auto p=path.find('/');
+		if(p!=std::string::npos)path=path.substr(0,p);
+		p=path.rfind('.');
+		if(p!=std::string::npos)path=path.substr(0,p);
+	}
+	return getSystem()->getScraperDir()+"/"+Utils::FileSystem::getStem(path);
 }
 
 std::string FileData::getMetaPath(MetaDataId key){
