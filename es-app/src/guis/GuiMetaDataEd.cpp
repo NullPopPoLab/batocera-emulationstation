@@ -445,13 +445,12 @@ bool GuiMetaDataEd::save()
 
 			if (mMetaData->getType(key) == MD_PATH && !val.empty() && filesToCopy.find(val) != filesToCopy.cend())
 			{				
-				auto rootPath = mScraperParams.game->getScraperDir();
-				auto sourceFile = Utils::FileSystem::resolveRelativePath(val, rootPath, true);
+				auto sourceFile = getScraperPathPrefix()+val;
 
 				auto destFile = Scraper::getSaveAsPath(mScraperParams.game, mMetaData->getId(key), Utils::FileSystem::getExtension(sourceFile));
 
 				if (Utils::FileSystem::copyFile(sourceFile, destFile))
-					val = Utils::FileSystem::createRelativePath(destFile, rootPath, false);
+					val = getScraperPathPrefix()+destFile;
 			}
 
 			mMetaData->set(key, val);

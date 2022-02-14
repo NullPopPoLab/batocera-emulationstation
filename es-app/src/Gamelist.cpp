@@ -543,7 +543,7 @@ void cleanupGamelist(SystemData* system)
 
 				if (!suffix.empty())
 				{					
-					std::string mediaPath = file->second->getScraperDir() +"/"+ suffix + ext;
+					std::string mediaPath = file->second->getScraperPathPrefix() + suffix + ext;
 
 					if (ext == ".pdf" && !Utils::FileSystem::exists(mediaPath))
 					{
