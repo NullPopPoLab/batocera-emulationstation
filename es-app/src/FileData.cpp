@@ -166,15 +166,16 @@ const std::string FileData::getScraperDir()
 	return dir+"/"+k;
 }
 
-const std::string FileData::getScraperPathPrefix()
+const std::string getScraperPrefix()
 {
 	auto dk=getDirKey();
-	auto fk=getFileKey();
+	if(dk.empty())return dk;
+	return getFileKey()+" - ";
+}
 
-	auto path=getSystem()->getScraperDir()+"/";
-	if(dk.empty())path+=fk+"/";
-	else path+=dk+"/"+fk+" - ";
-	return path;
+const std::string FileData::getScraperPathPrefix()
+{
+	return getSystem()->getScraperDir()+"/"+getScraperPrefix();
 }
 
 std::string FileData::getMetaPath(MetaDataId key){
