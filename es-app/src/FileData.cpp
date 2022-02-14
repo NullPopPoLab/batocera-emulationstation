@@ -183,7 +183,7 @@ std::string FileData::getMetaPath(MetaDataId key){
 	auto name=getMetadata(key);
 	if(name.empty())return name;
 
-	auto path=getScraperPathPrefix()+name;
+	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), false);
 	if(Utils::FileSystem::exists(path))return path;
 
 	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false);
@@ -195,7 +195,7 @@ bool FileData::hasMetaFile(MetaDataId key){
 	auto name=getMetadata(key);
 	if(name.empty())return false;
 
-	auto path=getScraperPathPrefix()+name;
+	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), false);
 	if(Utils::FileSystem::exists(path))return true;
 
 	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false);
