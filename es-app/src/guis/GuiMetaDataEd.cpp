@@ -445,8 +445,8 @@ bool GuiMetaDataEd::save()
 
 			if (mMetaData->getType(key) == MD_PATH && !val.empty() && filesToCopy.find(val) != filesToCopy.cend())
 			{				
-				auto prefix=mScraperParams.game->getScraperPathPrefix();
-				auto sourceFile = prefix+val;
+				auto rootPath = std::string("/userdata/screenshots/");
+				auto sourceFile = Utils::FileSystem::resolveRelativePath(val, rootPath, true);
 
 				auto destFile = Scraper::getSaveAsPath(mScraperParams.game, mMetaData->getId(key), Utils::FileSystem::getExtension(sourceFile));
 
