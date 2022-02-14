@@ -78,6 +78,7 @@ public:
 
 	virtual const std::string getLegacyScraperDir();
 	virtual const std::string getScraperDir();
+	virtual const std::string getScraperPathPrefix();
 	virtual const std::string getThumbnailPath();
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();
