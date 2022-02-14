@@ -451,7 +451,7 @@ bool GuiMetaDataEd::save()
 				auto destFile = Scraper::getSaveAsPath(mScraperParams.game, mMetaData->getId(key), Utils::FileSystem::getExtension(sourceFile));
 
 				if (Utils::FileSystem::copyFile(sourceFile, destFile))
-					val = prefix+destFile;
+					val = destFile;
 			}
 
 			mMetaData->set(key, val);
