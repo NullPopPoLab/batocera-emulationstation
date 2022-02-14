@@ -166,10 +166,10 @@ const std::string FileData::getScraperDir()
 	return dir+"/"+k;
 }
 
-const std::string getScraperPrefix()
+const std::string FileData::getScraperPrefix()
 {
-	auto dk=getDirKey();
-	if(dk.empty())return dk;
+	auto k=getDirKey();
+	if(k.empty())return k;
 	return getFileKey()+" - ";
 }
 
