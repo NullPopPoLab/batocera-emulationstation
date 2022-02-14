@@ -159,12 +159,22 @@ const std::string FileData::getLegacyScraperDir()
 
 const std::string FileData::getScraperDir()
 {
-	auto dn=getDirKey();
-	auto fn=getFileKey();
-	if(!dn.empty())fn+=dn+" ("+fn+")";
+	auto k=getDirKey();
+	if(k.empty())k=getFileKey();
 
 	auto dir=getSystem()->getScraperDir();
-	return dir+"/"+fn;
+	return dir+"/"+k;
+}
+
+const std::string FileData::getScraperPathPrefix()
+{
+	auto dk=getDirKey();
+	auto fk=getFileKey();
+
+	auto path=getSystem()->getScraperDir()+"/";
+	if(dk.empty())path+=fk+"/";
+	else path+=dk+"/"+fk+" - ";
+	return path;
 }
 
 std::string FileData::getMetaPath(MetaDataId key){
@@ -172,7 +182,7 @@ std::string FileData::getMetaPath(MetaDataId key){
 	auto name=getMetadata(key);
 	if(name.empty())return name;
 
-	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), false);
+	auto path=getScraperPathPrefix()+name;
 	if(Utils::FileSystem::exists(path))return path;
 
 	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false);
@@ -184,7 +194,7 @@ bool FileData::hasMetaFile(MetaDataId key){
 	auto name=getMetadata(key);
 	if(name.empty())return false;
 
-	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), false);
+	auto path=getScraperPathPrefix()+name;
 	if(Utils::FileSystem::exists(path))return true;
 
 	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), false);
@@ -208,7 +218,7 @@ const std::string FileData::getThumbnailPath()
 			{
 				if(thumbnail.empty())
 				{
-					std::string path = getScraperDir() + "/image" + extList[i];
+					std::string path = getScraperPathPrefix() + "image" + extList[i];
 					if (Utils::FileSystem::exists(path))
 					{
 						setMetadata(MetaDataId::Thumbnail, path);
@@ -229,7 +239,7 @@ const std::string FileData::getThumbnailPath()
 			{
 				if (thumbnail.empty())
 				{
-					std::string path = getScraperDir() + "/image" + extList[i];
+					std::string path = getScraperPathPrefix() + "image" + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 						thumbnail = path;
@@ -328,7 +338,7 @@ const std::string FileData::getVideoPath()
 	// no video, try to use local video
 	if(video.empty() && Settings::getInstance()->getBool("LocalArt"))
 	{
-		std::string path = getScraperDir() + "/video.mp4";
+		std::string path = getScraperPathPrefix() + "video.mp4";
 		if (Utils::FileSystem::exists(path))
 		{
 			setMetadata(MetaDataId::Video, path);
@@ -363,7 +373,7 @@ const std::string FileData::getMarqueePath()
 		{
 			if(marquee.empty())
 			{
-				std::string path = getScraperDir() + "/marquee" + extList[i];
+				std::string path = getScraperPathPrefix() + "marquee" + extList[i];
 				if (Utils::FileSystem::exists(path))
 				{
 					setMetadata(MetaDataId::Marquee, path);
@@ -393,7 +403,7 @@ const std::string FileData::getImagePath()
 			{
 				if (image.empty())
 				{
-					std::string path = getScraperDir() + "/image" + extList[i];
+					std::string path = getScraperPathPrefix() + "image" + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 					{

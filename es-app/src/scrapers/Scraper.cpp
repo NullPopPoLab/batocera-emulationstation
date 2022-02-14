@@ -716,19 +716,9 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 	std::string subdirectory = system->getName();
 	std::string name = Utils::FileSystem::getStem(game->getPath());
 	auto path = game->getSourceFileData()->getScraperDir();
-	bool legacy=false;
-
-#if 0
-	if(!Utils::FileSystem::exists(path)){
-		name = Utils::FileSystem::getStem(game->getPath()) + "-" + suffix;
-		path = system->getRootFolder()->getPath() + "/" + folder + "/";
-		legacy=true;
-	}
-#endif
 
 	if(!Utils::FileSystem::exists(path))
 		Utils::FileSystem::createDirectory(path);
 
-	path += "/"+(legacy?name:suffix) + extension;
-	return path;
+	return game->getSourceFileData()->getScraperPathPrefix()+suffix + extension;
 }
