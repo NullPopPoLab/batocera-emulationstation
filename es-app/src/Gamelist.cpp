@@ -547,19 +547,19 @@ void cleanupGamelist(SystemData* system)
 
 					if (ext == ".pdf" && !Utils::FileSystem::exists(mediaPath))
 					{
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ".pdf";
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ".pdf";
 						if (!Utils::FileSystem::exists(mediaPath))
-							mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ".cbz";
+							mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ".cbz";
 					}
 					else if (ext != ".jpg" && !Utils::FileSystem::exists(mediaPath))
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ext;
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ext;
 					else if (ext == ".jpg" && !Utils::FileSystem::exists(mediaPath))
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + "-" + suffix + ".png";
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + "-" + suffix + ".png";
 
 					if (mdd.id == MetaDataId::Image && !Utils::FileSystem::exists(mediaPath))
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ".jpg";
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ".jpg";
 					if (mdd.id == MetaDataId::Image && !Utils::FileSystem::exists(mediaPath))
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ".png";
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ".png";
 
 					if (Utils::FileSystem::exists(mediaPath))
 					{
