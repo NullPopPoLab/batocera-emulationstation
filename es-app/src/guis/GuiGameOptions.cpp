@@ -48,7 +48,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 	addChild(&mMenu);
 
 	bool isImageViewer = game->getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER);
-	bool hasManual = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && game->hasMetaFile(MetaDataId::Map);
+	bool hasManual = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && game->hasMetaFile(MetaDataId::Manual);
 	bool hasMagazine = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && game->hasMetaFile(MetaDataId::Magazine);
 	bool hasMap = game->hasMetaFile(MetaDataId::Map);
 	bool hasVideo = Utils::FileSystem::exists(game->getVideoPath());
@@ -63,7 +63,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		{
 			mMenu.addEntry(_("VIEW GAME MANUAL"), false, [window, game, this]
 			{
-				GuiImageViewer::showPdf(window, game->getMetaPath(MetaDataId::Map));
+				GuiImageViewer::showPdf(window, game->getMetaPath(MetaDataId::Manual));
 				close();
 			});
 		}
