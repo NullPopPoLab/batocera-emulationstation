@@ -51,7 +51,7 @@ std::string SystemRandomPlaylist::getNextItem()
 					path = file->getMetaPath(MetaDataId::FanArt);
 					break;
 				case TITLESHOT:
-					path = file->getTitleShotPath(MetaDataId::TitleShot);
+					path = file->getTitleShotPath();
 					break;
 				case VIDEO:
 					path = file->getVideoPath();
