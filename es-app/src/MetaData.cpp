@@ -145,9 +145,10 @@ MetaDataList::MetaDataList(MetaDataListType type) : mType(type), mWasChanged(fal
 
 }
 
-MetaDataList MetaDataList::createFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system)
+MetaDataList MetaDataList::createFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system, std::string target)
 {
 	MetaDataList mdl(type);
+	mdl.mTargetPath = target;
 	mdl.mRelativeTo = system;
 	std::string value;
 	std::string relativeTo = mdl.mRelativeTo->getStartPath();
@@ -541,7 +542,17 @@ std::string MetaDataList::getRelativeRootPath()
 
 std::string MetaDataList::getScraperDir() const{
 
-	return mRelativeTo->getScraperDir()+"/"+mName;
+	auto name=mTargetPath;
+	auto dir=getRelativeRootPath();
+	if(name.size()>dir.size()+1)name=name.substr(dir.size()+1,name.size()-dir.size()-1);
+
+	auto p=name.find('/');
+	if(p==std::string::npos)name="";
+	else name=name.substr(0,p);
+
+	if(name.empty())name=Utils::FileSystem::getStem(mTargetPath);
+
+	return mRelativeTo->getScraperDir()+"/"+name;
 }
 
 void MetaDataList::setScrapeDate(const std::string& scraper)
