@@ -169,7 +169,7 @@ std::vector<FileData*> loadGamelistFile(const std::string xmlpath, SystemData* s
 		else if (!file->isArcadeAsset())
 		{
 			std::string defaultName = file->getMetadata(MetaDataId::Name);
-			file->setMetadata(MetaDataList::createFromXML(type == FOLDER ? FOLDER_METADATA : GAME_METADATA, fileNode, system));
+			file->setMetadata(MetaDataList::createFromXML(type == FOLDER ? FOLDER_METADATA : GAME_METADATA, fileNode, system, file));
 			file->getMetadata().migrate(file, fileNode);
 
 			//make sure name gets set if one didn't exist
