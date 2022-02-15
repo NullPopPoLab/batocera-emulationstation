@@ -119,7 +119,7 @@ const std::string GridGameListView::getImagePath(FileData* file)
 	std::string path;
 
 	switch(src){
-		case TITLESHOT: path = file->getMetaPath(MetaDataId::TitleShot); break;
+		case TITLESHOT: path = file->getTitleShotPath(); break;
 		case BOXART: path = file->getMetaPath(MetaDataId::BoxArt); break;
 		case MARQUEE: 
 		case ImageSource::MARQUEEORTEXT: path = file->getMarqueePath(); break;
