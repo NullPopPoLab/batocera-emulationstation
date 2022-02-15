@@ -271,9 +271,9 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 				ed->setValue(val);
 			};
 
-			row.makeAcceptInputHandler([this, type, ed, iter, updateVal, relativePath]
+			row.makeAcceptInputHandler([this, type, ed, iter, updateVal, relativePath, file]
 			{			
-				std::string filePath = ed->getValue();
+				std::string filePath = file->getMetaPath(iter->id);
 				if (!filePath.empty())
 					filePath = Utils::FileSystem::resolveRelativePath(filePath, relativePath, true);
 				
