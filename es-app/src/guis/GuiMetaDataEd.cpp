@@ -277,10 +277,9 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 				if (!filePath.empty())
 					filePath = Utils::FileSystem::resolveRelativePath(filePath, relativePath, true);
 				
-				std::string dir = "/userdata/screenshots";
-//				std::string dir = Utils::FileSystem::getParent(filePath);
-//				if (dir.empty())
-//					dir = relativePath;
+				std::string dir = Utils::FileSystem::getParent(filePath);
+				if (dir.empty())
+					dir = relativePath;
 
 				std::string title = iter->displayName + " - " + mMetaData->getName();
 				mWindow->pushGui(new GuiFileBrowser(mWindow, dir, filePath, type, updateVal, title));
