@@ -169,7 +169,7 @@ std::vector<FileData*> loadGamelistFile(const std::string xmlpath, SystemData* s
 		else if (!file->isArcadeAsset())
 		{
 			std::string defaultName = file->getMetadata(MetaDataId::Name);
-			file->setMetadata(MetaDataList::createFromXML(type == FOLDER ? FOLDER_METADATA : GAME_METADATA, fileNode, system));
+			file->setMetadata(MetaDataList::createFromXML(type == FOLDER ? FOLDER_METADATA : GAME_METADATA, fileNode, system, file));
 			file->getMetadata().migrate(file, fileNode);
 
 			//make sure name gets set if one didn't exist
@@ -543,23 +543,23 @@ void cleanupGamelist(SystemData* system)
 
 				if (!suffix.empty())
 				{					
-					std::string mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + "-"+ suffix + ext;
+					std::string mediaPath = file->second->getScraperPathPrefix() + suffix + ext;
 
 					if (ext == ".pdf" && !Utils::FileSystem::exists(mediaPath))
 					{
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ".pdf";
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ".pdf";
 						if (!Utils::FileSystem::exists(mediaPath))
-							mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ".cbz";
+							mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ".cbz";
 					}
 					else if (ext != ".jpg" && !Utils::FileSystem::exists(mediaPath))
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ext;
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ext;
 					else if (ext == ".jpg" && !Utils::FileSystem::exists(mediaPath))
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + "-" + suffix + ".png";
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + "-" + suffix + ".png";
 
 					if (mdd.id == MetaDataId::Image && !Utils::FileSystem::exists(mediaPath))
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ".jpg";
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ".jpg";
 					if (mdd.id == MetaDataId::Image && !Utils::FileSystem::exists(mediaPath))
-						mediaPath = system->getStartPath() + folder + file->second->getDisplayName() + ".png";
+						mediaPath = system->getStartPath() + folder + file->second->getFileKey() + ".png";
 
 					if (Utils::FileSystem::exists(mediaPath))
 					{

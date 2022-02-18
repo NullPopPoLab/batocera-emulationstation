@@ -134,7 +134,7 @@ class MetaDataList
 public:
 	static void initMetadata();
 
-	static MetaDataList createFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system);
+	static MetaDataList createFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system, FileData* file);
 	void appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths = false) const;
 
 	void migrate(FileData* file, pugi::xml_node& node);
@@ -170,6 +170,7 @@ public:
 	void importScrappedMetadata(const MetaDataList& source);
 
 	std::string getRelativeRootPath();
+	std::string getScraperDir() const;
 
 	void setScrapeDate(const std::string& scraper);
 	Utils::Time::DateTime* getScrapeDate(const std::string& scraper);
@@ -182,6 +183,7 @@ private:
 	std::map<MetaDataId, std::string> mMap;
 	bool mWasChanged;
 	SystemData*		mRelativeTo;
+	FileData*		mTargetFile;
 
 	static std::vector<MetaDataDecl> mMetaDataDecls;
 

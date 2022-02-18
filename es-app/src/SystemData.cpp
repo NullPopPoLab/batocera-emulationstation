@@ -22,6 +22,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include "SaveStateRepository.h"
+#include "scrapers/Scraper.h"
 
 #if WIN32
 #include "Win32ApiSystem.h"
@@ -1200,11 +1201,16 @@ SystemData* SystemData::getPrev() const
 	return *it;
 }
 
+std::string SystemData::getScraperDir() const{
+
+	return Scraper::getScraperDir()+"/"+mMetadata.name;
+}
+
 std::string SystemData::getGamelistPath(bool forWrite) const
 {
 	std::string filePath;
 
-	filePath = mRootFolder->getPath() + "/gamelist.xml";
+	filePath = getScraperDir()+"/gamelist.xml";
 	if(Utils::FileSystem::exists(filePath))
 		return filePath;
 
@@ -1212,9 +1218,11 @@ std::string SystemData::getGamelistPath(bool forWrite) const
 	if (Utils::FileSystem::exists(localPath))
 		return localPath;
 
-	if (forWrite)
-		Utils::FileSystem::createDirectory(Utils::FileSystem::getParent(filePath));
-	
+	if (!forWrite){
+		return mRootFolder->getPath() + "/gamelist.xml";
+	}
+
+	Utils::FileSystem::createDirectory(Utils::FileSystem::getParent(filePath));
 	return filePath;
 }
 
