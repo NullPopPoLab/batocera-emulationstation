@@ -560,7 +560,7 @@ void DetailedContainer::updateDetailsForFolder(FolderData* folder)
 				auto src = mVideo->getSnapshotSource();
 
 				switch(src){
-					case TITLESHOT: snapShot = firstGameWithImage->getMetaPath(MetaDataId::TitleShot); break;
+					case TITLESHOT: snapShot = firstGameWithImage->getTitleShotPath(); break;
 					case BOXART: snapShot = firstGameWithImage->getMetaPath(MetaDataId::BoxArt); break;
 					case MARQUEE: snapShot = firstGameWithImage->getMarqueePath(); break;
 					case THUMBNAIL: snapShot = firstGameWithImage->getThumbnailPath(); break;
@@ -635,7 +635,7 @@ void DetailedContainer::updateControls(FileData* file, bool isClearing, int move
 			auto src = mVideo->getSnapshotSource();
 
 			switch(src){
-				case TITLESHOT: snapShot = file->getMetaPath(MetaDataId::TitleShot); break;
+				case TITLESHOT: snapShot = file->getTitleShotPath(); break;
 				case BOXART: snapShot = file->getMetaPath(MetaDataId::BoxArt); break;
 				case MARQUEE: snapShot = file->getMarqueePath(); break;
 				case THUMBNAIL: snapShot = file->getThumbnailPath(); break;

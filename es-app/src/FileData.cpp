@@ -270,6 +270,75 @@ const std::string FileData::getThumbnailPath()
 	return thumbnail;
 }
 
+const std::string FileData::getTitleShotPath()
+{
+	std::string path = getMetaPath(MetaDataId::TitleShot);
+	if (path.empty()) path = getMetaPath(MetaDataId::Thumbnail);
+	if (path.empty()) path = getMetaPath(MetaDataId::Cartridge);
+	if (path.empty()) path = getMetaPath(MetaDataId::Marquee);
+
+	// no titleshot, try image
+	if(path.empty())
+	{
+		// no image, try to use local image
+		if(path.empty() && Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for(int i = 0; i < 2; i++)
+			{
+				if(path.empty())
+				{
+					std::string path = getScraperPathPrefix() + "image" + extList[i];
+					if (Utils::FileSystem::exists(path))
+					{
+						setMetadata(MetaDataId::Thumbnail, path);
+						path = path;
+					}
+				}
+			}
+		}
+
+		if (path.empty())
+			path = getMetadata(MetaDataId::Image);
+
+		// no image, try to use local image
+		if (path.empty() && Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for (int i = 0; i < 2; i++)
+			{
+				if (path.empty())
+				{
+					std::string path = getScraperPathPrefix() + "image" + extList[i];
+
+					if (Utils::FileSystem::exists(path))
+						path = path;
+				}
+			}
+		}
+
+#if 0
+		if (path.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
+		{
+			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
+				return ((FolderData*)this)->mChildren[0]->getThumbnailPath();
+			else if (getType() == GAME)
+			{
+				path = getPath();
+
+				auto ext = Utils::String::toLower(Utils::FileSystem::getExtension(path));
+				if (ext == ".pdf" && ResourceManager::getInstance()->fileExists(":/pdf.jpg"))
+					return ":/pdf.jpg";
+				else if ((ext == ".mp4" || ext == ".avi" || ext == ".mkv" || ext == ".webm") && ResourceManager::getInstance()->fileExists(":/vid.jpg"))
+					return ":/vid.jpg";
+			}
+		}
+#endif
+	}
+
+	return path;
+}
+
 const bool FileData::getFavorite()
 {
 	return getMetadata(MetaDataId::Favorite) == "true";
