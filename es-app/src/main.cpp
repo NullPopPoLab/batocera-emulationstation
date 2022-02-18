@@ -289,6 +289,7 @@ bool loadSystemConfigFile(Window* window, const char** errorString)
 		return false;
 	}
 
+#if 0
 	if(SystemData::sSystemVector.size() == 0)
 	{
 		LOG(LogError) << "No systems found! Does at least one system have a game present? (check that extensions match!)\n(Also, make sure you've updated your es_systems.cfg for XML!)";
@@ -298,6 +299,7 @@ bool loadSystemConfigFile(Window* window, const char** errorString)
 			"VISIT EMULATIONSTATION.ORG FOR MORE INFORMATION.";
 		return false;
 	}
+#endif
 
 	return true;
 }
