@@ -76,7 +76,12 @@ public:
 
 	virtual SystemEnvironmentData* getSystemEnvData() const;
 
+	virtual const std::string getLegacyScraperDir();
+	virtual const std::string getScraperDir();
+	virtual const std::string getScraperPrefix();
+	virtual const std::string getScraperPathPrefix();
 	virtual const std::string getThumbnailPath();
+	virtual const std::string getTitleShotPath();
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();
 	virtual const std::string getImagePath();
@@ -109,6 +114,9 @@ public:
 	virtual FileData* getSourceFileData();
 	virtual std::string getSystemName() const;
 
+	virtual std::string getDirKey();
+	virtual std::string getFileKey();
+
 	// Returns our best guess at the "real" name for this file (will attempt to perform MAME name translation)
 	virtual std::string& getDisplayName();
 
@@ -127,8 +135,12 @@ public:
 
 	void setMetadata(MetaDataList value) { getMetadata() = value; } 
 	
+	bool hasMetadata(MetaDataId key) { return !getMetadata().get(key).empty(); }
 	std::string getMetadata(MetaDataId key) { return getMetadata().get(key); }
 	void setMetadata(MetaDataId key, const std::string& value) { return getMetadata().set(key, value); }
+
+	std::string getMetaPath(MetaDataId key);
+	bool hasMetaFile(MetaDataId key);
 
 	void detectLanguageAndRegion(bool overWrite);
 

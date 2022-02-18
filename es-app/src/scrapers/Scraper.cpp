@@ -35,6 +35,11 @@ std::vector<std::pair<std::string, Scraper*>> Scraper::scrapers
 	{ "ArcadeDB", new ArcadeDBScraper() }
 };
 
+std::string Scraper::getScraperDir()
+{
+	return "/userdata/scraper";
+}
+
 std::string Scraper::getScraperName(Scraper* scraper)
 {
 	for (auto engine : scrapers)
@@ -82,47 +87,47 @@ bool Scraper::isValidConfiguredScraper()
 bool Scraper::hasAnyMedia(FileData* file)
 {
 	if (isMediaSupported(ScraperMediaSource::Screenshot) || isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d) || isMediaSupported(ScraperMediaSource::Mix) || isMediaSupported(ScraperMediaSource::TitleShot) || isMediaSupported(ScraperMediaSource::FanArt))
-		if (!Settings::getInstance()->getString("ScrapperImageSrc").empty() && !file->getMetadata(MetaDataId::Image).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Image)))
+		if (!Settings::getInstance()->getString("ScrapperImageSrc").empty() && !file->getImagePath().empty() && Utils::FileSystem::exists(file->getImagePath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d))
-		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && !file->getMetadata(MetaDataId::Thumbnail).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Thumbnail)))
+		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && !file->getThumbnailPath().empty() && Utils::FileSystem::exists(file->getThumbnailPath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Wheel) || isMediaSupported(ScraperMediaSource::Marquee))
-		if (Settings::getInstance()->getString("ScrapperLogoSrc").empty() && !file->getMetadata(MetaDataId::Marquee).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Marquee)))
+		if (Settings::getInstance()->getString("ScrapperLogoSrc").empty() && !file->getMarqueePath().empty() && Utils::FileSystem::exists(file->getMarqueePath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Manual))
-		if (Settings::getInstance()->getBool("ScrapeManual") && !file->getMetadata(MetaDataId::Manual).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Manual)))
+		if (Settings::getInstance()->getBool("ScrapeManual") && file->hasMetaFile(MetaDataId::Manual))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Map))
-		if (Settings::getInstance()->getBool("ScrapeMap") && !file->getMetadata(MetaDataId::Map).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Map)))
+		if (Settings::getInstance()->getBool("ScrapeMap") && file->hasMetaFile(MetaDataId::Map))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::FanArt))
-		if (Settings::getInstance()->getBool("ScrapeFanart") && !file->getMetadata(MetaDataId::FanArt).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::FanArt)))
+		if (Settings::getInstance()->getBool("ScrapeFanart") && file->hasMetaFile(MetaDataId::FanArt))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Video))
-		if (Settings::getInstance()->getBool("ScrapeVideos") && !file->getMetadata(MetaDataId::Video).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Video)))
+		if (Settings::getInstance()->getBool("ScrapeVideos") && !file->getVideoPath().empty() && Utils::FileSystem::exists(file->getVideoPath()))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::BoxBack))
-		if (Settings::getInstance()->getBool("ScrapeBoxBack") && !file->getMetadata(MetaDataId::BoxBack).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::BoxBack)))
+		if (Settings::getInstance()->getBool("ScrapeBoxBack") && file->hasMetaFile(MetaDataId::BoxBack))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::TitleShot))
-		if (Settings::getInstance()->getBool("ScrapeTitleShot") && !file->getMetadata(MetaDataId::TitleShot).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::TitleShot)))
+		if (Settings::getInstance()->getBool("ScrapeTitleShot") && file->hasMetaFile(MetaDataId::TitleShot))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Cartridge))
-		if (Settings::getInstance()->getBool("ScrapeCartridge") && !file->getMetadata(MetaDataId::Cartridge).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Cartridge)))
+		if (Settings::getInstance()->getBool("ScrapeCartridge") && file->hasMetaFile(MetaDataId::Cartridge))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Bezel_16_9))
-		if (Settings::getInstance()->getBool("ScrapeBezel") && !file->getMetadata(MetaDataId::Bezel).empty() && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Bezel)))
+		if (Settings::getInstance()->getBool("ScrapeBezel") && file->hasMetaFile(MetaDataId::Bezel))
 			return true;
 	
 	return false;
@@ -131,11 +136,11 @@ bool Scraper::hasAnyMedia(FileData* file)
 bool Scraper::hasMissingMedia(FileData* file)
 {
 	if (isMediaSupported(ScraperMediaSource::Screenshot) || isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d) || isMediaSupported(ScraperMediaSource::Mix) || isMediaSupported(ScraperMediaSource::TitleShot) || isMediaSupported(ScraperMediaSource::FanArt))
-		if (!Settings::getInstance()->getString("ScrapperImageSrc").empty() && (file->getMetadata(MetaDataId::Image).empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::Image))))
+		if (!Settings::getInstance()->getString("ScrapperImageSrc").empty() && (file->getImagePath().empty() || !Utils::FileSystem::exists(file->getImagePath())))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Box2d) || isMediaSupported(ScraperMediaSource::Box3d))
-		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && (file->getMetadata(MetaDataId::Thumbnail).empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::Thumbnail))))
+		if (!Settings::getInstance()->getString("ScrapperThumbSrc").empty() && (file->getThumbnailPath().empty() || !Utils::FileSystem::exists(file->getMetadata(MetaDataId::Thumbnail))))
 			return true;
 
 	if (isMediaSupported(ScraperMediaSource::Wheel) || isMediaSupported(ScraperMediaSource::Marquee))
@@ -708,14 +713,12 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 
 	auto system = game->getSourceFileData()->getSystem();
 
-	const std::string subdirectory = system->getName();
-	const std::string name = Utils::FileSystem::getStem(game->getPath()) + "-" + suffix;
-
-	std::string path = system->getRootFolder()->getPath() + "/" + folder + "/";
+	std::string subdirectory = system->getName();
+	std::string name = Utils::FileSystem::getStem(game->getPath());
+	auto path = game->getSourceFileData()->getScraperDir();
 
 	if(!Utils::FileSystem::exists(path))
 		Utils::FileSystem::createDirectory(path);
 
-	path += name + extension;
-	return path;
+	return path+"/"+game->getSourceFileData()->getScraperPrefix()+suffix + extension;
 }

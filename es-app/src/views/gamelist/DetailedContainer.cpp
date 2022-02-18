@@ -559,23 +559,16 @@ void DetailedContainer::updateDetailsForFolder(FolderData* folder)
 
 				auto src = mVideo->getSnapshotSource();
 
-
-				if (src == TITLESHOT && Utils::FileSystem::exists(firstGameWithImage->getMetadata(MetaDataId::TitleShot)))
-					snapShot = firstGameWithImage->getMetadata(MetaDataId::TitleShot);
-				else if (src == BOXART && Utils::FileSystem::exists(firstGameWithImage->getMetadata(MetaDataId::BoxArt)))
-					snapShot = firstGameWithImage->getMetadata(MetaDataId::BoxArt);
-				else if (src == MARQUEE && !firstGameWithImage->getMarqueePath().empty())
-					snapShot = firstGameWithImage->getMarqueePath();
-				else if ((src == THUMBNAIL || src == BOXART) && !firstGameWithImage->getThumbnailPath().empty())
-					snapShot = firstGameWithImage->getThumbnailPath();
-				else if ((src == IMAGE || src == TITLESHOT) && !firstGameWithImage->getImagePath().empty())
-					snapShot = firstGameWithImage->getImagePath();
-				else if (src == FANART && Utils::FileSystem::exists(firstGameWithImage->getMetadata(MetaDataId::FanArt)))
-					snapShot = firstGameWithImage->getMetadata(MetaDataId::FanArt);
-				else if (src == CARTRIDGE && Utils::FileSystem::exists(firstGameWithImage->getMetadata(MetaDataId::Cartridge)))
-					snapShot = firstGameWithImage->getMetadata(MetaDataId::Cartridge);
-				else if (src == MIX && Utils::FileSystem::exists(firstGameWithImage->getMetadata(MetaDataId::Mix)))
-					snapShot = firstGameWithImage->getMetadata(MetaDataId::Mix);
+				switch(src){
+					case TITLESHOT: snapShot = firstGameWithImage->getTitleShotPath(); break;
+					case BOXART: snapShot = firstGameWithImage->getMetaPath(MetaDataId::BoxArt); break;
+					case MARQUEE: snapShot = firstGameWithImage->getMarqueePath(); break;
+					case THUMBNAIL: snapShot = firstGameWithImage->getThumbnailPath(); break;
+					case IMAGE: snapShot = firstGameWithImage->getImagePath(); break;
+					case FANART: snapShot = firstGameWithImage->getMetaPath(MetaDataId::FanArt); break;
+					case CARTRIDGE: snapShot = firstGameWithImage->getMetaPath(MetaDataId::Cartridge); break;
+					case MIX: snapShot = firstGameWithImage->getMetaPath(MetaDataId::Mix); break;
+				}
 
 				mVideo->setImage(snapShot);
 			}
@@ -641,22 +634,16 @@ void DetailedContainer::updateControls(FileData* file, bool isClearing, int move
 
 			auto src = mVideo->getSnapshotSource();
 
-			if (src == TITLESHOT && Utils::FileSystem::exists(file->getMetadata(MetaDataId::TitleShot)))
-				snapShot = file->getMetadata(MetaDataId::TitleShot);
-			else if (src == BOXART && Utils::FileSystem::exists(file->getMetadata(MetaDataId::BoxArt)))
-				snapShot = file->getMetadata(MetaDataId::BoxArt);
-			else if (src == MARQUEE && !file->getMarqueePath().empty())
-				snapShot = file->getMarqueePath();
-			else if ((src == THUMBNAIL || src == BOXART) && !file->getThumbnailPath().empty())
-				snapShot = file->getThumbnailPath();			
-			else if ((src == IMAGE || src == TITLESHOT) && !file->getImagePath().empty())
-				snapShot = file->getImagePath();
-			else if (src == FANART && Utils::FileSystem::exists(file->getMetadata(MetaDataId::FanArt)))
-				snapShot = file->getMetadata(MetaDataId::FanArt);
-			else if (src == CARTRIDGE && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Cartridge)))
-				snapShot = file->getMetadata(MetaDataId::Cartridge);
-			else if (src == MIX && Utils::FileSystem::exists(file->getMetadata(MetaDataId::Mix)))
-				snapShot = file->getMetadata(MetaDataId::Mix);
+			switch(src){
+				case TITLESHOT: snapShot = file->getTitleShotPath(); break;
+				case BOXART: snapShot = file->getMetaPath(MetaDataId::BoxArt); break;
+				case MARQUEE: snapShot = file->getMarqueePath(); break;
+				case THUMBNAIL: snapShot = file->getThumbnailPath(); break;
+				case IMAGE: snapShot = file->getImagePath(); break;
+				case FANART: snapShot = file->getMetaPath(MetaDataId::FanArt); break;
+				case CARTRIDGE: snapShot = file->getMetaPath(MetaDataId::Cartridge); break;
+				case MIX: snapShot = file->getMetaPath(MetaDataId::Mix); break;
+			}
 			
 			mVideo->setImage(snapShot, false, mVideo->getMaxSizeInfo());
 		}
