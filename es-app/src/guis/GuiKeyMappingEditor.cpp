@@ -67,7 +67,7 @@ void GuiKeyMappingEditor::initMappingNames()
 
 		{ "hotkey + a",       "HOTKEY + " + InputConfig::buttonLabel("a"),    ":/help/button_hotkey.svg", InputConfig::buttonImage("a") },
 		{ "hotkey + b",       "HOTKEY + " + InputConfig::buttonLabel("b"),   ":/help/button_hotkey.svg", InputConfig::buttonImage("b") },
-		{ "hotkey + c",       "HOTKEY + C",   ":/help/button_hotkey.svg", ":/help/button_c.svg" }
+		{ "hotkey + c",       "HOTKEY + C",   ":/help/button_hotkey.svg", ":/help/button_c.svg" },
 		{ "hotkey + x",       "HOTKEY + X",    ":/help/button_hotkey.svg", ":/help/buttons_north.svg" },
 		{ "hotkey + y",       "HOTKEY + Y",   ":/help/button_hotkey.svg", ":/help/buttons_west.svg" },
 		{ "hotkey + z",       "HOTKEY + Z",   ":/help/button_hotkey.svg", ":/help/button_z.svg" },
