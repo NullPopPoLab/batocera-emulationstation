@@ -157,7 +157,7 @@ const std::string FileData::getLegacyScraperDir()
 	return getSystem()->getStartPath();
 }
 
-const std::string getDeepPrefix()
+const std::string FileData::getDeepPrefix()
 {
 	auto k=getDirKey();
 	if(k.empty())return k;
