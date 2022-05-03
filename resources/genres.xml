@@ -725,6 +725,12 @@
     <parent>40</parent>
   </genre>
   <genre>
+    <id>2965</id>
+    <nom_fr>Pachinko</nom_fr>
+    <nom_en>Japanese Pinball</nom_en>
+    <parent>2857</parent>
+  </genre>
+  <genre>
     <id>29062</id>
     <nom_en>Conquest</nom_en>
     <nom_ja>征服系</nom_ja>
@@ -1089,6 +1095,12 @@
     <nom_en>Sugoroku</nom_en>
     <nom_ja>双六</nom_ja>
     <parent>29998</parent>
+  </genre>
+  <genre>
+    <id>2844</id>
+    <nom_fr>Shooter Small</nom_fr>
+    <nom_en>Shooter Small</nom_en>
+    <parent>2843</parent>
   </genre>
   <genre>
     <id>29093</id>
