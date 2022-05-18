@@ -129,6 +129,14 @@ std::string FileData::getFileKey(){
 	return Utils::FileSystem::getStem(getPath());
 }
 
+std::string FileData::getPathKey(){
+
+	auto k=getDirKey();
+	if(!k.empty())k+="/";
+	k+=getFileKey();
+	return k;
+}
+
 std::string& FileData::getDisplayName()
 {
 	if (mDisplayName == nullptr)
