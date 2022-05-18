@@ -157,6 +157,13 @@ const std::string FileData::getLegacyScraperDir()
 	return getSystem()->getStartPath();
 }
 
+const std::string FileData::getDeepPrefix()
+{
+	auto k=getDirKey();
+	if(k.empty())return k;
+	return getFileKey();
+}
+
 const std::string FileData::getScraperDir()
 {
 	auto k=getDirKey();
@@ -168,9 +175,9 @@ const std::string FileData::getScraperDir()
 
 const std::string FileData::getScraperPrefix()
 {
-	auto k=getDirKey();
+	auto k=getDeepPrefix();
 	if(k.empty())return k;
-	return getFileKey()+" - ";
+	return k+" - ";
 }
 
 const std::string FileData::getScraperPathPrefix()
