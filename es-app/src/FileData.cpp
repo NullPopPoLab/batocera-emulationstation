@@ -112,6 +112,31 @@ FileData::~FileData()
 		mSystem->removeFromIndex(this);	
 }
 
+std::string FileData::getDirKey(){
+
+	auto path=getPath();
+	auto dir=getSystem()->getStartPath();
+	if(path.size()>dir.size()+1)path=path.substr(dir.size()+1,path.size()-dir.size()-1);
+
+	auto p=path.find('/');
+	if(p==std::string::npos)return std::string();
+	path=path.substr(0,p);
+	return path;
+}
+
+std::string FileData::getFileKey(){
+
+	return Utils::FileSystem::getStem(getPath());
+}
+
+std::string FileData::getPathKey(){
+
+	auto k=getDirKey();
+	if(!k.empty())k+="/";
+	k+=getFileKey();
+	return k;
+}
+
 std::string& FileData::getDisplayName()
 {
 	if (mDisplayName == nullptr)

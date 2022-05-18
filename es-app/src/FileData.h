@@ -109,6 +109,10 @@ public:
 	virtual FileData* getSourceFileData();
 	virtual std::string getSystemName() const;
 
+	virtual std::string getDirKey();
+	virtual std::string getFileKey();
+	virtual std::string getPathKey();
+
 	// Returns our best guess at the "real" name for this file (will attempt to perform MAME name translation)
 	virtual std::string& getDisplayName();
 
