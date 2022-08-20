@@ -277,7 +277,7 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 				if (!filePath.empty())
 					filePath = Utils::FileSystem::resolveRelativePath(filePath, relativePath, true);
 				
-				std::string dir = Utils::FileSystem::getParent(filePath);
+				std::string dir = file->getScraperDir();
 				if (dir.empty())
 					dir = relativePath;
 
