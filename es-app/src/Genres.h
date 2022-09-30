@@ -28,7 +28,6 @@ struct GameGenre
 	std::string nom_fr;
 	std::string nom_de;
 	std::string nom_es;
-	std::string nom_ja;
 	std::string nom_pt;
 	std::vector<std::string> altNames;
 

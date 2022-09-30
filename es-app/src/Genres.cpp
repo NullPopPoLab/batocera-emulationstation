@@ -63,8 +63,6 @@ void Genres::init()
 				g->nom_en = value;
 			else if (name == "nom_es")
 				g->nom_es = value;
-			else if (name == "nom_ja")
-				g->nom_ja = value;
 			else if (name == "nom_pt")
 				g->nom_pt = value;
 			else if (name == "altname")
@@ -121,9 +119,6 @@ void Genres::init()
 			if (!genre->nom_es.empty())
 				mAllGenresNames[Utils::String::toUpper(genre->parent->nom_es) + " / " + Utils::String::toUpper(genre->nom_es)] = genre->id;
 
-			if (!genre->nom_ja.empty())
-				mAllGenresNames[Utils::String::toUpper(genre->parent->nom_ja) + " / " + Utils::String::toUpper(genre->nom_ja)] = genre->id;
-
 			if (!genre->nom_pt.empty())
 				mAllGenresNames[Utils::String::toUpper(genre->parent->nom_pt) + " / " + Utils::String::toUpper(genre->nom_pt)] = genre->id;
 		
@@ -144,9 +139,6 @@ void Genres::init()
 
 			if (!genre->nom_es.empty())
 				mAllGenresNames[Utils::String::toUpper(genre->nom_es)] = genre->id;
-
-			if (!genre->nom_ja.empty())
-				mAllGenresNames[Utils::String::toUpper(genre->nom_ja)] = genre->id;
 
 			if (!genre->nom_pt.empty())
 				mAllGenresNames[Utils::String::toUpper(genre->nom_pt)] = genre->id;
@@ -172,9 +164,6 @@ void Genres::init()
 
 			if (!genre->nom_es.empty() && mAllGenresNames.find(Utils::String::toUpper(genre->nom_es)) == mAllGenresNames.cend())
 				mAllGenresNames[Utils::String::toUpper(genre->nom_es)] = genre->id;
-
-			if (!genre->nom_ja.empty() && mAllGenresNames.find(Utils::String::toUpper(genre->nom_ja)) == mAllGenresNames.cend())
-				mAllGenresNames[Utils::String::toUpper(genre->nom_ja)] = genre->id;
 
 			if (!genre->nom_pt.empty() && mAllGenresNames.find(Utils::String::toUpper(genre->nom_pt)) == mAllGenresNames.cend())
 				mAllGenresNames[Utils::String::toUpper(genre->nom_pt)] = genre->id;
@@ -207,8 +196,6 @@ std::string& GameGenre::getLocalizedName()
 			locale = 3;
 		else if (lang == "es")
 			locale = 4;
-		else if (lang == "ja")
-			locale = 5;
 		else
 			locale = 0;
 	}
@@ -224,9 +211,6 @@ std::string& GameGenre::getLocalizedName()
 
 	if (locale == 4 && !nom_es.empty())
 		return nom_es;
-
-	if (locale == 5 && !nom_ja.empty())
-		return nom_ja;
 
 	return nom_en;
 }

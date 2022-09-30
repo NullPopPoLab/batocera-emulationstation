@@ -31,6 +31,9 @@
 #include "TextToSpeech.h"
 #include "LocaleES.h"
 #include "guis/GuiMsgBox.h"
+#include "Paths.h"
+
+FileData* FileData::mRunningGame = nullptr;
 
 FileData::FileData(FileType type, const std::string& path, SystemData* system)
 	: mPath(path), mType(type), mSystem(system), mParent(nullptr), mDisplayName(nullptr), mMetadata(type == GAME ? GAME_METADATA : FOLDER_METADATA) // metadata is REALLY set in the constructor!
@@ -83,10 +86,9 @@ const std::string FileData::getBreadCrumbPath()
 
 const std::string FileData::getConfigurationName()
 {
-	std::string gameConf = getPathKey();
+	std::string gameConf = Utils::FileSystem::getFileName(getPath());
 	gameConf = Utils::String::replace(gameConf, "=", "");
 	gameConf = Utils::String::replace(gameConf, "#", "");
-	gameConf += Utils::FileSystem::getExtension(getPath(),true);
 	gameConf = getSourceFileData()->getSystem()->getName() + std::string("[\"") + gameConf + std::string("\"]");
 	return gameConf;
 }
@@ -113,42 +115,13 @@ FileData::~FileData()
 		mSystem->removeFromIndex(this);	
 }
 
-std::string FileData::getDirKey(){
-
-	auto path=getPath();
-	auto dir=getSystem()->getStartPath();
-	if(path.size()>dir.size()+1)path=path.substr(dir.size()+1,path.size()-dir.size()-1);
-
-	auto p=path.find('/');
-	if(p==std::string::npos)return std::string();
-	path=path.substr(0,p);
-	return path;
-}
-
-std::string FileData::getFileKey(){
-
-	return Utils::FileSystem::getStem(getPath());
-}
-
-std::string FileData::getPathKey(){
-
-	auto k=getDirKey();
-	if(!k.empty())k+="/";
-	k+=getFileKey();
-	return k;
-}
-
 std::string& FileData::getDisplayName()
 {
 	if (mDisplayName == nullptr)
 	{
 		std::string stem = Utils::FileSystem::getStem(getPath());
-		if (mSystem && mSystem->hasPlatformId(PlatformIds::ARCADE) || mSystem->hasPlatformId(PlatformIds::NEOGEO))
+		if (mSystem && (mSystem->hasPlatformId(PlatformIds::ARCADE) || mSystem->hasPlatformId(PlatformIds::NEOGEO)))
 			stem = MameNames::getInstance()->getRealName(stem);
-		else{
-			auto dir=getDirKey();
-			if(!dir.empty())stem = dir+" ("+stem+")";
-		}
 
 		mDisplayName = new std::string(stem);
 	}
@@ -161,68 +134,9 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
-const std::string FileData::getLegacyScraperDir()
-{
-	return getSystem()->getStartPath();
-}
-
-const std::string FileData::getDeepPrefix()
-{
-	auto k=getDirKey();
-	if(k.empty())return k;
-	return getFileKey();
-}
-
-const std::string FileData::getScraperDir()
-{
-	auto k=getDirKey();
-	if(k.empty())k=getFileKey();
-
-	auto dir=getSystem()->getScraperDir();
-	return dir+"/"+k;
-}
-
-const std::string FileData::getScraperPrefix()
-{
-	auto k=getDeepPrefix();
-	if(k.empty())return k;
-	return k+" - ";
-}
-
-const std::string FileData::getScraperPathPrefix()
-{
-	return getSystem()->getScraperDir()+"/"+getScraperPrefix();
-}
-
-std::string FileData::getMetaPath(MetaDataId key){
-
-	auto name=getMetadata(key);
-	if(name.empty())return name;
-
-	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), true);
-	if(Utils::FileSystem::exists(path))return path;
-
-	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), true);
-	return Utils::FileSystem::exists(path)?path:std::string();
-}
-
-bool FileData::hasMetaFile(MetaDataId key){
-
-	auto name=getMetadata(key);
-	if(name.empty())return false;
-
-	auto path=Utils::FileSystem::resolveRelativePath(name, getScraperDir(), true);
-	if(Utils::FileSystem::exists(path))return true;
-
-	path=Utils::FileSystem::resolveRelativePath(name, getLegacyScraperDir(), true);
-	return Utils::FileSystem::exists(path);
-}
-
 const std::string FileData::getThumbnailPath()
 {
-	std::string thumbnail = getMetaPath(MetaDataId::Thumbnail);
-
-	if (thumbnail.empty()) thumbnail = getMetaPath(MetaDataId::TitleShot);
+	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
 
 	// no thumbnail, try image
 	if(thumbnail.empty())
@@ -235,7 +149,7 @@ const std::string FileData::getThumbnailPath()
 			{
 				if(thumbnail.empty())
 				{
-					std::string path = getScraperPathPrefix() + "image" + extList[i];
+					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-thumb" + extList[i];
 					if (Utils::FileSystem::exists(path))
 					{
 						setMetadata(MetaDataId::Thumbnail, path);
@@ -256,7 +170,9 @@ const std::string FileData::getThumbnailPath()
 			{
 				if (thumbnail.empty())
 				{
-					std::string path = getScraperPathPrefix() + "image" + extList[i];
+					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-image" + extList[i];					
+					if (!Utils::FileSystem::exists(path))
+						path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 						thumbnail = path;
@@ -264,7 +180,6 @@ const std::string FileData::getThumbnailPath()
 			}
 		}
 
-#if 0
 		if (thumbnail.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
 		{
 			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
@@ -280,79 +195,10 @@ const std::string FileData::getThumbnailPath()
 					return ":/vid.jpg";
 			}
 		}
-#endif
+
 	}
 
 	return thumbnail;
-}
-
-const std::string FileData::getTitleShotPath()
-{
-	std::string path = getMetaPath(MetaDataId::TitleShot);
-	if (path.empty()) path = getMetaPath(MetaDataId::Thumbnail);
-	if (path.empty()) path = getMetaPath(MetaDataId::Cartridge);
-	if (path.empty()) path = getMetaPath(MetaDataId::Marquee);
-
-	// no titleshot, try image
-	if(path.empty())
-	{
-		// no image, try to use local image
-		if(path.empty() && Settings::getInstance()->getBool("LocalArt"))
-		{
-			const char* extList[2] = { ".png", ".jpg" };
-			for(int i = 0; i < 2; i++)
-			{
-				if(path.empty())
-				{
-					std::string path = getScraperPathPrefix() + "image" + extList[i];
-					if (Utils::FileSystem::exists(path))
-					{
-						setMetadata(MetaDataId::Thumbnail, path);
-						path = path;
-					}
-				}
-			}
-		}
-
-		if (path.empty())
-			path = getMetadata(MetaDataId::Image);
-
-		// no image, try to use local image
-		if (path.empty() && Settings::getInstance()->getBool("LocalArt"))
-		{
-			const char* extList[2] = { ".png", ".jpg" };
-			for (int i = 0; i < 2; i++)
-			{
-				if (path.empty())
-				{
-					std::string path = getScraperPathPrefix() + "image" + extList[i];
-
-					if (Utils::FileSystem::exists(path))
-						path = path;
-				}
-			}
-		}
-
-#if 0
-		if (path.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
-		{
-			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
-				return ((FolderData*)this)->mChildren[0]->getThumbnailPath();
-			else if (getType() == GAME)
-			{
-				path = getPath();
-
-				auto ext = Utils::String::toLower(Utils::FileSystem::getExtension(path));
-				if (ext == ".pdf" && ResourceManager::getInstance()->fileExists(":/pdf.jpg"))
-					return ":/pdf.jpg";
-				else if ((ext == ".mp4" || ext == ".avi" || ext == ".mkv" || ext == ".webm") && ResourceManager::getInstance()->fileExists(":/vid.jpg"))
-					return ":/vid.jpg";
-			}
-		}
-#endif
-	}
-
-	return path;
 }
 
 const bool FileData::getFavorite()
@@ -419,12 +265,12 @@ const std::string& FileData::getName()
 
 const std::string FileData::getVideoPath()
 {
-	std::string video = getMetaPath(MetaDataId::Video);
+	std::string video = getMetadata(MetaDataId::Video);
 	
 	// no video, try to use local video
 	if(video.empty() && Settings::getInstance()->getBool("LocalArt"))
 	{
-		std::string path = getScraperPathPrefix() + "video.mp4";
+		std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-video.mp4";
 		if (Utils::FileSystem::exists(path))
 		{
 			setMetadata(MetaDataId::Video, path);
@@ -449,7 +295,7 @@ const std::string FileData::getVideoPath()
 
 const std::string FileData::getMarqueePath()
 {
-	std::string marquee = getMetaPath(MetaDataId::Marquee);
+	std::string marquee = getMetadata(MetaDataId::Marquee);
 
 	// no marquee, try to use local marquee
 	if (marquee.empty() && Settings::getInstance()->getBool("LocalArt"))
@@ -459,7 +305,7 @@ const std::string FileData::getMarqueePath()
 		{
 			if(marquee.empty())
 			{
-				std::string path = getScraperPathPrefix() + "marquee" + extList[i];
+				std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-marquee" + extList[i];
 				if (Utils::FileSystem::exists(path))
 				{
 					setMetadata(MetaDataId::Marquee, path);
@@ -474,7 +320,7 @@ const std::string FileData::getMarqueePath()
 
 const std::string FileData::getImagePath()
 {
-	std::string image = getMetaPath(MetaDataId::Image);
+	std::string image = getMetadata(MetaDataId::Image);
 
 	// no image, try to use local image
 	if(image.empty())
@@ -489,7 +335,9 @@ const std::string FileData::getImagePath()
 			{
 				if (image.empty())
 				{
-					std::string path = getScraperPathPrefix() + "image" + extList[i];
+					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-image" + extList[i];
+					if (!Utils::FileSystem::exists(path))
+						path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 					{
@@ -574,7 +422,7 @@ std::string FileData::getlaunchCommand(LaunchGameOptions& options, bool includeC
 	if (system == nullptr)
 		return "";
 
-	// batocera / must really;-) be done before window->deinit while it closes joysticks
+	// must really;-) be done before window->deinit while it closes joysticks
 	const std::string controllersConfig = InputManager::getInstance()->configureEmulators();
 
 	std::string systemName = system->getName();
@@ -638,13 +486,13 @@ std::string FileData::getlaunchCommand(LaunchGameOptions& options, bool includeC
 	const std::string basename = Utils::FileSystem::getStem(getPath());
 	const std::string rom_raw = Utils::FileSystem::getPreferredPath(getPath());
 	
-	command = Utils::String::replace(command, "%SYSTEM%", systemName); // batocera
+	command = Utils::String::replace(command, "%SYSTEM%", systemName);
 	command = Utils::String::replace(command, "%ROM%", rom);
 	command = Utils::String::replace(command, "%BASENAME%", basename);
 	command = Utils::String::replace(command, "%ROM_RAW%", rom_raw);
 	command = Utils::String::replace(command, "%EMULATOR%", emulator);
 	command = Utils::String::replace(command, "%CORE%", core);
-	command = Utils::String::replace(command, "%HOME%", Utils::FileSystem::getHomePath());
+	command = Utils::String::replace(command, "%HOME%", Paths::getHomePath());
 	command = Utils::String::replace(command, "%GAMENAME%", formatCommandLineArgument(gameToUpdate->getName()));
 	command = Utils::String::replace(command, "%SYSTEMNAME%", formatCommandLineArgument(system->getFullName()));
 
@@ -664,7 +512,7 @@ std::string FileData::getlaunchCommand(LaunchGameOptions& options, bool includeC
 	}
 	
 	if (includeControllers)
-		command = Utils::String::replace(command, "%CONTROLLERSCONFIG%", controllersConfig); // batocera
+		command = Utils::String::replace(command, "%CONTROLLERSCONFIG%", controllersConfig);
 
 	if (options.netPlayMode != DISABLED && (forceCore || gameToUpdate->isNetplaySupported()) && command.find("%NETPLAY%") == std::string::npos)
 		command = command + " %NETPLAY%"; // Add command line parameter if the netplay option is defined at <core netplay="true"> level
@@ -759,7 +607,7 @@ bool FileData::launchGame(Window* window, LaunchGameOptions options)
 	if (command.empty())
 		return false;
 
-	AudioManager::getInstance()->deinit(); // batocera
+	AudioManager::getInstance()->deinit();
 	VolumeControl::getInstance()->deinit();
 
 	bool hideWindow = Settings::getInstance()->getBool("HideWindow");
@@ -776,9 +624,13 @@ bool FileData::launchGame(Window* window, LaunchGameOptions options)
 
 	auto p2kConv = convertP2kFile();
 
+	mRunningGame = gameToUpdate;
+
 	int exitCode = runSystemCommand(command, getDisplayName(), hideWindow ? NULL : window);
 	if (exitCode != 0)
 		LOG(LogWarning) << "...launch terminated with nonzero exit code " << exitCode << "!";
+
+	mRunningGame = nullptr;
 
 	if (SaveStateRepository::isEnabled(this))
 	{
@@ -812,7 +664,7 @@ bool FileData::launchGame(Window* window, LaunchGameOptions options)
 		int timesPlayed = gameToUpdate->getMetadata().getInt(MetaDataId::PlayCount) + 1;
 		gameToUpdate->setMetadata(MetaDataId::PlayCount, std::to_string(static_cast<long long>(timesPlayed)));
 
-		// Batocera 5.25: how long have you played that game? (more than 10 seconds, otherwise
+		// How long have you played that game? (more than 10 seconds, otherwise
 		// you might have experienced a loading problem)
 		time_t tend = time(NULL);
 		long elapsedSeconds = difftime(tend, tstart);
@@ -953,13 +805,6 @@ std::set<std::string> FileData::getContentFiles()
 					if (trim[0] == '#' || trim[0] == '\\' || trim[0] == '/')
 						continue;
 
-					if(trim[0]=='*'){
-						// skip Advanced M3U attribute 
-						auto ep=trim.find(';');
-						if(ep==std::string::npos)continue;
-						if(trim.size()<=ep+1)continue;
-						trim=trim.substr(ep+1);
-					}
 					files.insert(path + "/" + trim);
 				}
 
