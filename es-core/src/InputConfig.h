@@ -41,6 +41,7 @@ public:
 	InputType type;
 	int id;
 	int value;
+        int code;
 	bool configured;
 
 	Input()
@@ -49,6 +50,7 @@ public:
 		configured = false;
 		id = -1;
 		value = -999;
+		code = -1;
 		type = TYPE_COUNT;
 	}
 
@@ -101,6 +103,25 @@ public:
 
 		return stream.str();
 	}
+
+  	void computeCode() {
+	  if(device == DEVICE_KEYBOARD) {
+	    return;
+	  }
+
+	  switch(type) {
+	  case TYPE_AXIS:
+	    code = SDL_JoystickAxisEventCodeById(device, id);
+	    break;
+	  case TYPE_BUTTON:
+	    code = SDL_JoystickButtonEventCodeById(device, id);
+	    break;
+	  case TYPE_HAT:
+	    code = SDL_JoystickHatEventCodeById(device, id);
+	    break;
+	  }
+	}
+
 };
 
 class InputConfig
