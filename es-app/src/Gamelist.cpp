@@ -179,7 +179,7 @@ std::vector<FileData*> loadGamelistFile(const std::string xmlpath, SystemData* s
 		if (!trustGamelist || !file->isArcadeAsset()) // arcade assets already filtered when !trustGamelist
 		{
 			MetaDataList& mdl = file->getMetadata();
-			mdl.loadFromXML(type == FOLDER ? FOLDER_METADATA : GAME_METADATA, fileNode, system);
+			mdl.loadFromXML(type == FOLDER ? FOLDER_METADATA : GAME_METADATA, fileNode, system, file);
 			mdl.migrate(file, fileNode);
 
 			// Make sure name gets set if one didn't exist
