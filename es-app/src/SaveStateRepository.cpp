@@ -34,8 +34,17 @@ std::string SaveStateRepository::getSavesPath()
 {
 	return Utils::FileSystem::combine(Paths::getSavesPath(), mSystem->getName());
 }
+
+std::string SaveStateRepository::getSaveName(const std::string& path)
+{
+	auto s=getSavesPath();
+	s=Utils::FileSystem::createRelativePath_undot(path,s,false);
+	s=Utils::FileSystem::changeExtension(s,"");
+	if (Utils::String::endsWith(s, ".state")) s = Utils::FileSystem::getStem(s);
+	return s;
+}
 	
-void SaveStateRepository::refresh()
+void SaveStateRepository::refresh(const std::string& path)
 {
 	clear();
 
@@ -46,8 +55,12 @@ void SaveStateRepository::refresh()
 	auto files = Utils::FileSystem::getDirectoryFiles(path);
 	for (auto file : files)
 	{
-		if (file.hidden || file.directory)
+		if (file.hidden)
 			continue;
+		if (file.directory){
+			refresh(file.path);
+			continue;
+		}
 
 		std::string ext = Utils::String::toLower(Utils::FileSystem::getExtension(file.path));
 
@@ -69,9 +82,7 @@ void SaveStateRepository::refresh()
 		else if (Utils::String::startsWith(ext, ".state"))
 			state->slot = Utils::String::toInteger(ext.substr(6));
 
-		auto stem = Utils::FileSystem::getStem(file.path);
-		if (Utils::String::endsWith(stem, ".state"))
-			stem = Utils::FileSystem::getStem(stem);
+		auto stem = getSaveName(file.path);
 				
 		state->rom = stem;
 		state->fileName = file.path;
@@ -86,6 +97,11 @@ void SaveStateRepository::refresh()
 	}
 }
 
+void SaveStateRepository::refresh()
+{
+	refresh(getSavesPath());
+}
+
 bool SaveStateRepository::hasSaveStates(FileData* game)
 {
 	if (mStates.size())
@@ -93,7 +109,8 @@ bool SaveStateRepository::hasSaveStates(FileData* game)
 		if (game->getSourceFileData()->getSystem() != mSystem)
 			return false;
 
-		auto it = mStates.find(Utils::FileSystem::getStem(game->getPath()));
+		auto name=game->getPathKey();
+		auto it = mStates.find(name);
 		if (it != mStates.cend())
 			return true;
 	}
@@ -104,7 +121,8 @@ std::vector<SaveState*> SaveStateRepository::getSaveStates(FileData* game)
 {
 	if (isEnabled(game) && game->getSourceFileData()->getSystem() == mSystem)
 	{
-		auto it = mStates.find(Utils::FileSystem::getStem(game->getPath()));
+		auto name=game->getPathKey();
+		auto it = mStates.find(name);
 		if (it != mStates.cend())
 			return it->second;
 	}
