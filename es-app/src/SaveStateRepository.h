@@ -25,7 +25,10 @@ public:
 
 	std::string getSavesPath();
 
+	std::string getSaveName(const std::string& path);
+
 	void clear();
+	void refresh(const std::string& path);
 	void refresh();
 
 private:
