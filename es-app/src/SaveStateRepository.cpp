@@ -48,7 +48,6 @@ void SaveStateRepository::refresh(const std::string& path)
 {
 	clear();
 
-	auto path = getSavesPath();
 	if (!Utils::FileSystem::exists(path))
 		return;
 	
