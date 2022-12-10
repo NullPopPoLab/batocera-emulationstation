@@ -1880,3 +1880,10 @@ int SystemData::getShowFlags()
 	
 	return Utils::String::toInteger(spf);
 }
+
+void SystemData::complement()
+{
+	for(auto& it: mRootFolder->getFilesRecursive(GAME, true)){
+		it->complement();
+	}
+}

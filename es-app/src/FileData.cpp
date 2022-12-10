@@ -1828,3 +1828,8 @@ void FileData::setSelectedGame()
 
 	
 }
+
+void FileData::complement()
+{
+	mMetadata.complement();
+}

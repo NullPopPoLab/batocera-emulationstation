@@ -138,6 +138,7 @@ public:
 	void appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths = false) const;
 
 	void migrate(FileData* file, pugi::xml_node& node);
+	void complement();
 
 	MetaDataList(MetaDataListType type);
 	
@@ -176,6 +177,11 @@ public:
 	Utils::Time::DateTime* getScrapeDate(const std::string& scraper);
 
 private:
+	void complement(const std::string& key, const std::vector<std::string>& extlist);
+	void complement_image(const std::string& key);
+	void complement_video(const std::string& key);
+	void complement_document(const std::string& key);
+
 	std::map<int, Utils::Time::DateTime> mScrapeDates;
 
 	std::string		mName;

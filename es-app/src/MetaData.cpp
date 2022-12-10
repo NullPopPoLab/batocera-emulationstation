@@ -275,6 +275,48 @@ void MetaDataList::migrate(FileData* file, pugi::xml_node& node)
 	}
 }
 
+void MetaDataList::complement(const std::string& key, const std::vector<std::string>& extlist){
+
+	for(auto& it: extlist){
+		std::string path = mTargetFile->getScraperPathPrefix() + key + *&it;
+
+		if(!Utils::FileSystem::exists(path))continue;
+		set(key,path);
+	}
+}
+
+void MetaDataList::complement_image(const std::string& key){
+	std::vector<std::string> extlist={ ".png", ".jpg" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement_video(const std::string& key){
+	std::vector<std::string> extlist={ ".mp4", ".avi", ".mkv", ".webm" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement_document(const std::string& key){
+	std::vector<std::string> extlist={ ".pdf" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement()
+{
+	complement_image("image");
+	complement_video("video");
+	complement_image("marquee");
+	complement_image("thumbnail");
+	complement_image("fanart");
+	complement_image("titleshot");
+	complement_document("manual");
+	complement_document("magazine");
+	complement_image("map");
+	complement_image("bezel");
+	complement_image("cartridge");
+	complement_image("boxback");
+	complement_image("wheel");
+}
+
 void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths) const
 {
 	const std::vector<MetaDataDecl>& mdd = getMDD();

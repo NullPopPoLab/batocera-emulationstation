@@ -209,6 +209,8 @@ public:
 
 	SaveStateRepository* getSaveStateRepository();
 
+	void complement();
+
 private:
 	std::string getKeyboardMappingFilePath();
 	static void createGroupedSystems();
