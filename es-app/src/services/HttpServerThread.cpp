@@ -250,14 +250,15 @@ void HttpServerThread::run()
 		if (!isAllowed(req, res))
 			return;
 
-		std::string ret = HttpApi::getRunnningGameInfo();
-		if (ret.empty())
+		auto game = FileData::GetRunningGame();
+		if (game != nullptr)
 		{
-			res.set_content("201 NO GAME RUNNING", "text/html");
-			res.status = 201;
+			res.set_content(HttpApi::ToJson(game), "application/json");
+			return;
 		}
-		else
-			res.set_content(ret, "application/json");
+
+		res.set_content("404 game not found", "text/html");
+		res.status = 404;
 	});
 
 
