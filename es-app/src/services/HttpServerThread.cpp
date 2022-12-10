@@ -710,6 +710,24 @@ void HttpServerThread::run()
 		}
 	});
 
+	mHttpServer->Get(R"(/scraper/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string url = req.matches[1];
+		auto path="/userdata/scraper/"+url;
+		auto data = ResourceManager::getInstance()->getFileData(path);
+		if (data.ptr)
+			res.set_content((char*)data.ptr.get(), data.length, getMimeType(url).c_str());
+		else
+		{
+			res.set_content("404 not found", "text/html");
+			res.status = 404;
+			return;
+		}
+	});
+
 	mHttpServer->Get(R"(/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
 	{
 		if (!isAllowed(req, res))
