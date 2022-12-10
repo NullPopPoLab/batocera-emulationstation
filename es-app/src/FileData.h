@@ -78,7 +78,7 @@ public:
 
 	virtual SystemEnvironmentData* getSystemEnvData() const;
 
-	virtual const std::string getLegacyScraperDir();
+	virtual const std::string getOfficialScraperDir();
 	virtual const std::string getDeepPrefix();
 	virtual const std::string getScraperDir();
 	virtual const std::string getScraperPrefix();
