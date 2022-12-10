@@ -245,7 +245,7 @@ void HttpServerThread::run()
 		res.set_content(HttpApi::getSystemList(), "application/json");
 	});
 
-	mHttpServer->Get("/runningGame", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get("/runningGame", [this](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
