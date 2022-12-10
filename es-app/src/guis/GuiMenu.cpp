@@ -181,10 +181,13 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 	if (SystemConf::getInstance()->getBool("kodi.enabled", true) && ApiSystem::getInstance()->isScriptingSupported(ApiSystem::KODI))
 		addEntry(_("KODI MEDIA CENTER").c_str(), false, [this] 
 	{ 
-		Window *window = mWindow;
-		delete this;
-		if (!ApiSystem::getInstance()->launchKodi(window))
-			LOG(LogWarning) << "Shutdown terminated with non-zero result!";
+		mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE?"), _("YES"), [&]
+		{
+			Window *window = mWindow;
+			delete this;
+			if (!ApiSystem::getInstance()->launchKodi(window))
+				LOG(LogWarning) << "Shutdown terminated with non-zero result!";
+		}, _("NO"), nullptr));
 
 	}, "iconKodi");	
 #endif
