@@ -33,6 +33,7 @@ void MetaDataList::initMetadata()
 		{ Name,             "name",        MD_STRING,              "",                 false,      _("Name"),                 _("this game's name"),			true },
 	//	{ SortName,         "sortname",    MD_STRING,              "",                 false,      _("sortname"),             _("enter game sort name"),	true },
 		{ Desc,             "desc",        MD_MULTILINE_STRING,    "",                 false,      _("Description"),          _("this game's description"),		true },
+		{ Startable,        "startable",   MD_BOOL,                "false",            false,      _("Favorite"),             _("can start this game"),			false },
 
 		{ Rating,           "rating",      MD_RATING,              "0.000000",         false,      _("Rating"),               _("enter rating"),			false },
 		{ Favorite,         "favorite",    MD_BOOL,                "false",            false,      _("Favorite"),             _("enter favorite"),			false },
@@ -53,6 +54,7 @@ void MetaDataList::initMetadata()
 		{ Thumbnail,        "thumbnail",   MD_PATH,                "",                 false,      _("Box"),				  _("enter path to box"),		 false },
 		{ Image,            "image",       MD_PATH,                "",                 false,      _("Image"),                _("enter path to image"),		 true },
 		{ TitleShot,        "titleshot",   MD_PATH,                "",                 false,      _("Title shot"),           _("enter path to title shot"), true },
+		{ Ingame,			"ingame",	   MD_PATH,                "",                 false,      _("Ingame"),		  		  _("enter path to ingame screenshot"), true },
 		{ Video,            "video",       MD_PATH,                "",                 false,      _("Video"),                _("enter path to video"),		 false },
 
 		{ Language,         "lang",        MD_STRING,              "",                 false,      _("Languages"),            _("this game's languages"),				false },
@@ -67,13 +69,23 @@ void MetaDataList::initMetadata()
 		{ Family,           "family",      MD_STRING,              "",                 false,      _("Game family"),		  _("this game's game family"),		false },
 		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Arcade system"),        _("this game's arcade system"), false },
 
-		{ Players,          "players",     MD_INT,                 "",                false,       _("Players"),              _("this game's number of players"),	false },
+		{ Players,          "players",     MD_INT,                 "",                 false,      _("Players"),              _("this game's number of players"),	false },
+		{ Premise,          "premise",     MD_MULTILINE_STRING,    "",                 false,      _("Premise"),              _("premise for this game"),	false },
+		{ Story,            "story",       MD_MULTILINE_STRING,    "",                 false,      _("Story"),                _("this game's story"),		false },
+		{ Rule,             "rule",        MD_MULTILINE_STRING,    "",                 false,      _("Rule"),                 _("this game's rule"),		false },
+		{ Operation,        "operation",   MD_MULTILINE_STRING,    "",                 false,      _("Operation"),            _("how to play"),             false },
+		{ Credit,           "credit",      MD_MULTILINE_STRING,    "",                 false,      _("Credit"),               _("this game's staff"),       false },
+		{ Tips,             "tips",        MD_MULTILINE_STRING,    "",                 false,      _("Tips"),                 _("useful something"),        false },
+		{ Notes,            "notes",       MD_MULTILINE_STRING,    "",                 false,      _("Notes"),                _("miscellaneous something"),        false },
+		{ Bugs,             "bugs",        MD_MULTILINE_STRING,    "",                 false,      _("Bugs"),                 _("problem info"),            false },
 
 		{ Bezel,            "bezel",       MD_PATH,                "",                 false,      _("Bezel (16:9)"),         _("enter path to bezel (16:9)"),	 true },
 		{ Marquee,          "marquee",     MD_PATH,                "",                 false,      _("Logo"),                 _("enter path to logo"),	     true },
 		{ BoxArt,			"boxart",	   MD_PATH,                "",                 false,       _("Alt BoxArt"),		      _("enter path to alt boxart"), true },
 		{ BoxBack,			"boxback",	   MD_PATH,                "",                 false,      _("Box backside"),		  _("enter path to box background"), true },
 		{ Cartridge,        "cartridge",   MD_PATH,                "",                 false,       _("Cartridge"),            _("enter path to cartridge"),  true },
+		{ PCB,				"pcb",	       MD_PATH,                "",                 false,      _("PCB"),		  		  _("enter path to pcb"), true },
+		{ Flyer,			"flyer",	   MD_PATH,                "",                 false,      _("Flyer"),		  		  _("enter path to flyer"), true },
 		{ Wheel,			"wheel",	   MD_PATH,                "",                 false,       _("Wheel"),		          _("enter path to wheel"),      true },
 		{ FanArt,           "fanart",      MD_PATH,                "",                 false,      _("Fan art"),              _("enter path to fanart"),	 true },
 		{ Mix,			    "mix",	       MD_PATH,                "",                 false,       _("Mix"),                  _("enter path to mix"),		 true },
@@ -308,8 +320,12 @@ void MetaDataList::complement()
 	complement_image("map");
 	complement_image("bezel");
 	complement_image("cartridge");
+	complement_image("boxart");
 	complement_image("boxback");
 	complement_image("wheel");
+	complement_image("pcb");
+	complement_image("flyer");
+	complement_image("ingame");
 }
 
 void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths) const

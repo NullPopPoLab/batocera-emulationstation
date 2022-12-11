@@ -76,6 +76,19 @@ enum MetaDataId
 	GenreIds = 39,
 	Family = 40,
 	Bezel = 41,
+	// NullPopPoCustom 
+	Ingame,
+	PCB,
+	Flyer,
+	Startable,
+	Premise,
+	Story,
+	Rule,
+	Operation,
+	Credit,
+	Tips,
+	Notes,
+	Bugs,
 	Max,
 };
 

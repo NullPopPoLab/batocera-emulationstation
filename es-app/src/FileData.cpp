@@ -250,6 +250,8 @@ const std::string FileData::getThumbnailPath()
 
 		if (thumbnail.empty())
 			thumbnail = getMetadata(MetaDataId::Image);
+		if (thumbnail.empty())
+			thumbnail = getMetadata(MetaDataId::Ingame);
 
 		// no image, try to use local image
 		if (thumbnail.empty() && Settings::getInstance()->getBool("LocalArt"))
@@ -319,6 +321,8 @@ const std::string FileData::getTitleShotPath()
 
 		if (path.empty())
 			path = getMetadata(MetaDataId::Image);
+		if (path.empty())
+			path = getMetadata(MetaDataId::Ingame);
 
 		// no image, try to use local image
 		if (path.empty() && Settings::getInstance()->getBool("LocalArt"))
@@ -478,6 +482,8 @@ const std::string FileData::getMarqueePath()
 const std::string FileData::getImagePath()
 {
 	std::string image = getMetaPath(MetaDataId::Image);
+	if (image.empty())
+		image = getMetadata(MetaDataId::Ingame);
 
 	// no image, try to use local image
 	if(image.empty())

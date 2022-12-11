@@ -372,9 +372,12 @@ MDResolveHandle::MDResolveHandle(const ScraperSearchResult& result, const Scrape
 		case MetaDataId::Video: suffix = "video";  resize = false; break;
 		case MetaDataId::FanArt: suffix = "fanart"; resize = false; break;
 		case MetaDataId::BoxBack: suffix = "boxback"; resize = false; break;
+		case MetaDataId::PCB: suffix = "pcb"; resize = false; break;
+		case MetaDataId::Flyer: suffix = "flyer"; resize = false; break;
 		case MetaDataId::BoxArt: suffix = "box"; resize = false; break;
 		case MetaDataId::Wheel: suffix = "wheel"; resize = false; break;		
 		case MetaDataId::TitleShot: suffix = "titleshot"; break;
+		case MetaDataId::Ingame: suffix = "ingame"; break;
 		case MetaDataId::Manual: suffix = "manual"; resize = false;  break;
 		case MetaDataId::Magazine: suffix = "magazine"; resize = false;  break;
 		case MetaDataId::Map: suffix = "map"; resize = false; break;
@@ -701,6 +704,9 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 	case MetaDataId::Video: suffix = "video"; folder = "videos"; break;
 	case MetaDataId::FanArt: suffix = "fanart"; break;
 	case MetaDataId::BoxBack: suffix = "boxback"; break;
+	case MetaDataId::PCB: suffix = "pcb"; break;
+	case MetaDataId::Flyer: suffix = "flyer"; break;
+	case MetaDataId::Ingame: suffix = "ingame"; break;
 	case MetaDataId::BoxArt: suffix = "box"; break;
 	case MetaDataId::Wheel: suffix = "wheel"; break;
 	case MetaDataId::TitleShot: suffix = "titleshot"; break;

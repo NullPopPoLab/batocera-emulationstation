@@ -43,10 +43,13 @@ DetailedContainer::DetailedContainer(ISimpleGameListView* parent, GuiComponent* 
 		{ "md_marquee", { MetaDataId::Marquee, MetaDataId::Wheel } },
 		{ "md_fanart", { MetaDataId::FanArt, MetaDataId::TitleShot, MetaDataId::Image } },
 		{ "md_titleshot", { MetaDataId::TitleShot, MetaDataId::Image } },
+		{ "md_ingame", { MetaDataId::Ingame, MetaDataId::Image } },
 		{ "md_boxart", { MetaDataId::BoxArt, MetaDataId::Thumbnail } },		
 		{ "md_wheel",{ MetaDataId::Wheel, MetaDataId::Marquee } },
 		{ "md_cartridge",{ MetaDataId::Cartridge } },
 		{ "md_boxback",{ MetaDataId::BoxBack } },		
+		{ "md_flyer",{ MetaDataId::Flyer } },		
+		{ "md_pcb",{ MetaDataId::PCB } },		
 		{ "md_mix",{ MetaDataId::Mix, MetaDataId::Image, MetaDataId::Thumbnail } },
 
 		// Medias  that can't be substituted even if not found
@@ -56,10 +59,12 @@ DetailedContainer::DetailedContainer(ISimpleGameListView* parent, GuiComponent* 
 		{ "md_wheel_only", { MetaDataId::Wheel } },
 		{ "md_fanart_only", { MetaDataId::FanArt } },
 		{ "md_titleshot_only", { MetaDataId::TitleShot } },
+		{ "md_ingame_only", { MetaDataId::Ingame} },
 		{ "md_boxart_only", { MetaDataId::BoxArt } },
 		{ "md_boxback_only", { MetaDataId::BoxBack } },		
 		{ "md_cartridge_only",{ MetaDataId::Cartridge } },
-		{ "md_boxback_only",{ MetaDataId::BoxBack } },
+		{ "md_flyer_only",{ MetaDataId::Flyer } },
+		{ "md_pcb_only",{ MetaDataId::PCB } },
 		{ "md_mix_only", { MetaDataId::Mix } }
 	};
 
