@@ -76,6 +76,7 @@ enum MetaDataId
 	GenreIds = 39,
 	Family = 40,
 	Bezel = 41
+	Max,
 };
 
 namespace MetaDataImportType
