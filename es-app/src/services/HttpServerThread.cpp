@@ -53,6 +53,14 @@ File APIs
 GET /resources/{path relative to resources}"					-> any file in resources
 GET /{path relative to resources/services}"						-> any other file in resources/services
 
+NullPopPo Custom APIs
+---------------------
+GET /scraper/{path}                                             -> any file in /userdata/scraper/
+GET /screenshots/{fileName}                                     -> download a screenshot image
+GET /systems/{systemName}/games/{gameId}/doclist                -> document list from /userdata/scraper/{systemName}/{gameName}/docs.json
+GET /systems/{systemName}/games/{gameId}/jukebox                -> listup in /userdata/scraper/{systemName}/{gameName}/jukebox/
+GET /systems/{systemName}/games/{gameId}/slideshow              -> listup in /userdata/scraper/{systemName}/{gameName}/slideshow/
+
 */
 HttpServerThread::HttpServerThread(Window* window) : mWindow(window)
 {
@@ -800,6 +808,24 @@ void HttpServerThread::run()
 
 		std::string url = req.matches[1];
 		auto path="/userdata/scraper/"+url;
+		auto data = ResourceManager::getInstance()->getFileData(path);
+		if (data.ptr)
+			res.set_content((char*)data.ptr.get(), data.length, getMimeType(url).c_str());
+		else
+		{
+			res.set_content("404 not found", "text/html");
+			res.status = 404;
+			return;
+		}
+	});
+
+	mHttpServer->Get(R"(/screenshots/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string url = req.matches[1];
+		auto path="/userdata/screenshots/"+url;
 		auto data = ResourceManager::getInstance()->getFileData(path);
 		if (data.ptr)
 			res.set_content((char*)data.ptr.get(), data.length, getMimeType(url).c_str());
