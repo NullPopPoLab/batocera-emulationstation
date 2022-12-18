@@ -376,6 +376,9 @@ msgstr "TABLEAU DES SCORES"
 msgid "VERBOSE MODE"
 msgstr "MODE VERBEUX"
 
+msgid "ENCORE MODE"
+msgstr ""
+
 msgid "AUTOMATIC SCREENSHOT"
 msgstr "CAPTURE D'ÉCRAN AUTOMATIQUE"
 
@@ -948,14 +951,11 @@ msgstr "ETES-VOUS SUR(E) ?"
 msgid "UPDATING %s"
 msgstr "MISE À JOUR DE %s"
 
-msgid "UPDATING BATOCERA"
-msgstr "MISE À JOUR DE BATOCERA"
-
 msgid "UPDATE IS READY"
 msgstr "LA MISE À JOUR EST PRÊTE"
 
-msgid "REBOOT SYSTEM TO APPLY THE UPDATE"
-msgstr "REDÉMARREZ LE SYSTÈME POUR APPLIQUER LA MISE À JOUR"
+msgid "REBOOT TO APPLY"
+msgstr "REDÉMARRER POUR APPLIQUER"
 
 msgid "REALLY UPDATE?"
 msgstr "VOULEZ-VOUS VRAIMENT METTRE À JOUR ?"
@@ -974,8 +974,8 @@ msgstr "CONNEXION RÉSEAU NÉCESSAIRE"
 msgid "NO UPDATE AVAILABLE"
 msgstr "PAS DE MISE À JOUR DISPONIBLE"
 
-msgid "INSTALL BATOCERA"
-msgstr "INSTALLER BATOCERA"
+msgid "INSTALL ON A NEW DISK"
+msgstr "INSTALLATION SUR UN NOUVEAU DISQUE"
 
 msgid "TARGET DEVICE"
 msgstr "PÉRIPHÉRIQUE CIBLE"
@@ -1175,6 +1175,9 @@ msgstr "LOGO"
 msgid "MARQUEE"
 msgstr "BANNIÈRE"
 
+msgid "SCRAPE SHORT NAME"
+msgstr "SCRAPER LES NOMS COURTS"
+
 msgid "SCRAPE RATINGS"
 msgstr "SCRAPER LES NOTATIONS"
 
@@ -1220,11 +1223,11 @@ msgstr "SCRAPER LES JEUX POUR"
 msgid "ALL"
 msgstr "TOUS"
 
-msgid "GAMES MISSING MEDIAS"
-msgstr "JEUX AVEC MÉDIAS MANQUANTS"
+msgid "GAMES MISSING ANY MEDIA"
+msgstr "JEUX AYANT UN MÉDIA MANQUANT"
 
-msgid "GAMES WITHOUT ANY MEDIA"
-msgstr "JEUX SANS AUCUN MÉDIA"
+msgid "GAMES MISSING ALL MEDIA"
+msgstr "JEUX AYANT TOUS LES MÉDIAS MANQUANTS"
 
 msgid "IGNORE RECENTLY SCRAPED GAMES"
 msgstr "IGNORER LES JEUX SCRAPÉS RÉCEMMENT"
@@ -1387,6 +1390,18 @@ msgstr "PARAMÈTRES DES MANETTES"
 msgid "CONTROLLER & BLUETOOTH SETTINGS"
 msgstr "PARAMÈTRES DES MANETTES ET BLUETOOTH"
 
+msgid "INTERNAL"
+msgstr "INTERNE"
+
+msgid "ANY EXTERNAL"
+msgstr "PREMIER DISQUE EXTERNE"
+
+msgid "maximum 1920x1080"
+msgstr "maximum 1920x1080"
+
+msgid "maximum 640x480"
+msgstr "maximum 640x480"
+
 msgid "MAIN MENU"
 msgstr "MENU PRINCIPAL"
 
@@ -1468,9 +1483,6 @@ msgstr "ACTIVER L'ACCÈS WEB PUBLIC"
 #, c-format
 msgid "Allow public web access API using %s"
 msgstr "Autoriser l’accès public à l’API via %s"
-
-msgid "REBOOT REQUIRED TO APPLY THE NEW CONFIGURATION"
-msgstr "UN REDÉMARRAGE EST NÉCESSAIRE POUR APPLIQUER LA NOUVELLE CONFIGURATION"
 
 msgid "LOG LEVEL"
 msgstr "NIVEAU DE LOG"
@@ -1555,9 +1567,6 @@ msgstr "THÈME DE L’INTERFACE RETROARCH"
 
 msgid "AUTO"
 msgstr "AUTO"
-
-msgid "AUTOCONFIGURE EMULATORS CONTROLLERS"
-msgstr "AUTOCONFIGURATION ÉMULATEURS/MANETTES"
 
 msgid "SWITCH A & B BUTTONS IN EMULATIONSTATION"
 msgstr "INVERSER LES BOUTONS A/B DANS EMULATIONSTATION"
@@ -1796,9 +1805,6 @@ msgstr "PÉRIPHÉRIQUE DE STOCKAGE"
 msgid "BACKUP USER DATA"
 msgstr "SAUVEGARDER LES DONNÉES UTILISATEUR"
 
-msgid "INSTALL BATOCERA ON A NEW DISK"
-msgstr "INSTALLER BATOCERA SUR UN NOUVEAU DISQUE"
-
 msgid "ADVANCED"
 msgstr "AVANCÉ"
 
@@ -1810,6 +1816,9 @@ msgstr "RENFORCER LA SÉCURITÉ"
 
 msgid "ROOT PASSWORD"
 msgstr "MOT DE PASSE ROOT"
+
+msgid "REBOOT REQUIRED TO APPLY THE NEW CONFIGURATION"
+msgstr "UN REDÉMARRAGE EST NÉCESSAIRE POUR APPLIQUER LA NOUVELLE CONFIGURATION"
 
 msgid "LATENCY REDUCTION"
 msgstr "RÉDUCTION DE LA LATENCE"
@@ -1824,7 +1833,7 @@ msgid "USE SECOND INSTANCE FOR RUN-AHEAD"
 msgstr ""
 
 msgid "Can prevent audio skips on button presses."
-msgstr ""
+msgstr "Peut prévenir des sauts audios sur pression des boutons"
 
 msgid "AUTOMATIC FRAME DELAY"
 msgstr "IMAGES EN RETARD AUTOMATIQUE"
@@ -1838,10 +1847,10 @@ msgid ""
 msgstr ""
 
 msgid "VARIABLE REFRESH RATE (G-SYNC, FREESYNC)"
-msgstr ""
+msgstr "TAUX DE RAFFRAÎCHISSEMENT VARIABLE (G-SYNC, FREESYNC)"
 
 msgid "VARIABLE REFRESH RATE"
-msgstr ""
+msgstr "TAUX DE RAFFRAÎCHISSEMENT VARIABLE"
 
 msgid ""
 "Don't deviate from core requested timing. G-Sync, FreeSync, HDMI 2.1 VRR."
@@ -1849,6 +1858,9 @@ msgstr ""
 
 msgid "DECORATION SET"
 msgstr "PACK DE DÉCORATIONS"
+
+msgid "Current setting"
+msgstr "Paramètre actuel"
 
 msgid "DEFAULT GLOBAL SETTINGS"
 msgstr "PARAMÈTRES GLOBAUX PAR DÉFAUT"
@@ -1929,6 +1941,9 @@ msgstr "URL DU SERVICE IA"
 msgid "PAUSE ON TRANSLATED SCREEN"
 msgstr "PAUSE SUR L'ÉCRAN DE TRADUCTION"
 
+msgid "AUTOCONFIGURE CONTROLLERS"
+msgstr "AUTOCONFIGURER LES MANETTES"
+
 msgid "SAVESTATES"
 msgstr "SAUVEGARDES INSTANTANÉES"
 
@@ -1944,8 +1959,8 @@ msgstr "Nouveau jeu crée un nouveau slot"
 msgid "NEW GAME OVERWRITES CURRENT SLOT"
 msgstr "Nouveau jeu écrase le slot actuel"
 
-msgid "DISPLAY SAVE STATE MANAGER"
-msgstr "MONTRER LE GESTIONNAIRE DE SAUVEGARDES"
+msgid "SHOW SAVE STATE MANAGER"
+msgstr "AFFICHER LE GESTIONNAIRE DE SAUVEGARDES"
 
 msgid "ALWAYS"
 msgstr "TOUJOURS"
@@ -1953,11 +1968,8 @@ msgstr "TOUJOURS"
 msgid "IF NOT EMPTY"
 msgstr "SI NON VIDE"
 
-msgid "SHOW SAVE STATE MANAGER"
-msgstr "AFFICHER LE GESTIONNAIRE DE SAUVEGARDES"
-
-msgid "DISPLAY SAVE STATE MANAGER BEFORE LAUNCHING A GAME"
-msgstr "Afficher le gestionnaire de sauvegardes avant de lancer le jeu"
+msgid "Display save state manager before launching a game."
+msgstr "Afficher le gestionnaire de sauvegarde au lancement d'un jeu"
 
 msgid "PER SYSTEM ADVANCED CONFIGURATION"
 msgstr "CONFIGURATION AVANCÉE PAR SYSTÈME"
@@ -2202,9 +2214,6 @@ msgstr "LANCER L'ÉCRAN DE VEILLE"
 msgid "VIEW USER'S MANUAL"
 msgstr "VOIR LE MANUEL DE L’UTILISATEUR"
 
-msgid "VIEW BATOCERA MANUAL"
-msgstr "VOIR LE MANUEL DE BATOCERA"
-
 msgid "RESTART SYSTEM"
 msgstr "REDÉMARRER"
 
@@ -2264,9 +2273,6 @@ msgstr "COTE À COTE"
 
 msgid "INTERNAL RESOLUTION"
 msgstr "RÉSOLUTION INTERNE"
-
-msgid "AUTOCONFIGURE CONTROLLERS"
-msgstr "AUTOCONFIGURER LES MANETTES"
 
 msgid "LAUNCH THIS GAME AT STARTUP"
 msgstr "LANCER CE JEU AU DÉMARRAGE"
@@ -2411,6 +2417,9 @@ msgstr "Kiosque"
 msgid "Kid"
 msgstr "Enfant"
 
+msgid "Basic"
+msgstr "Basique"
+
 msgid "Released"
 msgstr "Date de sortie"
 
@@ -2432,8 +2441,17 @@ msgstr "Jeux similaires à"
 msgid "GAME OPTIONS"
 msgstr "OPTIONS DU JEU"
 
+msgid "SAVE STATES (HOLD)"
+msgstr "SAUVEGARDES INSTANTANÉES (MAINTENU)"
+
+msgid "GAME OPTIONS (HOLD)"
+msgstr "OPTIONS DU JEU (MAINTENU)"
+
 msgid "FAVORITE"
 msgstr "FAVORIS"
+
+msgid "RANDOM (HOLD)"
+msgstr "ALÉATOIRE (MAINTENU)"
 
 msgid ""
 "A valid account is required. Please register an account on https://"
@@ -2468,6 +2486,9 @@ msgstr "Chargement de la configuration système..."
 
 msgid "SAVING METADATAS. PLEASE WAIT..."
 msgstr "SAUVEGARDE DES MÉTADONNÉES. VEUILLEZ PATIENTEZ..."
+
+msgid "DO YOU WANT TO SWITCH THE SCREEN ?"
+msgstr "VOULEZ-VOUS CHANGER D'ÉCRAN ?"
 
 msgid "Collections"
 msgstr "Collections"
@@ -2859,6 +2880,36 @@ msgstr "LECTURE À L’ÉCRAN ACTIVÉE"
 
 msgid "SCREEN READER DISABLED"
 msgstr "LECTURE À L’ÉCRAN DÉSACTIVÉE"
+
+#~ msgid "REBOOT SYSTEM TO APPLY THE UPDATE"
+#~ msgstr "REDÉMARREZ LE SYSTÈME POUR APPLIQUER LA MISE À JOUR"
+
+#~ msgid "UPDATING BATOCERA"
+#~ msgstr "MISE À JOUR DE BATOCERA"
+
+#~ msgid "INSTALL BATOCERA"
+#~ msgstr "INSTALLER BATOCERA"
+
+#~ msgid "GAMES MISSING MEDIAS"
+#~ msgstr "JEUX AVEC MÉDIAS MANQUANTS"
+
+#~ msgid "GAMES WITHOUT ANY MEDIA"
+#~ msgstr "JEUX SANS AUCUN MÉDIA"
+
+#~ msgid "AUTOCONFIGURE EMULATORS CONTROLLERS"
+#~ msgstr "AUTOCONFIGURATION ÉMULATEURS/MANETTES"
+
+#~ msgid "INSTALL BATOCERA ON A NEW DISK"
+#~ msgstr "INSTALLER BATOCERA SUR UN NOUVEAU DISQUE"
+
+#~ msgid "DISPLAY SAVE STATE MANAGER"
+#~ msgstr "MONTRER LE GESTIONNAIRE DE SAUVEGARDES"
+
+#~ msgid "DISPLAY SAVE STATE MANAGER BEFORE LAUNCHING A GAME"
+#~ msgstr "Afficher le gestionnaire de sauvegardes avant de lancer le jeu"
+
+#~ msgid "VIEW BATOCERA MANUAL"
+#~ msgstr "VOIR LE MANUEL DE BATOCERA"
 
 #~ msgid "USE RUN-AHEAD FRAMES"
 #~ msgstr "UTILISER DES IMAGES A EXÉCUTER EN AVANCE"

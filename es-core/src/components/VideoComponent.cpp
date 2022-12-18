@@ -7,6 +7,7 @@
 #include "Window.h"
 #include <SDL_timer.h>
 #include "LocaleES.h"
+#include "Paths.h"
 
 #define FADE_TIME_MS	800
 
@@ -19,7 +20,7 @@ std::string getTitlePath()
 std::string getTitleFolder() 
 {
 #if WIN32
-	return Utils::FileSystem::getGenericPath(Utils::FileSystem::getEsConfigPath() + "/tmp/");
+	return Utils::FileSystem::getGenericPath(Paths::getUserEmulationStationPath() + "/tmp/");
 #endif
 
 	return "/tmp/";
@@ -195,7 +196,7 @@ void VideoComponent::render(const Transform4x4f& parentTrans)
 
 	Renderer::setMatrix(trans);
 
-	if (Settings::DebugImage)
+	if (Settings::DebugImage())
 	{
 		Vector2f targetSizePos = (mTargetSize - mSize) * mOrigin * -1;
 		Renderer::drawRect(targetSizePos.x(), targetSizePos.y(), mTargetSize.x(), mTargetSize.y(), 0xFF000033);
@@ -389,7 +390,7 @@ void VideoComponent::applyTheme(const std::shared_ptr<ThemeData>& theme, const s
 std::vector<HelpPrompt> VideoComponent::getHelpPrompts()
 {
 	std::vector<HelpPrompt> ret;
-	ret.push_back(HelpPrompt(BUTTON_BACK, _("SELECT"))); // batocera
+	ret.push_back(HelpPrompt(BUTTON_BACK, _("SELECT")));
 	return ret;
 }
 
@@ -518,10 +519,14 @@ void VideoComponent::manageState()
 	{
 		// If we are not on display then stop the video from playing
 		if (!show)
-		{
+		{			
 			mIsWaitingForVideoToStart = false;
 			mStartDelayed = false;
-			stopVideo();
+
+			if (mDisable && isShowing() && !mScreensaverActive && mIsPlaying && mVisible)
+				pauseVideo();
+			else
+				stopVideo();
 		}
 		else
 		{
@@ -541,7 +546,10 @@ void VideoComponent::manageState()
 		// If we are on display then see if we should start the video
 		if (show && !mVideoPath.empty())
 		{
-			startVideoWithDelay();
+			if (isPaused())
+				resumeVideo();
+			else
+				startVideoWithDelay();
 		}
 	}
 }

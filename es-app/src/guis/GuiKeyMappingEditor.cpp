@@ -33,12 +33,22 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "right",   "RIGHT",        ":/help/dpad_right.svg" },
 		{ "start",   "START",        ":/help/button_start.svg" },
 		{ "select",  "SELECT",       ":/help/button_select.svg" },
+		{ "menu",  "MENU",       ":/help/button_menu.svg" },
 
 		{ "a",				 InputConfig::buttonLabel("a"),    InputConfig::buttonImage("a") },
 		{ "b",				 InputConfig::buttonLabel("b"),    InputConfig::buttonImage("b") },
+		{ "c",               "C",   ":/help/button_c.svg" },
 
 		{ "x",               "X",   ":/help/buttons_north.svg" },
 		{ "y",               "Y",    ":/help/buttons_west.svg" },
+		{ "z",               "Z",   ":/help/button_z.svg" },
+
+		{ "pageup",          "L1",      ":/help/button_l.svg" },
+		{ "pagedown",        "R1",     ":/help/button_r.svg" },
+		{ "l2",              "L2",       ":/help/button_lt.svg" },
+		{ "r2",              "R2",      ":/help/button_rt.svg" },
+		{ "l3",              "L3",       ":/help/analog_thumb.svg" },
+		{ "r3",              "R3",      ":/help/analog_thumb.svg" },
 
 		{ "joystick1up",     "LEFT ANALOG UP",     ":/help/analog_up.svg" },
 		{ "joystick1down",   "LEFT ANALOG DOWN",     ":/help/analog_down.svg" },
@@ -49,21 +59,25 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "joystick2down",   "RIGHT ANALOG DOWN",     ":/help/analog_down.svg" },
 		{ "joystick2left",   "RIGHT ANALOG LEFT",   ":/help/analog_left.svg" },
 		{ "joystick2right",  "RIGHT ANALOG RIGHT",   ":/help/analog_right.svg" },
-		{ "pageup",          "L1",      ":/help/button_l.svg" },
-		{ "pagedown",        "R1",     ":/help/button_r.svg" },
-		{ "l2",              "L2",       ":/help/button_lt.svg" },
-		{ "r2",              "R2",      ":/help/button_rt.svg" },
-		{ "l3",              "L3",       ":/help/analog_thumb.svg" },
-		{ "r3",              "R3",      ":/help/analog_thumb.svg" },
 
 		//{ "hotkey",          "HOTKEY",      ":/help/button_hotkey.svg" },
 
 		{ "hotkey + start",          "HOTKEY + START",      ":/help/button_hotkey.svg", ":/help/button_start.svg" },
+		{ "hotkey + select",          "HOTKEY + SELECT",      ":/help/button_hotkey.svg", ":/help/button_select.svg" },
+		{ "hotkey + menu",          "HOTKEY + MENU",      ":/help/button_hotkey.svg", ":/help/button_menu.svg" },
 
 		{ "hotkey + a",       "HOTKEY + " + InputConfig::buttonLabel("a"),    ":/help/button_hotkey.svg", InputConfig::buttonImage("a") },
 		{ "hotkey + b",       "HOTKEY + " + InputConfig::buttonLabel("b"),   ":/help/button_hotkey.svg", InputConfig::buttonImage("b") },
+		{ "hotkey + c",       "HOTKEY + C",   ":/help/button_hotkey.svg", ":/help/button_c.svg" },
 		{ "hotkey + x",       "HOTKEY + X",    ":/help/button_hotkey.svg", ":/help/buttons_north.svg" },
-		{ "hotkey + y",       "HOTKEY + Y",   ":/help/button_hotkey.svg", ":/help/buttons_west.svg" }
+		{ "hotkey + y",       "HOTKEY + Y",   ":/help/button_hotkey.svg", ":/help/buttons_west.svg" },
+		{ "hotkey + z",       "HOTKEY + Z",   ":/help/button_hotkey.svg", ":/help/button_z.svg" },
+		{ "hotkey + pageup",       "HOTKEY + L1",   ":/help/button_hotkey.svg", ":/help/button_l.svg" },
+		{ "hotkey + pagedown",       "HOTKEY + R1",   ":/help/button_hotkey.svg", ":/help/button_r.svg" },
+		{ "hotkey + l2",       "HOTKEY + L2",   ":/help/button_hotkey.svg", ":/help/button_lt.svg" },
+		{ "hotkey + r2",       "HOTKEY + R2",   ":/help/button_hotkey.svg", ":/help/button_rt.svg" },
+		{ "hotkey + l3",       "HOTKEY + L3",   ":/help/button_hotkey.svg", ":/help/analog_thumb.svg" },
+		{ "hotkey + r3",       "HOTKEY + R3",   ":/help/button_hotkey.svg", ":/help/analog_thumb.svg" },
 	};
 }
 
@@ -95,7 +109,7 @@ GuiKeyMappingEditor::GuiKeyMappingEditor(Window* window, IKeyboardMapContainer* 
 	// Title
 	mHeaderGrid = std::make_shared<ComponentGrid>(mWindow, Vector2i(1, 5));
 
-	mTitle = std::make_shared<TextComponent>(mWindow, _("PAD TO KEYBOARD CONFIGURATION"), theme->Title.font, theme->Title.color, ALIGN_CENTER); // batocera
+	mTitle = std::make_shared<TextComponent>(mWindow, _("PAD TO KEYBOARD CONFIGURATION"), theme->Title.font, theme->Title.color, ALIGN_CENTER);
 	mSubtitle = std::make_shared<TextComponent>(mWindow, _("SELECT ACTIONS TO CHANGE"), theme->TextSmall.font, theme->TextSmall.color, ALIGN_CENTER);
 
 	if (!mEditable)

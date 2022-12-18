@@ -62,6 +62,8 @@ public:
 	FileData(FileType type, const std::string& path, SystemData* system);
 	virtual ~FileData();
 
+	static FileData* GetRunningGame() { return mRunningGame; }
+
 	virtual const std::string& getName();
 
 	inline FileType getType() const { return mType; }
@@ -82,6 +84,7 @@ public:
 	virtual const std::string getScraperPrefix();
 	virtual const std::string getScraperPathPrefix();
 	virtual const std::string getThumbnailPath();
+	virtual const std::string getTitleShotPath();
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();
 	virtual const std::string getImagePath();
@@ -173,6 +176,8 @@ private:
 	MetaDataList mMetadata;
 
 protected:	
+	static FileData* mRunningGame;
+
 	FolderData* mParent;
 	std::string mPath;
 	FileType mType;
