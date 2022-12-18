@@ -145,10 +145,15 @@ MetaDataList::MetaDataList(MetaDataListType type) : mType(type), mWasChanged(fal
 
 }
 
-void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system, FileData* file)
+void MetaDataList::init(SystemData* system, FileData* file)
+{
+	mRelativeTo = system;	
+	mTargetFile = file;
+}
+
+void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system)
 {
 	mType = type;
-	mTargetFile = file;
 	mRelativeTo = system;	
 
 	mUnKnownElements.clear();
