@@ -193,10 +193,21 @@ bool HttpApi::ImportFromJson(FileData* file, const std::string& json)
 
 		std::string newValue = value.GetString();
 		std::string currentValue = meta.get(mdd.id);
-		if (newValue != currentValue)
-		{
+		if (newValue == currentValue){
+			continue;
+		}
+
+		switch(mdd.type){
+			case MD_STRING:
+			case MD_INT:
+			case MD_FLOAT:
+			case MD_BOOL:
+			case MD_MULTILINE_STRING:
+			case MD_RATING:
+			case MD_DATE:
 			meta.set(mdd.id, newValue);
 			changed = true;
+			break;
 		}
 	}
 
