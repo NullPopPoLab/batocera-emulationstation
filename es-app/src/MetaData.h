@@ -134,7 +134,8 @@ class MetaDataList
 public:
 	static void initMetadata();
 
-	void loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system, FileData* file);
+	void init(SystemData* system, FileData* file);
+	void loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system);
 	void appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths = false) const;
 
 	void migrate(FileData* file, pugi::xml_node& node);
