@@ -558,23 +558,25 @@ void GuiMenu::openDeveloperSettings()
 		}, _("NO"), nullptr));
 	});
 
-#if 0 // Down with SIGSEGV, why?
 	s->addEntry(_("COMPLEMENT METADATA"), true, [this, s]
 	{
 		mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE?"), _("YES"), [&]
 		{
 			LOG(LogInfo) << "* bgn of complementation";
 
+			int idx = 0;
 			for (auto& system : SystemData::sSystemVector)
 			{
+				mWindow->renderSplashScreen(_("Complementing") + ": " + system->getFullName(), (float)idx / (float)SystemData::sSystemVector.size());
 				system->complement();
+				idx++;
 			}
 
 			LOG(LogInfo) << "* end of complementation";
+			mWindow->closeSplashScreen();
 
 		}, _("NO"), nullptr));
 	});
-#endif
 
 	s->addEntry(_("CLEAR CACHES"), true, [this, s]
 	{
