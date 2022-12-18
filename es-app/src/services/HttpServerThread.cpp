@@ -309,6 +309,81 @@ void HttpServerThread::run()
 		res.status = 404;		
 	});
 
+	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/slideshow)", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			std::string gameId = req.matches[2];
+			auto game = HttpApi::findFileData(system, gameId);
+			if (game != nullptr) {
+				res.set_content(HttpApi::getSlideshowFiles(game), "application/json");
+				return;
+			}
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/jukebox)", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			std::string gameId = req.matches[2];
+			auto game = HttpApi::findFileData(system, gameId);
+			if (game != nullptr) {
+				res.set_content(HttpApi::getJukeboxFiles(game), "application/json");
+				return;
+			}
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/doclist)", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			std::string gameId = req.matches[2];
+			auto game = HttpApi::findFileData(system, gameId);
+			if (game != nullptr) {
+				std::string path = game->getScraperDir()+"/docs.json";
+				if (!path.empty())
+				{
+					auto data = ResourceManager::getInstance()->getFileData(path);
+					if (data.ptr)
+					{
+						res.set_content((char*)data.ptr.get(), data.length, "application/json");
+						return;
+					}
+
+					res.set_content("503 cannot read", "text/html");
+					res.status = 503;
+					return;
+				}
+			}
+		}
+
+		res.set_content("404 list not found", "text/html");
+		res.status = 404;
+	});
+
 	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/media/(/?.*))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
@@ -336,6 +411,8 @@ void HttpServerThread::run()
 							return;
 						}
 
+						res.set_content("503 cannot read", "text/html");
+						res.status = 503;
 						return;
 					}
 				}
@@ -420,6 +497,11 @@ void HttpServerThread::run()
 					if (ViewController::hasInstance())
 						mWindow->postToUiThread([game]() { ViewController::get()->onFileChanged(game, FileChangeType::FILE_METADATA_CHANGED); });					
 
+					return;
+				}
+				else{
+					res.set_content("204 not changed", "text/html");
+					res.status = 204;
 					return;
 				}
 			}

@@ -194,6 +194,10 @@ public:
 	void setScrapeDate(const std::string& scraper);
 	Utils::Time::DateTime* getScrapeDate(const std::string& scraper);
 
+	bool isSlideShowAvailable();
+	bool isJukeBoxAvailable();
+	bool isDocumentationAvailable();
+
 private:
 	void complement(const std::string& key, const std::vector<std::string>& extlist);
 	void complement_image(const std::string& key);
