@@ -30,23 +30,25 @@ void MetaDataList::initMetadata()
 	MetaDataDecl gameDecls[] = 
 	{
 		// key,             type,                   default,            statistic,  name in GuiMetaDataEd,  prompt in GuiMetaDataEd
-		{ Name,             "name",        MD_STRING,              "",                 false,      _("Name"),                 _("this game's name"),			true },
-	//	{ SortName,         "sortname",    MD_STRING,              "",                 false,      _("sortname"),             _("enter game sort name"),	true },
+		{ Name,             "name",        MD_STRING,              "",                 false,      _("Name"),                 _("displaying game title"),	true },
+		{ Title,      		"title",       MD_STRING,              "",                 false,      _("Strict Title"),		  _("strict game title"),		false },
+		{ SortName,         "sortname",    MD_STRING,              "",                 false,      _("Sortable Title"),       _("sortable game title"),		true },
+		{ Family,           "family",      MD_STRING,              "",                 false,      _("Game family"),		  _("this game's game family"),		false },
 		{ Desc,             "desc",        MD_MULTILINE_STRING,    "",                 false,      _("Description"),          _("this game's description"),		true },
-		{ Startable,        "startable",   MD_BOOL,                "false",            false,      _("Startable"),             _("can start this game"),			false },
 
-		{ Rating,           "rating",      MD_RATING,              "0.000000",         false,      _("Rating"),               _("enter rating"),			false },
+		{ Rating,           "rating",      MD_RATING,              "0",                false,      _("Rating"),               _("enter rating"),			false },
+		{ Startable,        "startable",   MD_BOOL,                "false",            false,      _("Startable"),             _("can start this game"),			false },
 		{ Favorite,         "favorite",    MD_BOOL,                "false",            false,      _("Favorite"),             _("enter favorite"),			false },
 		{ Hidden,           "hidden",      MD_BOOL,                "false",            false,      _("Hidden"),               _("enter hidden"),			true },
 		{ KidGame,          "kidgame",     MD_BOOL,                "false",            false,      _("Kidgame"),              _("enter kidgame"),			false },
 
 #if WIN32 && !_DEBUG
 		{ Emulator,         "emulator",    MD_LIST,				 "",                 false,       _("Emulator"),			 _("emulator"),					false },
-		{ Core,             "core",	      MD_LIST,				 "",                 false,       _("Core"),				 _("core"),						false },
+		{ Core,             "core",	       MD_LIST,				 "",                 false,       _("Core"),				 _("core"),						false },
 #else
 		// Windows & recalbox gamelist.xml compatiblity -> Set as statistic to hide it from metadata editor
 		{ Emulator,         "emulator",    MD_LIST,				 "",                 true,        _("Emulator"),			 _("emulator"),					false },
-		{ Core,             "core",	     MD_LIST,				 "",                 true,        _("Core"),				 _("core"),						false },
+		{ Core,             "core",	       MD_LIST,				 "",                 true,        _("Core"),				 _("core"),						false },
 #endif
 		{ Crc32,            "crc32",       MD_STRING,              "",                 true,       _("Crc32"),                _("Crc32 checksum"),			false },
 		{ Md5,              "md5",		   MD_STRING,              "",                 true,       _("Md5"),                  _("Md5 checksum"),			false },
@@ -57,18 +59,16 @@ void MetaDataList::initMetadata()
 		{ Ingame,			"ingame",	   MD_PATH,                "",                 false,      _("Ingame"),		  		  _("enter path to ingame screenshot"), true },
 		{ Video,            "video",       MD_PATH,                "",                 false,      _("Video"),                _("enter path to video"),		 false },
 
-		{ Language,         "lang",        MD_STRING,              "",                 false,      _("Languages"),            _("this game's languages"),				false },
 		{ Region,           "region",      MD_STRING,              "",                 false,      _("Region"),               _("this game's region"),					false },
+		{ Language,         "lang",        MD_STRING,              "",                 false,      _("Languages"),            _("this game's languages"),				false },
 		{ ReleaseDate,      "releasedate", MD_DATE,                "not-a-date-time",  false,      _("Release date"),         _("enter release date"),		false },
 		{ Developer,        "developer",   MD_STRING,              "",                 false,      _("Developer"),            _("this game's developer"),	false },
 		{ Publisher,        "publisher",   MD_STRING,              "",                 false,      _("Publisher"),            _("this game's publisher"),	false },
 
+		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Arcade system"),        _("this game's arcade system"), false },
 		{ Genre,            "genre",       MD_STRING,              "",                 false,      _("Genre"),                _("enter game genre"),		false }, 
 		// GenreIds is not serialized
 		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genres"),				  _("enter game genres"),		false },
-		{ Family,           "family",      MD_STRING,              "",                 false,      _("Game family"),		  _("this game's game family"),		false },
-		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Arcade system"),        _("this game's arcade system"), false },
-
 		{ Players,          "players",     MD_INT,                 "",                 false,      _("Players"),              _("this game's number of players"),	false },
 		{ Premise,          "premise",     MD_MULTILINE_STRING,    "",                 false,      _("Premise"),              _("premise for this game"),	false },
 		{ Story,            "story",       MD_MULTILINE_STRING,    "",                 false,      _("Story"),                _("this game's story"),		false },
