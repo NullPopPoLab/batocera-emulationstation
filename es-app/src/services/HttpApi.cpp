@@ -324,9 +324,10 @@ std::string HttpApi::getSystemGames(SystemData* system)
 	return s.GetString();
 }
 
-std::string HttpApi::getSlideshowFiles(FileData* file){
+std::string HttpApi::getScraperFiles(FileData* file, const std::string& path){
 
-	auto dir=file->getScraperDir()+"/slideshow";
+	auto dir=file->getScraperDir();
+	if(path!="")dir+="/"+path;
 	if(!Utils::FileSystem::isDirectory(dir))return "[]";
 
 	rapidjson::StringBuffer s;
@@ -335,25 +336,8 @@ std::string HttpApi::getSlideshowFiles(FileData* file){
 
 	auto contents = Utils::FileSystem::getDirectoryFiles(dir);
 	for (auto& ent : contents){
-		writer.String(ent.path.c_str());
-	}
-
-	writer.EndArray();
-	return s.GetString();
-}
-
-std::string HttpApi::getJukeboxFiles(FileData* file){
-
-	auto dir=file->getScraperDir()+"/docs.json";
-	if(!Utils::FileSystem::isRegularFile(dir))return "{}";
-
-	rapidjson::StringBuffer s;
-	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
-	writer.StartArray();
-
-	auto contents = Utils::FileSystem::getDirectoryFiles(dir);
-	for (auto& ent : contents){
-		writer.String(ent.path.c_str());
+		auto p2=Utils::FileSystem::createRelativePath(ent.path, file->getScraperDir(), false);
+		writer.String(p2.c_str());
 	}
 
 	writer.EndArray();
