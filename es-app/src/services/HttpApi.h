@@ -14,8 +14,7 @@ class HttpApi
 public:
 	static std::string getSystemList();
 	static std::string getSystemGames(SystemData* system);
-	static std::string getSlideshowFiles(FileData* file);
-	static std::string getJukeboxFiles(FileData* file);
+	static std::string getScraperFiles(FileData* file, const std::string& path);
 
 	static std::string getRunnningGameInfo();
 
