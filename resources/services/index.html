@@ -1,173 +1,1118 @@
 <!DOCTYPE html>
-<html lang='fr'>
+<html lang=en>
 <head>			
 	<title>EmulationStation Web services</title>
 	<link rel="shortcut icon" href="favicon.png">
 	<link href="main.css" rel="stylesheet">
 </head>
+<body><div class=screen>
+<header><img height="24" style="vertical-align: middle;" src="favicon.png"><span>EmulationStation Web services</span></header>
+<main id=mainboard>
+</main>
+<footer><a target="_blank" href="https://batocera.org/">Batocera.linux</a>: <A target="_blank" href="https://github.com/NullPopPoLab/batocera.linux/wiki">NullPopPo custom</a></footer>
+<script type="text/javascript"><!--
 
-<body>
+const ratingscore=['0','0.2','0.4','0.6','0.8','1']
 
-<div class="title">
-	<img height="24" style="vertical-align: middle;" src="favicon.png">
-	<span>EmulationStation Web services</span>
-</div>
+var system_ctrl={}
+var selected_system=null;
 
-<!-- See REST Api list on https://github.com/batocera-linux/batocera-emulationstation/blob/master/es-app/src/services/HttpServerThread.cpp#L25
- -->
- 
-<script type='text/javascript'>
+var main=document.getElementById('mainboard');
 
-function quitES() {
-	var xhr = new XMLHttpRequest();			
-	xhr.open('GET', '/quit');
-	xhr.send(); 
-}
-
-function reloadGamelists() {
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', '/reloadgames');
-	xhr.send(); 
-}
-
-function emuKill() {
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', '/emukill');
-	xhr.send();
-}
-
-function launchGame(game) {
-	var xhr = new XMLHttpRequest();
-	xhr.open('POST', '/launch');
-	xhr.send(game);
-}
-
-function showGames(arr) {
-    var out = "<table width=100% border=0 cellpadding=4 cellspacing=0>";
-    var i;
-    for(i = 0; i < arr.length; i++) {
-		out += '<tr class="game">';
-		if(arr[i].image)
-			out += '<td width="72px" align="center"><img loading="lazy" height=48 style="max-width:100pt" src="' + arr[i].image + '"></td>';
-		else
-			out += '<td width="72px" align="center"></td>';
-		out += '<td>';
-		out += '<table width=100%>';
-		out += '<tr><td>' + arr[i].name + '</td></tr>';
-		if (arr[i].desc) {
-			out += '<tr><td><div class="desc">' + arr[i].desc + '</div></td></tr>';
-		}
-		out += '</table>';
-		out += '<button class="playitBtn" onclick="launchGame(\'' + arr[i].path + '\')">Play</button>'
-		out += '</td>';
-		out += '<tr/>';
-    }
-	
-	out += "</table>";
-    document.getElementById("gameList").innerHTML = out;
-}
-
-function getOrder(prop) {
-    return function(a, b) {
-        if (a[prop] > b[prop]) {
-            return 1;
-        } else if (a[prop] < b[prop]) {
-            return -1;
-        }
-        return 0;
-    }
-}
-
-function loadGames(name) {
-	var xhr = new XMLHttpRequest();
-	
-	xhr.onreadystatechange = function() {
-		if (this.readyState == 4 && this.status == 200) {
-			var myArr = JSON.parse(this.responseText);
-			myArr.sort(getOrder("name"));
-			showGames(myArr);
-		}
-	};
-
-	xhr.open('GET', '/systems/' + name + '/games');
-	xhr.send(); 
-	
-}
-
-var xmlhttp = new XMLHttpRequest();
-var url = "/systems";
-
-xmlhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-        var myArr = JSON.parse(this.responseText);
-        showSystems(myArr);
-    }
-};
-xmlhttp.open("GET", url, true);
-xmlhttp.send();
-
-function showSystems(arr) {
-    var out = "<table width=30% cellpadding=8>";
-    var i;
-    for(i = 0; i < arr.length; i++) {
-	
-		if (arr[i].visible == "true") {
-			out += '<tr class="system">';
-			if (arr[i].logo) {
-				out += '<td align="center"><a onclick="javascript:loadGames(\''+ arr[i].name +'\')" href="#"><img height=32pt style="max-width:100pt" src="' + arr[i].logo + '"></a></td>';
-			} else {
-				out += '<td align="center"><a onclick="javascript:loadGames(\'' + arr[i].name +'\')" href="#">' + arr[i].fullname + '</a></td>';
+function httpGetJson(url,cbok=null,cbng=null){
+	fetch(url)
+		.then((res)=>{
+			if(res.status>=200 && res.status<300){
+				return res.json();
 			}
-			
-		//	out += '<td>Games : ' + arr[i].totalGames + '</td>';
-			
-			out += '<tr/>';
+			else{
+				var err={code:res.status,msg:res.statusText}
+				if(cbng)cbng(err);
+				else console.log(err.toString());
+			}
+		})
+		.then((xml)=>{
+			if(cbok)cbok(xml);
+		})
+		.catch((err)=>{
+			if(cbng)cbng(err);
+			else console.log(err.toString());
+		});
+}
+
+function httpGetXML(url,cbok=null,cbng=null){
+	fetch(url)
+		.then((res)=>{
+			if(res.status>=200 && res.status<300){
+				return res;
+			}
+			else{
+				var err={code:res.status,msg:res.statusText}
+				if(cbng)cbng(err);
+				else console.log(err.toString());
+			}
+		})
+		.then((res)=>{
+			return res.text().then((xml)=>{
+				var psr=new DOMParser();
+				var data=psr.parseFromString(xml, "text/xml");
+				if(cbok)cbok(data);
+			});
+		})
+		.catch((err)=>{
+			if(cbng)cbng(err);
+			else console.log(err.toString());
+		});
+}
+
+function httpPostJson(url,data,cbok=null,cbng=null){
+	fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+		.then((res)=>{
+			if(res.status>=200 && res.status<300){
+				return res.json();
+			}
+			else{
+				var err={code:res.status,msg:res.statusText}
+				if(cbng)cbng(err);
+				else console.log(err.toString());
+			}
+		})
+		.then((data)=>{
+			if(cbok)cbok(data);
+		})
+		.catch((err)=>{
+			if(cbng)cbng(err);
+			else console.log(err.toString());
+		});
+}
+
+function httpPostFile(url,data,cbok=null,cbng=null){
+	fetch(url,{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:data})
+		.then((data)=>{
+			if(cbok)cbok(data);
+		})
+		.catch((err)=>{
+			if(cbng)cbng(err);
+			else console.log(err.toString());
+		});
+}
+
+function createElement(prm){
+
+	if(!prm.tag){
+		if(prm.target && prm.sub){
+			for(var t of prm.sub){
+				if(t===null){}
+				else if(typeof t==='object')prm.target.append(t);
+				else prm.target.innerHTML+=t;
+			}
 		}
-    }
-	
-	out += "</table>";
-    document.getElementById("systemList").innerHTML = out;
-}
-</script>
-
-<!-- <img src="resources/vid.jpg"/> -->
-
-<div id="toolbar" class="toolbar">
-	<input class="toolbarbutton" type='button' value='Reload games' onClick='reloadGamelists()'/>
-	<input class="toolbarbutton" type='button' value='Exit EmulationStation' onClick='quitES()'/>
-	<input class="toolbarbutton" type='button' value='Kill running emulator' onClick='emuKill()'/>
-</div>
-
-<table height='100%' width='100%' cellpadding=0 cellspacing=0 border=0>
-<tr>
- <td valign="top" width='120pt'>
-    <div id="systemList" class="systemlist"></div>
- </td>
- <td valign="top">
-   <div id="gameList" class="gamelist" style="height:300px"></div>
- </td>
-</tr> 
-</table>
-
-
-<script type='text/javascript'>
-function resize() {
-	var heights = window.innerHeight;	
-	var toolbar = document.getElementById("toolbar");
-	
-	var systemList = document.getElementById("systemList");
-	if (systemList) {
-		systemList.style.height = (heights - toolbar.offsetTop - toolbar.offsetHeight) + "px";
+		return null;
 	}
-	
-	var systemList = document.getElementById("gameList");
-	if (gameList) {
-		gameList.style.height = (heights - toolbar.offsetTop - toolbar.offsetHeight) + "px";
+
+	var el=document.createElement(prm.tag);
+	if(prm.attr){
+		for(var k in prm.attr){
+			el.setAttribute(k,prm.attr[k]);
+		}
 	}
+	if(prm.style){
+		for(var k in prm.style){
+			el.style[k]=prm.style[k];
+		}
+	}
+	if(prm.sub){
+		for(var t of prm.sub){
+			if(t===null){}
+			else if(typeof t==='object')el.append(t);
+			else el.innerHTML+=t;
+		}
+	}
+	if(prm.target)prm.target.append(el);
+	return el;
 }
 
-resize();
-window.onresize = function() { 	resize(); };		
-</script>
-</body>
-</html>
+const panel_progress=createElement({
+	tag:'div',
+	sub:['Now Loading...'],
+});
+
+const panel_mainboard=createElement({
+	tag:'div',
+	attr:{class:'mainboard'},
+});
+
+const panel_modalview=createElement({
+	tag:'div',
+	attr:{class:'modalview'},
+});
+
+const panel_syslist=createElement({
+	target:panel_mainboard,
+	tag:'div',
+	attr:{class:'systemlist'},
+});
+const panel_sysview=createElement({
+	target:panel_mainboard,
+	tag:'div',
+	attr:{class:'systemview'},
+});
+
+const panel_gamelist=createElement({
+	tag:'div',
+	attr:{class:'gamelist'},
+});
+const panel_genreeditor=createElement({
+	tag:'div',
+	attr:{class:'genreeditor'},
+});
+const panel_metaeditor=createElement({
+	tag:'div',
+	attr:{class:'metaeditor'},
+});
+const panel_mediaviewer=createElement({
+	tag:'div',
+	attr:{class:'mediaviewer'},
+});
+const panel_doclist=createElement({
+	tag:'div',
+	attr:{class:'doclist'},
+});
+
+function createGameTime(gt){
+	var v=gt.gametime;
+	var h=Math.floor(v/3600);
+	v-=h*3600;
+	var m=Math.floor(v/60);
+	v-=m*60;
+	var s=Math.floor(v);
+	var m2='0'+m;
+	var s2='0'+s;
+	return ''+h+':'+m2.substring(m2.length-2)+':'+s2.substring(s2.length-2);
+}
+
+function createRatingControl(gt,onchange){
+
+	var v=Math.floor(gt.rating*5+0.5);
+	var s=[]
+	var t={
+		view:createElement({
+			tag:'span',
+			attr:{title:v},
+		}),
+		set:(v)=>{
+			for(var i=0;i<5;++i){
+				s[i].setAttribute('src',
+					'/resources/star_'+((i<v)?'filled.svg':'unfilled.svg'));
+			}
+			t.view.setAttribute('title',v);
+		},
+	}
+
+	for(var i=0;i<5;++i){
+		var f=(i+1)<=v;
+		s[i]=createElement({
+			target:t.view,
+			tag:'img',
+			attr:{src:'/resources/star_'+(f?'filled.svg':'unfilled.svg')},
+		});
+		((i_)=>{
+			s[i_].onclick=()=>{
+				var i2=(i_==0 && v==1)?(i_-1):i_;
+				v=i2+1;
+				t.set(v);
+				onchange(v);
+			}
+		})(i);
+	}
+
+	return t;
+}
+
+function createFavoriteButton(gt,onchange){
+
+	var f=gt.favorite=='true';
+	var t={
+		view:createElement({tag:'button',attr:{class:f?'btn_favorite':'btn_normal'},sub:['Favorite']}),
+		set:(f)=>{
+			t.view.setAttribute('class',f?'btn_favorite':'btn_normal');
+		},
+	}
+	t.view.onclick=()=>{
+		f=!f;
+		t.set(f);
+		onchange(f);
+	}
+	return t;
+}
+
+function createHiddenButton(gt,onchange){
+
+	var f=gt.hidden=='true';
+	var t={
+		view:createElement({tag:'button',attr:{class:f?'btn_hidden':'btn_normal'},sub:['Hidden']}),
+		set:(f)=>{
+			t.view.setAttribute('class',f?'btn_hidden':'btn_normal');
+		},
+	}
+	t.view.onclick=()=>{
+		f=!f;
+		t.set(f);
+		onchange(f);
+	}
+	return t;
+}
+
+function createStartableButton(gt,onchange){
+
+	var f=gt.startable=='true';
+	var t={
+		view:createElement({tag:'button',attr:{class:f?'btn_startable':'btn_normal'},sub:['Startable']}),
+		set:(f)=>{
+			t.view.setAttribute('class',f?'btn_startable':'btn_normal');
+		},
+	}
+	t.view.onclick=()=>{
+		f=!f;
+		t.set(f);
+		onchange(f);
+	}
+	return t;
+}
+
+function createKidGameButton(gt,onchange){
+
+	var f=gt.kidgame=='true';
+	var t={
+		view:createElement({tag:'button',attr:{class:f?'btn_kidgame':'btn_normal'},sub:['Kid Game']}),
+		set:(f)=>{
+			t.view.setAttribute('class',f?'btn_kidgame':'btn_normal');
+		},
+	}
+	t.view.onclick=()=>{
+		f=!f;
+		t.set(f);
+		onchange(f);
+	}
+	return t;
+}
+
+function createMetaButton(st,gt,onsubmit){
+
+	var btn=createElement({tag:'button',sub:['Meta']});
+	btn.onclick=()=>{
+		updateMetaEditor(st,gt,onsubmit);
+	}
+	return btn;
+}
+
+function createMediaButton(st,gt){
+
+	var btn=createElement({tag:'button',sub:['Media']});
+	btn.onclick=()=>{
+		updateMediaViewer(st,gt);
+	}
+	return btn;
+}
+
+function createDocsButton(st,gt){
+
+	var btn=createElement({tag:'button',sub:['Docs']});
+	btn.onclick=()=>{
+		updateDocList(st,gt);
+	}
+	return btn;
+}
+
+function createInstantErrorView(cols)
+{
+	var t={
+		view:createElement({tag:'td',attr:{colspan:cols}}),
+		clear:()=>{t.view.innerHTML='';},
+		put:(err)=>{
+			t.view.innerHTML='';
+			t.view.append(createElement({
+				tag:'span',
+				attr:{class:'instanterror'},
+				sub:[JSON.stringify(err)],
+			}));
+		},
+	}
+
+	return t;
+}
+
+function showModalView(msg,back){
+
+	main.innerHTML='';
+	panel_modalview.innerHTML='';
+
+	createElement({
+		target:panel_modalview,
+		tag:'p',
+		attr:{class:'modalmsg'},
+		sub:[msg]
+	});
+
+	if(back){
+		var btn=createElement({
+			target:panel_modalview,
+			tag:'button',
+			sub:['Quit'],
+		});
+		btn.onclick=()=>{
+			main.innerHTML='';
+			main.append(back);
+		}
+	}
+
+	main.append(panel_modalview);
+}
+
+var genrelist=null;
+function extractGenre(t,xml){
+	var u={id:null,parent:null,sub:[],nom:{},chk:null,lab:null}
+	for(var sub of xml.children){
+		if(sub.tagName=='id')u.id=sub.innerHTML;
+		else if(sub.tagName=='parent'){
+			u.parent=sub.innerHTML;
+		}
+		else if(sub.tagName.substring(0,4)=='nom_'){
+			u.nom[sub.tagName.substring(4)]=sub.innerHTML;
+		}
+	}
+	if(!u.id){
+		console.log('missing id');
+		return;
+	}
+	if(t.flat[u.id]){
+		console.log('id dubbed; '+u.id);
+		return;
+	}
+	u.chk=createElement({
+		tag:'input',
+		attr:{type:'checkbox',id:'cb_genre_'+u.id},
+	});
+	u.chk.onclick=()=>{
+		if(u.chk.checked){
+			if(u.parent)t.flat[u.parent].chk.checked=true;
+		}
+		else{
+			for(var sub of u.sub)t.flat[sub.id].chk.checked=false;
+		}
+	}
+	u.lab=createElement({
+		tag:'label',
+		attr:{for:'cb_genre_'+u.id},
+		sub:[u.nom.en]
+	});
+	t.flat[u.id]=u;
+}
+function buildGenreView(view,u){
+
+	var dt=createElement({
+		target:view,
+		tag:u.parent?'span':'div',
+		style:u.parent?{}:{border:'inset'},
+		sub:[' ',u.chk,u.lab]
+	});
+	if(u.sub.length<1)return;
+
+	var dd=createElement({
+		target:dt,
+		tag:'div',
+	});
+	for(var sub of u.sub){
+		buildGenreView(dd,sub);
+	}
+}
+function buildGenreList(xml,onsubmit){
+	var t={flat:{},tree:[]}
+	t.view=createElement({
+		tag:'div',
+		attr:{class:'centering'},
+	});
+	createElement({
+		target:t.view,
+		tag:'div',
+		attr:{class:'sidespace'},
+	});
+	var dl=createElement({
+		target:t.view,
+		tag:'p',
+		attr:{class:'genretree'}
+	});
+	createElement({
+		target:t.view,
+		tag:'div',
+		attr:{class:'sidespace'},
+	});
+
+	xml=xml.children[0];
+	if(!xml){
+		console.log('empty xml');
+		return t;
+	}
+	if(xml.tagName!='genres'){
+		console.log('not genres');
+		return t;
+	}
+	for(var g of xml.children){
+		if(g.tagName!='genre'){
+			console.log('not genre; '+g.tagName);
+			continue;
+		}
+		extractGenre(t,g);
+	}
+
+	for(var id in t.flat){
+		var u=t.flat[id];
+		if(!u.parent)t.tree.push(u);
+		else if(t.flat[u.parent]){
+			t.flat[u.parent].sub.push(u);
+		}
+		else{
+			console.log('missing parent; '+u.parent+'~'+u.id);
+		}
+	}
+
+	for(var u of t.tree){
+		buildGenreView(dl,u);
+	}
+
+	btn=createElement({
+		target:dl,
+		tag:'button',
+		sub:['Submit'],
+	});
+	btn.onclick=()=>{
+		if(onsubmit){
+			var ids=[]
+			var tree={}
+			for(var id in t.flat){
+				var u=t.flat[id];
+				if(u.chk.checked){
+					ids.push(id);
+					if(u.parent){
+						if(!tree[u.parent])tree[u.parent]=[]
+						tree[u.parent].push(id);
+					}
+					else{
+						if(!tree[id])tree[id]=[]
+					}
+				}
+			}
+
+			var nms=[]
+			for(var id1 in tree){
+				var u1=t.flat[id1]
+				if(tree[id1].length<1){
+					nms.push(u1.nom.en);
+					continue;
+				}
+				var a=[]
+				for(var id2 of tree[id1]){
+					var u2=t.flat[id2]
+					a.push(u2.nom.en);
+				}
+				nms.push(u1.nom.en+'('+a.join('; ')+')');
+			}
+
+			onsubmit(ids,nms.join(', '));
+		}
+	}
+
+	return t;
+}
+function updateGenreList(gs){
+	var t=genrelist;
+
+	for(var id in t.flat){
+		var u=t.flat[id];
+		u.chk.checked=false;
+	}
+	for(var id of gs){
+		var u=t.flat[id];
+		if(!u)continue;
+		u.chk.checked=true;
+	}
+}
+
+function updateGenreEditor(gs,onsubmit){
+	gs=gs?gs.split(','):[];
+
+	main.innerHTML='';
+	panel_genreeditor.innerHTML='';
+
+	var btn=createElement({
+		target:panel_genreeditor,
+		tag:'button',
+		sub:['Quit'],
+	});
+	btn.onclick=()=>{
+		main.innerHTML='';
+		main.append(panel_metaeditor);
+	}
+
+	createElement({
+		target:panel_genreeditor,
+		tag:'p',
+		attr:{class:'editorcaption'},
+		sub:['Genre Select'],
+	});
+
+	var view=createElement({
+		target:panel_genreeditor,
+		tag:'p',
+	});
+
+	main.append(panel_genreeditor);
+	if(genrelist){
+		updateGenreList(gs);
+		view.innerHTML='';
+		view.append(genrelist.view);
+	}
+	else{
+		view.innerHTML='Now Loading...';
+		httpGetXML('/resources/genres.xml',(xml)=>{
+			genrelist=buildGenreList(xml,(ids,nms)=>{
+				if(onsubmit)onsubmit(ids,nms);
+				main.innerHTML='';
+				main.append(panel_metaeditor);
+			});
+			updateGenreList(gs);
+			view.innerHTML='';
+			view.append(genrelist.view);
+		},(err)=>{
+			view.innerHTML=err.toString();
+		});
+	}
+}
+
+function updateMetaEditor(st,gt,onsubmit){
+
+	main.innerHTML='';
+	panel_metaeditor.innerHTML='';
+
+	createElement({
+		target:panel_metaeditor,
+		tag:'div',
+		attr:{class:'systemcaption'},
+		sub:[st.fullname]
+	});
+	createElement({
+		target:panel_metaeditor,
+		tag:'div',
+		attr:{class:'gamecaption'},
+		sub:[gt.name]
+	});
+
+	var btn=createElement({
+		target:panel_metaeditor,
+		tag:'button',
+		sub:['Quit'],
+	});
+	btn.onclick=()=>{
+		main.innerHTML='';
+		main.append(panel_mainboard);
+	}
+
+	createElement({
+		target:panel_metaeditor,
+		tag:'p',
+		attr:{class:'editorcaption'},
+		sub:['Meta Editor'],
+	});
+
+	const romdir='/userdata/roms/'+gt.systemName+'/';
+	const romfile=gt.path.substring(romdir.length);
+	var dst={}
+
+	var tbl=createElement({
+		target:panel_metaeditor,
+		tag:'table',
+		attr:{align:'center',border:'border'},
+	});
+
+	var meta={
+		systemName:{capt:'Platform',type:'label'},
+		romfile:{capt:'File',type:'val',func:()=>romfile},
+		arcadesystemname:{capt:'Attachment',type:'lineinput'},
+		name:{capt:'Captional Title',type:'lineinput'},
+		title:{capt:'Formal Title',type:'lineinput'},
+		sortname:{capt:'Sortable Title',type:'lineinput'},
+		family:{capt:'Family',type:'lineinput'},
+		desc:{capt:'Description',type:'textinput'},
+		rating:{capt:'Rating',type:'rating'},
+		flags:{capt:'Flags',type:'flags'},
+		region:{capt:'Region',type:'lineinput'},
+		lang:{capt:'Language',type:'lineinput'},
+		releasedate:{capt:'Release Date',type:'date'},
+		developer:{capt:'Developer',type:'lineinput'},
+		publisher:{capt:'Publisher',type:'lineinput'},
+		genres:{capt:'Genres',type:'genres'},
+		players:{capt:'Players',type:'lineinput'},
+		premise:{capt:'Premise',type:'textinput'},
+		story:{capt:'Story',type:'textinput'},
+		rule:{capt:'Rule',type:'textinput'},
+		operation:{capt:'Operation',type:'textinput'},
+		credit:{capt:'Credit',type:'textinput'},
+		tips:{capt:'Tips',type:'textinput'},
+		notes:{capt:'Notes',type:'textinput'},
+		bugs:{capt:'Bugs',type:'textinput'},
+	}
+
+	for(var it in meta){
+		var mt=meta[it]
+		var sub=[createElement({tag:'th',sub:[mt.capt]})]
+		switch(mt.type){
+			case 'label':
+			sub.push(createElement({tag:'td',sub:[gt[it]]}));
+			break;
+
+			case 'val':
+			sub.push(createElement({tag:'td',sub:[mt.func()]}));
+			break;
+
+			case 'lineinput':
+			var ui=createElement({tag:'input',attr:{type:'text',class:'metatextbox',name:it,value:gt[it]??''}});
+			((it_,ui_)=>{ui_.onchange=()=>{dst[it_]=ui_.value;}})(it,ui);
+			sub.push(ui);
+			break;
+
+			case 'textinput':
+			var ui=createElement({tag:'textarea',attr:{name:it,wrap:'off',class:'metatextarea'},sub:[gt[it]??'']});
+			((it_,ui_)=>{ui_.onchange=()=>{dst[it_]=ui_.value;}})(it,ui);
+			sub.push(ui);
+			break;
+
+			case 'date':
+			var d=gt[it];
+			var ui=createElement({tag:'input',attr:{type:'text',class:'metatextbox',name:it,value:d}});
+			((it_,ui_)=>{ui_.onchange=()=>{dst[it_]=ui_.value;}})(it,ui);
+			sub.push(ui);
+			break;
+
+			case 'rating':
+			var c_rating=createRatingControl(gt,(score)=>{
+				dst.rating=ratingscore[score];
+			});
+			sub.push(c_rating.view);
+			break;
+
+			case 'flags':
+			var c_startable=createStartableButton(gt,(f)=>{
+				dst.startable=f?'true':'false';
+			});
+			sub.push(c_startable.view);
+			var c_kidgame=createKidGameButton(gt,(f)=>{
+				dst.kidgame=f?'true':'false';
+			});
+			sub.push(c_kidgame.view);
+			var c_favorite=createFavoriteButton(gt,(f)=>{
+				dst.favorite=f?'true':'false';
+			});
+			sub.push(c_favorite.view);
+			var c_hidden=createHiddenButton(gt,(f)=>{
+				dst.hidden=f?'true':'false';
+			});
+			sub.push(c_hidden.view);
+			break;
+
+			case 'genres':
+			var btn=createElement({tag:'button',sub:['Edit']});
+			var gv=createElement({tag:'span',sub:[gt.genre]});
+			((gs_,gv_)=>{btn.onclick=()=>{
+				updateGenreEditor(gs_,(ids,nms)=>{
+					dst.genres=ids.join(',');
+					dst.genre=nms;
+					gv_.innerHTML=dst.genre;
+				});
+			}})(gt.genres,gv);
+			sub.push(createElement({tag:'td',sub:[gv,' ',btn,]}));
+			break;
+		}
+		createElement({target:tbl,tag:'tr',sub:sub});
+	}
+
+	btn=createElement({
+		target:panel_metaeditor,
+		tag:'button',
+		sub:['Submit'],
+	});
+	btn.onclick=()=>{
+		main.innerHTML='';
+		if(onsubmit)onsubmit(dst);
+		main.append(panel_mainboard);
+	}
+
+	main.append(panel_metaeditor);
+}
+
+function updateMediaViewer(st,gt){
+
+	main.innerHTML='';
+	panel_mediaviewer.innerHTML='';
+
+	createElement({
+		target:panel_mediaviewer,
+		tag:'div',
+		attr:{class:'systemcaption'},
+		sub:[st.fullname]
+	});
+	createElement({
+		target:panel_mediaviewer,
+		tag:'div',
+		attr:{class:'gamecaption'},
+		sub:[gt.name]
+	});
+
+	var btn=createElement({
+		target:panel_mediaviewer,
+		tag:'button',
+		sub:['Quit'],
+	});
+	btn.onclick=()=>{
+		main.innerHTML='';
+		main.append(panel_mainboard);
+	}
+
+	createElement({
+		target:panel_mediaviewer,
+		tag:'p',
+		attr:{class:'editorcaption'},
+		sub:['Media Viewer'],
+	});
+
+	const meta={
+		'video':'Video',
+		'image':'Image',
+		'thumbnail':'Thumbnail',
+		'titleshot':'Title Shot',
+		'ingame':'Ingame Shot',
+		'bezel':'Bezel',
+		'marquee':'Marquee',
+		'boxart':'Box Front',
+		'boxback':'Box Back',
+		'cartridge':'Cartridge',
+		'pcb':'PCB',
+		'wheel':'Wheel',
+		'flyer':'Flyer',
+		'fanart':'Fan Art',
+		'mix':'Mix',
+		'map':'Map',
+	}
+	for(var it in meta){
+		var frm=createElement({
+			target:panel_mediaviewer,
+			tag:'div',
+			attr:{class:'imgframe'},
+		});
+
+		var path=gt[it];
+
+		createElement({
+			target:frm,
+			tag:'p',
+			sub:[
+				createElement({tag:'span',attr:{class:'mediacaption'},sub:[meta[it]+' ']}),
+//				createElement({tag:'button',sub:[path?'Replace':'Register']})
+			],
+		});
+		if(!path)continue;
+		createElement({
+			target:frm,
+			tag:'p',
+			sub:[
+				(it=='video')?
+					createElement({tag:'video',attr:{controls:'controls'},sub:[
+						createElement({tag:'source',attr:{src:gt[it]}})
+					]}):
+				createElement({tag:'img',attr:{src:gt[it]}})
+			],
+		});
+	}
+
+	var btn=createElement({
+		target:panel_mediaviewer,
+		tag:'button',
+		sub:['Quit'],
+	});
+	btn.onclick=()=>{
+		main.innerHTML='';
+		main.append(panel_mainboard);
+	}
+
+	main.append(panel_mediaviewer);
+}
+
+function updateDocList(st,gt){
+
+	main.innerHTML='';
+	panel_doclist.innerHTML='';
+
+	createElement({
+		target:panel_doclist,
+		tag:'div',
+		attr:{class:'systemcaption'},
+		sub:[st.fullname]
+	});
+	createElement({
+		target:panel_doclist,
+		tag:'div',
+		attr:{class:'gamecaption'},
+		sub:[gt.name]
+	});
+
+	var btn=createElement({
+		target:panel_doclist,
+		tag:'button',
+		sub:['Quit'],
+	});
+	btn.onclick=()=>{
+		main.innerHTML='';
+		main.append(panel_mainboard);
+	}
+
+	createElement({
+		target:panel_doclist,
+		tag:'p',
+		attr:{class:'editorcaption'},
+		sub:['Documents'],
+	});
+
+	const meta={
+		'manual':'Manual',
+		'magazine':'Magazine',
+	}
+	for(var it in meta){
+		var frm=createElement({
+			target:panel_doclist,
+			tag:'p',
+		});
+
+		var path=gt[it];
+		createElement({
+			target:frm,
+			tag:path?'a':'span',
+			attr:path?{target:'_blank',href:gt[it],class:'mediacaption'}:{class:'mediacaption'},
+			sub:[meta[it]]
+		});
+		createElement({target:frm,tag:'span',sub:[' ']});
+//		var file=createElement({
+//			target:frm,
+//			tag:'input',
+//			type:'file',
+//			accept:'.pdf,.cbz',
+//		});
+//		var btn=createElement({
+//			target:frm,
+//			tag:'button',
+//			sub:[path?'Replace':'Register']
+//		});
+//		((file_,btn_)=>{
+//			btn_.onclick=()=>{
+//				var url='/systems/'+st.name+'/games/'+gt.id+'/media/'+it;
+//				httpPostFile(url,file_.);
+//			}
+//		})(file,btn);
+	}
+
+	if(gt.docsAvailable=='true'){
+		createElement({target:panel_doclist,tag:'hr'});
+
+		var list=createElement({target:panel_doclist,tag:'div',sub:['Now Loading...']});
+
+		var pref='/systems/'+gt.systemName+'/games/'+gt.id+'/scraper/';
+		httpGetJson(pref+'docs.json',(data)=>{
+			list.innerHTML='';
+			for(var it in data){
+				var path=data[it];
+				var frm=createElement({
+					target:list,
+					tag:'p',
+				});
+
+				createElement({
+					target:frm,
+					tag:'a',
+					attr:{target:'_blank',href:(path.indexOf(':')<0)?(pref+encodeURI(path)):path},
+					sub:[it]
+				});
+			}
+		},(err)=>{
+			list.innerHTML='';
+			list.append(createElement({
+				tag:'span',
+				attr:{class:'instanterror'},
+				sub:[JSON.stringify(err)],
+			}));
+		});
+	}
+
+	main.append(panel_doclist);
+}
+
+function updateGameList(ctrl){
+
+	panel_sysview.innerHTML='';
+	panel_gamelist.innerHTML='';
+
+	var st=ctrl.src;
+	createElement({
+		target:panel_gamelist,
+		tag:'div',
+		sub:[createElement({
+			tag:'img',
+			attr:{src:st.logo,alt:st.fullname,class:'systemicon'},
+		})],
+	});
+
+	var games=createElement({
+		target:panel_gamelist,
+		tag:'div',
+		sub:['Now Loading...'],
+	});
+
+	var url='/systems/'+st.name+'/games';
+	httpGetJson(url,(data)=>{
+
+		if(data.length<1){
+			games.innerHTML='no entries';
+			return;
+		}
+
+		data.sort((a,b)=>{return a.name<b.name?-1:1});
+
+		games.innerHTML='';
+
+		var tbl=createElement({
+			target:games,
+			tag:'table',
+			attr:{border:'border'},
+			style:{margin:'auto'},
+		});
+
+		var tr=createElement({
+			target:tbl,
+			tag:'tr',
+			sub:[
+				createElement({tag:'th',sub:['Name']}),
+				createElement({tag:'th',sub:['Count']}),
+				createElement({tag:'th',sub:['Time']}),
+				createElement({tag:'th',sub:['Rating']}),
+				createElement({tag:'th',sub:['Etc']}),
+			],
+		});
+
+		for(var gt of data){
+			((gt_)=>{
+				var post2=url+'/'+gt_.id;
+				var errview=createInstantErrorView(5);
+				var c_rating=createRatingControl(gt_,(score)=>{
+					gt_.rating=ratingscore[score];
+					errview.clear();
+					httpPostJson(post2,{rating:gt_.rating},null,(err)=>{
+						errview.put(err);
+					});
+				});
+				var c_favorite=createFavoriteButton(gt_,(f)=>{
+					gt_.favorite=f?'true':'false';
+					errview.clear();
+					httpPostJson(post2,{favorite:gt_.favorite},null,(err)=>{
+						errview.put(err);
+					});
+				});
+				var c_hidden=createHiddenButton(gt_,(f)=>{
+					gt_.hidden=f?'true':'false';
+					errview.clear();
+					httpPostJson(post2,{hidden:gt_.hidden},null,(err)=>{
+						errview.put(err);
+					});
+				});
+				tr=createElement({
+					target:tbl,
+					tag:'tr',
+					sub:[
+						createElement({tag:'td',style:{'text-align':'left','max-width':'50vw'},sub:[gt_.name]}),
+						createElement({tag:'td',style:{'text-align':'right'},sub:[gt_.playcount]}),
+						createElement({tag:'td',style:{'text-align':'right'},sub:[createGameTime(gt_)]}),
+						createElement({tag:'td',style:{'text-align':'left'},sub:[c_rating.view]}),
+						createElement({tag:'td',style:{'text-align':'left'},sub:[
+							c_favorite.view,
+							c_hidden.view,
+							createMetaButton(st,gt_,(dst)=>{
+								for(var k in dst)gt_[k]=dst[k];
+								c_rating.set(Math.floor(dst.rating*5+0.5));
+								c_favorite.set(dst.favorite=='true');
+								c_hidden.set(dst.hidden=='true');
+								var url='/systems/'+st.name+'/games';
+								var post2=url+'/'+gt_.id;
+								errview.clear();
+								httpPostJson(post2,dst,null,(err)=>{
+									errview.put(err);
+								});
+							}),
+							createMediaButton(st,gt_),
+							createDocsButton(st,gt_),
+						]}),
+					],
+				});
+				tr=createElement({target:tbl,tag:'tr',sub:[errview.view]});
+			})(gt);
+		}
+	},(err)=>{
+		showModalView(err,panel_mainboard);
+	});
+
+	panel_sysview.append(panel_gamelist);
+}
+
+function updateMainBoard(data){
+
+	panel_syslist.innerHTML='';
+
+	var st={Collection:[],Gallery:[]}
+	for(var src of data){
+		switch(src.manufacturer){
+			case 'Collections': st.Collection.push(src); break;
+			case 'Gallery': st.Gallery.push(src); break;
+			default:
+			if(!st[src.hardwareType])st[src.hardwareType]=[]
+			st[src.hardwareType].push(src);
+		}
+	}
+
+	for(var k in st){
+		if(st[k].length<1)continue;
+		createElement({target:panel_syslist,tag:'div',attr:{class:'cardgroup'},sub:k});
+		for(var src of st[k]){
+			var n=src.name;
+			var t=system_ctrl[n]={
+				src:src,
+			}
+			t.btn=createElement({target:panel_syslist,tag:'div',attr:{class:'card_others'},sub:src.fullname});
+			((n_,t_)=>{
+				t_.btn.onclick=()=>{
+					if(n_==selected_system)return;
+					if(selected_system)system_ctrl[selected_system].btn.setAttribute('class','card_others');
+					system_ctrl[n_].btn.setAttribute('class','card_selected');
+					selected_system=n_;
+					updateGameList(t_);
+				}
+			})(n,t);
+		}
+	}
+}
+
+main.innerHTML=panel_progress;
+httpGetJson('/systems',(data)=>{
+	updateMainBoard(data);
+	main.innerHTML='';
+	main.append(panel_mainboard);
+},(err)=>{
+	showModalView(err,null);
+});
+
+//--></script>
+</div></body></html>
