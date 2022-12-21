@@ -289,11 +289,20 @@ void MetaDataList::migrate(FileData* file, pugi::xml_node& node)
 
 void MetaDataList::complement(const std::string& key, const std::vector<std::string>& extlist){
 
+	auto path = get(key);
+	if (path != ""){
+		if(Utils::FileSystem::exists(path))return;
+		mMap.erase(getId(key));
+		mWasChanged = true;
+	}
+
+	bool f=false;
 	for(auto& it: extlist){
-		std::string path = mTargetFile->getScraperPathPrefix() + key + *&it;
+		path = mTargetFile->getScraperPathPrefix() + key + *&it;
 
 		if(!Utils::FileSystem::exists(path))continue;
 		set(key,path);
+		f=true;
 	}
 }
 
