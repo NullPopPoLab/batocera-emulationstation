@@ -542,6 +542,7 @@ void GuiMenu::openDeveloperSettings()
 	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::DISKFORMAT))
 		s->addEntry(_("FORMAT A DISK"), true, [this] { openFormatDriveSettings(); });
 	
+#if 0 // 一旦封印 現仕様に合わせて書き直しを要する 
 	s->addEntry(_("CLEAN GAMELISTS & REMOVE UNUSED MEDIA"), true, [this, s]
 	{
 		mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE?"), _("YES"), [&]
@@ -557,6 +558,7 @@ void GuiMenu::openDeveloperSettings()
 			mWindow->closeSplashScreen();
 		}, _("NO"), nullptr));
 	});
+#endif
 
 	s->addEntry(_("COMPLEMENT METADATA"), true, [this, s]
 	{
