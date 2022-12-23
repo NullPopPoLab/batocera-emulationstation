@@ -3,7 +3,7 @@ html, body {
 	padding:0px; 
 	background-color:#202020; 
 	color:white;
-	overflow;hidden;
+	overflow:hidden;
 	height: 100vh;
 	width: 100vw;
 }
@@ -31,23 +31,18 @@ footer{
 
 main {
 }
+.mainboard{
+	flex-grow:1;
+	display: flex;
+}
 
 .centering{
-	display: flax;
+	display: flex;
 }
 .sidespace{
 	flex-grow: 1;
 }
 
-.mainboard{
-	flex-grow:1;
-	display: flex;
-}
-.modalview{
-	color:white;
-	background-color:#202020; 
-	text-align:center;
-}
 .systemlist {
 	color:white;
 	background-color:#202020; 
@@ -60,13 +55,62 @@ main {
 	overflow-y: auto;
 	max-height: calc(100vh - 3em);
 }
+.screenshots {
+	flex-grow:1;
+	overflow-y: auto;
+	max-height: calc(100vh - 3em);
+}
+.workspace {
+}
 
+.imageviewer {
+	text-align:center;
+	display:flex;
+	flex-direction:column;
+}
+
+.imagehead {
+	width: 99%;
+	height: 3.5em;
+}
+.imagetool {
+	display:flex;
+}
+.imagecapt {
+	height:100%;
+	flex-grow:1;
+	font-size:150%;
+}
+.imagebtns {
+	height:100%;
+}
+.imagebtn {
+	font-size:200%;
+}
+.imagecanvas {
+	flex-grow:1;
+	overflow-y: scroll;
+	border:groove;
+	overflow-y: auto;
+	max-height: calc(100vh - 3em - 3.5em);
+}
+.imagefit {
+	overflow-x: scroll;
+}
 .gamelist {
 	color:white;
 	background-color:#202020; 
 	text-align:center;
 }
+.gameview{
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
 .genreeditor {
+	flex-grow:1;
+	max-height: calc(100vh - 3em);
+	overflow-y: scroll;
 	color:white;
 	background-color:#202020; 
 	text-align:center;
@@ -75,16 +119,25 @@ main {
 	font-size:200%;
 }
 .metaeditor {
+	flex-grow:1;
+	max-height: calc(100vh - 3em);
+	overflow-y: scroll;
 	color:white;
 	background-color:#202020; 
 	text-align:center;
 }
 .mediaviewer {
+	flex-grow:1;
+	max-height: calc(100vh - 3em);
+	overflow-y: scroll;
 	color:white;
 	background-color:#202020; 
 	text-align:center;
 }
 .doclist {
+	flex-grow:1;
+	max-height: calc(100vh - 3em);
+	overflow-y: scroll;
 	color:white;
 	background-color:#202020; 
 	text-align:center;
@@ -143,9 +196,6 @@ main {
 	font-size:300%;
 }
 .mediacaption{
-	font-size:150%;
-}
-.modalmsg{
 	font-size:150%;
 }
 .instanterror{
