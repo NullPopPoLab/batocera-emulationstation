@@ -28,14 +28,14 @@ function httpGetJson(url,cbok=null,cbng=null){
 			else{
 				var err={code:res.status,msg:res.statusText}
 				if(cbng)cbng(err);
-				else console.log(err.toString());
+				else console.log(JSON.stringify(err));
 			}
 		})
 		.then((xml)=>{
 			if(cbok)cbok(xml);
 		})
 		.catch((err)=>{
-			if(cbng)cbng(err);
+			if(cbng)cbng({error:err.toString()});
 			else console.log(err.toString());
 		});
 }
@@ -49,7 +49,7 @@ function httpGetXML(url,cbok=null,cbng=null){
 			else{
 				var err={code:res.status,msg:res.statusText}
 				if(cbng)cbng(err);
-				else console.log(err.toString());
+				else console.log(JSON.stringify(err));
 			}
 		})
 		.then((res)=>{
@@ -60,7 +60,7 @@ function httpGetXML(url,cbok=null,cbng=null){
 			});
 		})
 		.catch((err)=>{
-			if(cbng)cbng(err);
+			if(cbng)cbng({error:err.toString()});
 			else console.log(err.toString());
 		});
 }
@@ -69,19 +69,19 @@ function httpPostJson(url,data,cbok=null,cbng=null){
 	fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
 		.then((res)=>{
 			if(res.status>=200 && res.status<300){
-				return res.json();
+				return res;
 			}
 			else{
 				var err={code:res.status,msg:res.statusText}
 				if(cbng)cbng(err);
-				else console.log(err.toString());
+				else console.log(JSON.stringify(err));
 			}
 		})
 		.then((data)=>{
 			if(cbok)cbok(data);
 		})
 		.catch((err)=>{
-			if(cbng)cbng(err);
+			if(cbng)cbng({error:err.toString()});
 			else console.log(err.toString());
 		});
 }
@@ -92,7 +92,7 @@ function httpPostFile(url,data,cbok=null,cbng=null){
 			if(cbok)cbok(data);
 		})
 		.catch((err)=>{
-			if(cbng)cbng(err);
+			if(cbng)cbng({error:err.toString()});
 			else console.log(err.toString());
 		});
 }
@@ -157,10 +157,25 @@ const panel_sysview=createElement({
 	tag:'div',
 	attr:{class:'systemview'},
 });
-
+const panel_screenshots=createElement({
+	tag:'div',
+	attr:{class:'screenshots'},
+});
+const panel_workspace=createElement({
+	tag:'div',
+	attr:{class:'workspace'},
+});
+const panel_imageviewer=createElement({
+	tag:'div',
+	attr:{class:'imageviewer'},
+});
 const panel_gamelist=createElement({
 	tag:'div',
 	attr:{class:'gamelist'},
+});
+const panel_gameview=createElement({
+	tag:'div',
+	attr:{class:'gameview'},
 });
 const panel_genreeditor=createElement({
 	tag:'div',
@@ -306,20 +321,11 @@ function createMetaButton(st,gt,onsubmit){
 	return btn;
 }
 
-function createMediaButton(st,gt){
+function createDetailButton(st,gt){
 
-	var btn=createElement({tag:'button',sub:['Media']});
+	var btn=createElement({tag:'button',sub:['Detail']});
 	btn.onclick=()=>{
-		updateMediaViewer(st,gt);
-	}
-	return btn;
-}
-
-function createDocsButton(st,gt){
-
-	var btn=createElement({tag:'button',sub:['Docs']});
-	btn.onclick=()=>{
-		updateDocList(st,gt);
+		updateGameView(st,gt);
 	}
 	return btn;
 }
@@ -340,33 +346,6 @@ function createInstantErrorView(cols)
 	}
 
 	return t;
-}
-
-function showModalView(msg,back){
-
-	main.innerHTML='';
-	panel_modalview.innerHTML='';
-
-	createElement({
-		target:panel_modalview,
-		tag:'p',
-		attr:{class:'modalmsg'},
-		sub:[msg]
-	});
-
-	if(back){
-		var btn=createElement({
-			target:panel_modalview,
-			tag:'button',
-			sub:['Quit'],
-		});
-		btn.onclick=()=>{
-			main.innerHTML='';
-			main.append(back);
-		}
-	}
-
-	main.append(panel_modalview);
 }
 
 var genrelist=null;
@@ -584,7 +563,7 @@ function updateGenreEditor(gs,onsubmit){
 			view.innerHTML='';
 			view.append(genrelist.view);
 		},(err)=>{
-			view.innerHTML=err.toString();
+			view.innerHTML=JSON.stringify(err.toString());
 		});
 	}
 }
@@ -749,145 +728,51 @@ function updateMetaEditor(st,gt,onsubmit){
 	main.append(panel_metaeditor);
 }
 
-function updateMediaViewer(st,gt){
+function updateGameView(st,gt,cbchg,cberr){
 
-	main.innerHTML='';
-	panel_mediaviewer.innerHTML='';
+	panel_sysview.innerHTML='';
+	panel_gameview.innerHTML='';
 
 	createElement({
-		target:panel_mediaviewer,
+		target:panel_gameview,
 		tag:'div',
 		attr:{class:'systemcaption'},
 		sub:[st.fullname]
 	});
 	createElement({
-		target:panel_mediaviewer,
+		target:panel_gameview,
 		tag:'div',
 		attr:{class:'gamecaption'},
 		sub:[gt.name]
 	});
 
 	var btn=createElement({
-		target:panel_mediaviewer,
+		target:panel_gameview,
 		tag:'button',
 		sub:['Quit'],
 	});
 	btn.onclick=()=>{
-		main.innerHTML='';
-		main.append(panel_mainboard);
+		panel_sysview.innerHTML='';
+		panel_sysview.append(panel_gamelist);
 	}
 
-	createElement({
-		target:panel_mediaviewer,
-		tag:'p',
-		attr:{class:'editorcaption'},
-		sub:['Media Viewer'],
-	});
-
-	const meta={
-		'video':'Video',
-		'image':'Image',
-		'thumbnail':'Thumbnail',
-		'titleshot':'Title Shot',
-		'ingame':'Ingame Shot',
-		'bezel':'Bezel',
-		'marquee':'Marquee',
-		'boxart':'Box Front',
-		'boxback':'Box Back',
-		'cartridge':'Cartridge',
-		'pcb':'PCB',
-		'wheel':'Wheel',
-		'flyer':'Flyer',
-		'fanart':'Fan Art',
-		'mix':'Mix',
-		'map':'Map',
-	}
-	for(var it in meta){
-		var frm=createElement({
-			target:panel_mediaviewer,
-			tag:'div',
-			attr:{class:'imgframe'},
+	panel_gameview.append(createMetaButton(st,gt,(dst)=>{
+		for(var k in dst)gt[k]=dst[k];
+		if(cbchg)cbchg();
+		var url='/systems/'+st.name+'/games';
+		var post2=url+'/'+gt.id;
+		httpPostJson(post2,dst,null,(err)=>{
+			if(cberr)cberr(err);
 		});
+	}));
 
-		var path=gt[it];
-
-		createElement({
-			target:frm,
-			tag:'p',
-			sub:[
-				createElement({tag:'span',attr:{class:'mediacaption'},sub:[meta[it]+' ']}),
-//				createElement({tag:'button',sub:[path?'Replace':'Register']})
-			],
-		});
-		if(!path)continue;
-		createElement({
-			target:frm,
-			tag:'p',
-			sub:[
-				(it=='video')?
-					createElement({tag:'video',attr:{controls:'controls'},sub:[
-						createElement({tag:'source',attr:{src:gt[it]}})
-					]}):
-				createElement({tag:'img',attr:{src:gt[it]}})
-			],
-		});
-	}
-
-	var btn=createElement({
-		target:panel_mediaviewer,
-		tag:'button',
-		sub:['Quit'],
-	});
-	btn.onclick=()=>{
-		main.innerHTML='';
-		main.append(panel_mainboard);
-	}
-
-	main.append(panel_mediaviewer);
-}
-
-function updateDocList(st,gt){
-
-	main.innerHTML='';
-	panel_doclist.innerHTML='';
-
-	createElement({
-		target:panel_doclist,
-		tag:'div',
-		attr:{class:'systemcaption'},
-		sub:[st.fullname]
-	});
-	createElement({
-		target:panel_doclist,
-		tag:'div',
-		attr:{class:'gamecaption'},
-		sub:[gt.name]
-	});
-
-	var btn=createElement({
-		target:panel_doclist,
-		tag:'button',
-		sub:['Quit'],
-	});
-	btn.onclick=()=>{
-		main.innerHTML='';
-		main.append(panel_mainboard);
-	}
-
-	createElement({
-		target:panel_doclist,
-		tag:'p',
-		attr:{class:'editorcaption'},
-		sub:['Documents'],
-	});
-
-	const meta={
+	var meta={
 		'manual':'Manual',
 		'magazine':'Magazine',
 	}
 	for(var it in meta){
 		var frm=createElement({
-			target:panel_doclist,
+			target:panel_gameview,
 			tag:'p',
 		});
 
@@ -919,9 +804,9 @@ function updateDocList(st,gt){
 	}
 
 	if(gt.docsAvailable=='true'){
-		createElement({target:panel_doclist,tag:'hr'});
+		createElement({target:panel_gameview,tag:'hr'});
 
-		var list=createElement({target:panel_doclist,tag:'div',sub:['Now Loading...']});
+		var list=createElement({target:panel_gameview,tag:'div',sub:['Now Loading...']});
 
 		var pref='/systems/'+gt.systemName+'/games/'+gt.id+'/scraper/';
 		httpGetJson(pref+'docs.json',(data)=>{
@@ -950,7 +835,66 @@ function updateDocList(st,gt){
 		});
 	}
 
-	main.append(panel_doclist);
+	meta={
+		'video':'Video',
+		'image':'Image',
+		'thumbnail':'Thumbnail',
+		'titleshot':'Title Shot',
+		'ingame':'Ingame Shot',
+		'bezel':'Bezel',
+		'marquee':'Marquee',
+		'boxart':'Box Front',
+		'boxback':'Box Back',
+		'cartridge':'Cartridge',
+		'pcb':'PCB',
+		'wheel':'Wheel',
+		'flyer':'Flyer',
+		'fanart':'Fan Art',
+		'mix':'Mix',
+		'map':'Map',
+	}
+	for(var it in meta){
+		var frm=createElement({
+			target:panel_gameview,
+			tag:'div',
+			attr:{class:'imgframe'},
+		});
+
+		var path=gt[it];
+
+		createElement({
+			target:frm,
+			tag:'p',
+			sub:[
+				createElement({tag:'span',attr:{class:'mediacaption'},sub:[meta[it]+' ']}),
+//				createElement({tag:'button',sub:[path?'Replace':'Register']})
+			],
+		});
+		if(!path)continue;
+		createElement({
+			target:frm,
+			tag:'p',
+			sub:[
+				(it=='video')?
+					createElement({tag:'video',attr:{controls:'controls'},sub:[
+						createElement({tag:'source',attr:{src:gt[it]},class:'imagefit'})
+					]}):
+				createElement({tag:'img',attr:{src:gt[it],class:'imagefit'}})
+			],
+		});
+	}
+
+	var btn=createElement({
+		target:panel_gameview,
+		tag:'button',
+		sub:['Quit'],
+	});
+	btn.onclick=()=>{
+		main.innerHTML='';
+		main.append(panel_mainboard);
+	}
+
+	panel_sysview.append(panel_gameview);
 }
 
 function updateGameList(ctrl){
@@ -1041,20 +985,27 @@ function updateGameList(ctrl){
 						createElement({tag:'td',style:{'text-align':'left'},sub:[
 							c_favorite.view,
 							c_hidden.view,
-							createMetaButton(st,gt_,(dst)=>{
-								for(var k in dst)gt_[k]=dst[k];
+//							createMetaButton(st,gt_,(dst)=>{
+//								for(var k in dst)gt_[k]=dst[k];
+//								c_rating.set(Math.floor(dst.rating*5+0.5));
+//								c_favorite.set(dst.favorite=='true');
+//								c_hidden.set(dst.hidden=='true');
+//								var url='/systems/'+st.name+'/games';
+//								var post2=url+'/'+gt_.id;
+//								errview.clear();
+//								httpPostJson(post2,dst,null,(err)=>{
+//									errview.put(err);
+//								});
+//							}),
+
+							createDetailButton(st,gt_,()=>{
+								errview.clear();
 								c_rating.set(Math.floor(dst.rating*5+0.5));
 								c_favorite.set(dst.favorite=='true');
 								c_hidden.set(dst.hidden=='true');
-								var url='/systems/'+st.name+'/games';
-								var post2=url+'/'+gt_.id;
-								errview.clear();
-								httpPostJson(post2,dst,null,(err)=>{
-									errview.put(err);
-								});
+							},(err)=>{
+								errview.put(err);
 							}),
-							createMediaButton(st,gt_),
-							createDocsButton(st,gt_),
 						]}),
 					],
 				});
@@ -1062,10 +1013,105 @@ function updateGameList(ctrl){
 			})(gt);
 		}
 	},(err)=>{
-		showModalView(err,panel_mainboard);
+		games.innerHTML=JSON.stringify(err);
 	});
 
 	panel_sysview.append(panel_gamelist);
+}
+
+function loadImage(st,gt,canvas,capt){
+
+	// from /userdata/screenshots/ 
+	var path=gt.path.substring(22);
+
+	capt.innerHTML=path;
+	canvas.innerHTML='';
+	createElement({
+		target:canvas,
+		tag:'img',
+		attr:{src:'/screenshots/'+path,class:'imagefit'}
+	});
+}
+
+function updateImageViewer(st,url,onquit){
+
+	panel_sysview.innerHTML='';
+	panel_screenshots.innerHTML='Now Loading...';
+
+	httpGetJson(url,(data)=>{
+		var max=data.length;
+		if(max<1){
+			panel_screenshots.innerHTML='(empty)';
+			return;
+		}
+		var idx=0;
+
+		main.innerHTML='';
+		var head=createElement({
+			target:panel_imageviewer,
+			tag:'div',
+			attr:{class:'imagehead'},
+		});
+		var tool=createElement({
+			target:head,
+			tag:'div',
+			attr:{class:'imagetool'},
+		});
+		var capt=createElement({
+			target:tool,
+			tag:'div',
+			attr:{class:'imagecapt'},
+		});
+		var btns=createElement({
+			target:tool,
+			tag:'div',
+			attr:{class:'imagebtns'},
+		});
+		var btnl=createElement({
+			target:btns,
+			tag:'button',
+			attr:{class:'imagebtn'},
+			sub:['©']
+		});
+		var btnr=createElement({
+			target:btns,
+			tag:'button',
+			attr:{class:'imagebtn'},
+			sub:['¨']
+		});
+		var btnq=createElement({
+			target:btns,
+			tag:'button',
+			attr:{class:'imagebtn'},
+			sub:['~']
+		});
+		var canvas=createElement({
+			target:panel_imageviewer,
+			tag:'div',
+			attr:{class:'imagecanvas'},
+		});
+
+		loadImage(st,data[0],canvas,capt);
+		btnl.onclick=()=>{
+			idx=(idx+max-1)%max;
+			loadImage(st,data[idx],canvas,capt);
+		}
+		btnr.onclick=()=>{
+			idx=(idx+1)%max;
+			loadImage(st,data[idx],canvas,capt);
+		}
+		btnq.onclick=()=>{
+			onquit();
+			panel_screenshots.innerHTML='';
+			main.innerHTML='';
+			main.append(panel_mainboard);
+		}
+		main.append(panel_imageviewer);
+	},(err)=>{
+		panel_screenshots.innerHTML=JSON.stringify(err);
+	});
+
+	panel_sysview.append(panel_screenshots);
 }
 
 function updateMainBoard(data){
@@ -1098,20 +1144,24 @@ function updateMainBoard(data){
 					if(selected_system)system_ctrl[selected_system].btn.setAttribute('class','card_others');
 					system_ctrl[n_].btn.setAttribute('class','card_selected');
 					selected_system=n_;
-					updateGameList(t_);
+					if(n_=='imageviewer')updateImageViewer(t_,'/systems/imageviewer/games',()=>{
+						if(selected_system)system_ctrl[selected_system].btn.setAttribute('class','card_others');
+						selected_system='';
+					});
+					else updateGameList(t_);
 				}
 			})(n,t);
 		}
 	}
 }
 
-main.innerHTML=panel_progress;
+main.append(panel_progress);
 httpGetJson('/systems',(data)=>{
 	updateMainBoard(data);
 	main.innerHTML='';
 	main.append(panel_mainboard);
 },(err)=>{
-	showModalView(err,null);
+	main.innerHTML=JSON.stringify(err);
 });
 
 //--></script>
