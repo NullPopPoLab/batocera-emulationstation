@@ -267,7 +267,7 @@ void HttpServerThread::run()
 	});
 
 
-	mHttpServer->Get(R"(/systems/(/?.*)/logo)", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/logo)", [](const httplib::Request& req, httplib::Response& res)
 	{		
 		if (!isAllowed(req, res))
 			return;
@@ -297,7 +297,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 	
-	mHttpServer->Get(R"(/systems/(/?.*)/games)", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games(/?))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -314,7 +314,7 @@ void HttpServerThread::run()
 		res.status = 404;		
 	});
 
-	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/scraper/(/?.*))", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/scraper/(.*))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -351,7 +351,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/scraper)", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/scraper)", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -372,7 +372,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/media/(/?.*))", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/media/(.+))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -411,7 +411,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Post(R"(/systems/(/?.*)/games/(/?.*)/media/(/?.*))", [this](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Post(R"(/systems/(.+)/games/(.+)/media/(.+))", [this](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -460,7 +460,7 @@ void HttpServerThread::run()
 	});
 
 
-	mHttpServer->Post(R"(/systems/(/?.*)/games/(/?.*))", [this](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Post(R"(/systems/(.+)/games/(.+))", [this](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -500,7 +500,7 @@ void HttpServerThread::run()
 	});
 
 
-	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*))", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -522,7 +522,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Get(R"(/systems/(/?.*))", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -614,7 +614,7 @@ void HttpServerThread::run()
 		}
 	});
 
-	mHttpServer->Post(R"(/addgames/(/?.*))", [this](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Post(R"(/addgames/(.+))", [this](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -690,7 +690,7 @@ void HttpServerThread::run()
 		res.set_content("OK", "text/html");
 	});
 	
-	mHttpServer->Post(R"(/removegames/(/?.*))", [this](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Post(R"(/removegames/(.+))", [this](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -764,7 +764,7 @@ void HttpServerThread::run()
 		res.set_content("OK", "text/html");
 	});
 
-	mHttpServer->Get(R"(/resources/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
+	mHttpServer->Get(R"(/resources/(.+))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -781,7 +781,7 @@ void HttpServerThread::run()
 		}
 	});
 
-	mHttpServer->Get(R"(/screenshots/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
+	mHttpServer->Get(R"(/screenshots/(.+))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
 	{
 		if (!isAllowed(req, res))
 			return;
