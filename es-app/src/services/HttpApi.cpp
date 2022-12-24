@@ -328,19 +328,40 @@ std::string HttpApi::getScraperFiles(FileData* file, const std::string& path){
 
 	auto dir=file->getScraperDir();
 	if(path!="")dir+="/"+path;
-	if(!Utils::FileSystem::isDirectory(dir))return "[]";
+	if(!Utils::FileSystem::isDirectory(dir))return "{}";
+
+	auto contents = Utils::FileSystem::getDirectoryFiles(dir);
+	std::vector<std::string> dirs;
+	std::vector<std::string> files;
+	for (auto& ent : contents){
+		if(Utils::FileSystem::isDirectory(ent.path)){
+			dirs.push_back(Utils::FileSystem::createRelativePath(ent.path, dir, false));
+		}
+		else if(Utils::FileSystem::isRegularFile(ent.path)){
+			files.push_back(Utils::FileSystem::createRelativePath(ent.path, dir, false));
+		}
+	}
 
 	rapidjson::StringBuffer s;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+	writer.StartObject();
+	writer.Key("base"); writer.String(path.c_str());
+
+	writer.Key("dirs");
 	writer.StartArray();
-
-	auto contents = Utils::FileSystem::getDirectoryFiles(dir);
-	for (auto& ent : contents){
-		auto p2=Utils::FileSystem::createRelativePath(ent.path, file->getScraperDir(), false);
-		writer.String(p2.c_str());
+	for (auto& ent : dirs){
+		writer.String(ent.c_str());
 	}
-
 	writer.EndArray();
+
+	writer.Key("files");
+	writer.StartArray();
+	for (auto& ent : files){
+		writer.String(ent.c_str());
+	}
+	writer.EndArray();
+
+	writer.EndObject();
 	return s.GetString();
 }
 
