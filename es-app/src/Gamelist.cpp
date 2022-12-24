@@ -189,7 +189,8 @@ std::vector<FileData*> loadGamelistFile(const std::string xmlpath, SystemData* s
 			if (!trustGamelist && !file->getHidden() && Utils::FileSystem::isHidden(path))
 				mdl.set(MetaDataId::Hidden, "true");
 
-			Genres::convertGenreToGenreIds(&mdl);
+			if (mdl.get(MetaDataId::GenreIds).empty())
+				Genres::convertGenreToGenreIds(&mdl);
 
 			if (checkSize != SIZE_MAX)
 				mdl.setDirty();

@@ -67,7 +67,6 @@ void MetaDataList::initMetadata()
 
 		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Arcade system"),        _("this game's arcade system"), false },
 		{ Genre,            "genre",       MD_STRING,              "",                 false,      _("Genre"),                _("enter game genre"),		false }, 
-		// GenreIds is not serialized
 		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genres"),				  _("enter game genres"),		false },
 		{ Players,          "players",     MD_INT,                 "",                 false,      _("Players"),              _("this game's number of players"),	false },
 		{ Premise,          "premise",     MD_MULTILINE_STRING,    "",                 false,      _("Premise"),              _("premise for this game"),	false },
@@ -220,9 +219,6 @@ void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, Syst
 			continue;
 		}
 
-		if (mdd.id == MetaDataId::GenreIds)
-			continue;
-
 		if (value == mdd.defaultValue)
 			continue;
 
@@ -353,10 +349,6 @@ void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, cons
 			parent.append_child("name").text().set(mName.c_str());
 			continue;
 		}
-
-		// Don't save GenreIds
-		if (mddIter->id == MetaDataId::GenreIds)
-			continue;
 
 		auto mapIter = mMap.find(mddIter->id);
 		if(mapIter != mMap.cend())
