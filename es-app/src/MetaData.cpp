@@ -37,7 +37,7 @@ void MetaDataList::initMetadata()
 		{ Desc,             "desc",        MD_MULTILINE_STRING,    "",                 false,      _("Description"),          _("this game's description"),		true },
 
 		{ Rating,           "rating",      MD_RATING,              "0",                false,      _("Rating"),               _("enter rating"),			false },
-		{ Startable,        "startable",   MD_BOOL,                "false",            false,      _("Startable"),             _("can start this game"),			false },
+		{ Runnable,         "runnable",    MD_BOOL,                "false",            false,      _("Runnable"),             _("can start this game"),			false },
 		{ Favorite,         "favorite",    MD_BOOL,                "false",            false,      _("Favorite"),             _("enter favorite"),			false },
 		{ Hidden,           "hidden",      MD_BOOL,                "false",            false,      _("Hidden"),               _("enter hidden"),			true },
 		{ KidGame,          "kidgame",     MD_BOOL,                "false",            false,      _("Kidgame"),              _("enter kidgame"),			false },

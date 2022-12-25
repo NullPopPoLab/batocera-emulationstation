@@ -83,7 +83,7 @@ enum MetaDataId
 	PCB,
 	Flyer,
 	Title,
-	Startable,
+	Runnable,
 	Premise,
 	Story,
 	Rule,
