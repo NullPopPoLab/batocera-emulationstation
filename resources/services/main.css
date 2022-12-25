@@ -42,6 +42,25 @@ main {
 .sidespace{
 	flex-grow: 1;
 }
+.tblcapt{
+	text-align: left;
+	max-width: 50vw;
+}
+.tbltext{
+	text-align: left;
+}
+.tblnum{
+	text-align: right;
+}
+.tblstar{
+	white-space:nowrap;
+}
+.tbltool{
+}
+
+.langslect{
+	text-align:center;
+}
 
 .systemlist {
 	color:white;
@@ -60,6 +79,12 @@ main {
 	overflow-y: auto;
 	max-height: calc(100vh - 3em);
 }
+.gamelist{
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:1.5em;
+	
+}
 .workspace {
 }
 
@@ -76,7 +101,7 @@ main {
 .imagetool {
 	display:flex;
 }
-.imagecapt {
+.imagectrl {
 	height:100%;
 	flex-grow:1;
 	font-size:150%;
@@ -89,13 +114,9 @@ main {
 }
 .imagecanvas {
 	flex-grow:1;
-	overflow-y: scroll;
+	overflow: scroll;
 	border:groove;
-	overflow-y: auto;
 	max-height: calc(100vh - 3em - 3.5em);
-}
-.imagefit {
-	overflow-x: scroll;
 }
 .gamelist {
 	color:white;
@@ -159,6 +180,27 @@ main {
 	color:white;
 }
 
+.genregroup{
+	line-height:1.8em;
+	word-break:keep-all;
+}
+.genre_off{
+	border:outset;
+	background-color:#777777; 
+	color:white;
+	padding:0.2em;
+	white-space:nowrap;
+	font-size:100%;
+}
+.genre_on{
+	border:inset;
+	background-color:#cccc44; 
+	color:#444466;
+	padding:0.2em;
+	white-space:nowrap;
+	font-size:100%;
+}
+
 .btn_normal{
 }
 .btn_startable{
@@ -176,12 +218,13 @@ main {
 
 .imgframe{
 	border:ridge;
+	overflow:auto;
 }
 .metatextbox{
-	width:40vw;
+	width:65vw;
 }
 .metatextarea{
-	width:40vw;
+	width:65vw;
 	height:5em;
 	overflow:scroll;
 }
