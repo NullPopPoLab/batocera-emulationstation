@@ -861,7 +861,7 @@ function updateGameView(st,gt,cbchg,cberr){
 		});
 		btn.onclick=()=>{
 			var url='/systems/'+st.name+'/games/'+gt.id;
-			updateImageViewer(url+'/scraper/jukebox',(data)=>{
+			updateImageViewer(url+'/scraper/jukebox',0,(data)=>{
 				var a={base:url+'/scraper/jukebox/',dir:[],file:[]}
 				for(var b of data.dirs){
 					// from ./ 
@@ -887,7 +887,7 @@ function updateGameView(st,gt,cbchg,cberr){
 		});
 		btn.onclick=()=>{
 			var url='/systems/'+st.name+'/games/'+gt.id;
-			updateImageViewer(url+'/scraper/slideshow',(data)=>{
+			updateImageViewer(url+'/scraper/slideshow',0,(data)=>{
 				var a={base:url+'/scraper/slideshow/',dir:[],file:[]}
 				for(var b of data.dirs){
 					// from ./ 
@@ -1433,64 +1433,77 @@ function showImage(title,canvas,capt,url){
 	}
 }
 
-function updateImageViewer(url,onload,onquit){
+function updateImageViewer(url,depth,onload,onquit){
 
 	panel_imageviewer.innerHTML='';
-	panel_screenshots.innerHTML='Now Loading...';
+	main.innerHTML='';
 
+	var head=createElement({
+		target:panel_imageviewer,
+		tag:'div',
+		attr:{class:'imagehead'},
+	});
+	var tool=createElement({
+		target:head,
+		tag:'div',
+		attr:{class:'imagetool'},
+	});
+	var ctrl=createElement({
+		target:tool,
+		tag:'div',
+		attr:{class:'imagectrl'},
+	});
+	var btns=createElement({
+		target:tool,
+		tag:'div',
+		attr:{class:'imagebtns'},
+	});
+	var btnl=createElement({
+		target:btns,
+		tag:'button',
+		attr:{class:'imagebtn'},
+		sub:['←']
+	});
+	var btnr=createElement({
+		target:btns,
+		tag:'button',
+		attr:{class:'imagebtn'},
+		sub:['→']
+	});
+	var btnq=createElement({
+		target:btns,
+		tag:'button',
+		attr:{class:'imagebtn'},
+		sub:['×']
+	});
+	var view=createElement({
+		target:panel_imageviewer,
+		tag:'div',
+		attr:{class:'imageview'},
+	});
+	var dirsel=createElement({
+		target:view,
+		tag:'div',
+		attr:{class:'imagedir'},
+	});
+	var canvas=createElement({
+		target:view,
+		tag:'div',
+		attr:{class:'imagecanvas'},
+	});
+	main.append(panel_imageviewer);
+
+	btnq.onclick=()=>{
+		onquit();
+	}
+
+	ctrl.innerHTML='Now Loading...';
 	httpGetJson(url,(data)=>{
 		var attr=onload(data);
-		var max=attr.file.length;
-		if(max<1){
-			panel_screenshots.innerHTML='(empty)';
-			return;
-		}
 		var idx=0;
 
-		main.innerHTML='';
-		var head=createElement({
-			target:panel_imageviewer,
-			tag:'div',
-			attr:{class:'imagehead'},
-		});
-		var tool=createElement({
-			target:head,
-			tag:'div',
-			attr:{class:'imagetool'},
-		});
-		var ctrl=createElement({
-			target:tool,
-			tag:'div',
-			attr:{class:'imagectrl'},
-		});
-		var btns=createElement({
-			target:tool,
-			tag:'div',
-			attr:{class:'imagebtns'},
-		});
-		var btnl=createElement({
-			target:btns,
-			tag:'button',
-			attr:{class:'imagebtn'},
-			sub:['←']
-		});
-		var btnr=createElement({
-			target:btns,
-			tag:'button',
-			attr:{class:'imagebtn'},
-			sub:['→']
-		});
-		var btnq=createElement({
-			target:btns,
-			tag:'button',
-			attr:{class:'imagebtn'},
-			sub:['×']
-		});
-		var canvas=createElement({
-			target:panel_imageviewer,
-			tag:'div',
-			attr:{class:'imagecanvas'},
-		});
+		attr.dir.sort((a,b)=>{return (a<b)?-1:1});
+		attr.file.sort((a,b)=>{return (a<b)?-1:1});
 
 		var show=(idx)=>{
 			var name=attr.file[idx];
@@ -1498,25 +1511,52 @@ function updateImageViewer(url,onload,onquit){
 			showImage(ctrl,canvas,name,url);
 		}
 
-		show(idx);
-		btnl.onclick=()=>{
-			idx=(idx+max-1)%max;
+		var max=attr.file.length;
+		if(max>0){
 			show(idx);
+			btnl.onclick=()=>{
+				idx=(idx+max-1)%max;
+				show(idx);
+			}
+			btnr.onclick=()=>{
+				idx=(idx+1)%max;
+				show(idx);
+			}
 		}
-		btnr.onclick=()=>{
-			idx=(idx+1)%max;
-			show(idx);
+		else{
+			ctrl.innerHTML='(empty)';
+			btnl.onclick=()=>{}
+			btnr.onclick=()=>{}
 		}
-		btnq.onclick=()=>{
-			onquit();
-			panel_screenshots.innerHTML='';
-		}
-		main.append(panel_imageviewer);
-	},(err)=>{
-		panel_screenshots.innerHTML=JSON.stringify(err);
-	});
 
-	panel_sysview.append(panel_screenshots);
+		var dirs=attr.dir;
+		if(depth>0)dirs.unshift('..');
+		for(var name of dirs){
+			var btn=createElement({
+				target:dirsel,
+				tag:'button',
+				sub:[name]
+			});
+			((name_,btn_)=>btn_.onclick=()=>{
+				var url=attr.base+name_+'/';
+				updateImageViewer(url,depth+((name=='..')?-1:+1),(data)=>{
+					var a={base:url,dir:[],file:[]}
+					for(var b of data.dirs){
+						// from ./ 
+						a.dir.push(b.substring(2));
+					}
+					for(var b of data.files){
+						// from ./ 
+						a.file.push(b.substring(2));
+					}
+					return a;
+				},onquit);
+			})(name,btn);
+		}
+
+	},(err)=>{
+		ctrl.innerHTML=JSON.stringify(err);
+	});
 }
 
 function updateMainBoard(data){
@@ -1549,19 +1589,24 @@ function updateMainBoard(data){
 					if(selected_system)system_ctrl[selected_system].btn.setAttribute('class','card_others');
 					system_ctrl[n_].btn.setAttribute('class','card_selected');
 					selected_system=n_;
-					if(n_=='imageviewer')updateImageViewer('/systems/imageviewer/games',(data)=>{
-						var a={base:'/screenshots/',dir:[],file:[]}
-						for(var b of data){
-							// from /userdata/screenshots/ 
-							a.file.push(b.path.substring(22));
-						}
-						return a;
-					},()=>{
-						if(selected_system)system_ctrl[selected_system].btn.setAttribute('class','card_others');
-						selected_system='';
-						main.innerHTML='';
-						main.append(panel_mainboard);
-					});
+					panel_screenshots.innerHTML='Now Loading...';
+					if(n_=='imageviewer'){
+						updateImageViewer('/systems/imageviewer/games',0,(data)=>{
+							var a={base:'/screenshots/',dir:[],file:[]}
+							for(var b of data){
+								// from /userdata/screenshots/ 
+								a.file.push(b.path.substring(22));
+							}
+							return a;
+						},()=>{
+							if(selected_system)system_ctrl[selected_system].btn.setAttribute('class','card_others');
+							panel_screenshots.innerHTML='';
+							selected_system='';
+							main.innerHTML='';
+							main.append(panel_mainboard);
+						});
+						panel_sysview.append(panel_screenshots);
+					}
 					else updateGameList(t_);
 				}
 			})(n,t);
