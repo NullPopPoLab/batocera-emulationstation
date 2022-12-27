@@ -44,7 +44,7 @@ main {
 }
 .tblcapt{
 	text-align: left;
-	max-width: 50vw;
+	max-width: 40vw;
 }
 .tbltext{
 	text-align: left;
@@ -95,6 +95,7 @@ main {
 }
 
 .imagehead {
+	flex-shrink:0;
 	width: 99%;
 	height: 3.5em;
 }
@@ -102,22 +103,26 @@ main {
 	display:flex;
 }
 .imagectrl {
-	height:100%;
 	flex-grow:1;
 	font-size:150%;
 }
 .imagebtns {
-	height:100%;
 }
 .imagebtn {
 	font-size:200%;
 }
-.imagecanvas {
+.imageview {
 	flex-grow:1;
 	overflow: scroll;
-	border:groove;
 	max-height: calc(100vh - 3em - 3.5em);
 }
+.imagedir {
+	flex-shrink:0;
+}
+.imagecanvas {
+	border:groove;
+}
+
 .gamelist {
 	color:white;
 	background-color:#202020; 
