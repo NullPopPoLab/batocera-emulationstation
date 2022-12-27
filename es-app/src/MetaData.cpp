@@ -300,7 +300,7 @@ void MetaDataList::complement(const std::string& key, const std::vector<std::str
 }
 
 void MetaDataList::complement_image(const std::string& key){
-	std::vector<std::string> extlist={ ".png", ".jpg" };
+	std::vector<std::string> extlist={ ".png", ".jpg", ".jpeg", ".gif" };
 	complement(key,extlist);
 }
 
@@ -310,7 +310,7 @@ void MetaDataList::complement_video(const std::string& key){
 }
 
 void MetaDataList::complement_document(const std::string& key){
-	std::vector<std::string> extlist={ ".pdf" };
+	std::vector<std::string> extlist={ ".pdf", ".cbz" };
 	complement(key,extlist);
 }
 
