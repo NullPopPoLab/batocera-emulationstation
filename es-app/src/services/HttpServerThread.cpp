@@ -451,6 +451,10 @@ void HttpServerThread::run()
 
 						return;
 					}
+					else{
+						res.set_content(std::string("415 unsupported media type; ")+contentType, "text/html");
+						res.status = 415;
+					}
 				}
 			}
 		}
