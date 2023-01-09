@@ -20,6 +20,64 @@ var selected_system=null;
 
 var main=document.getElementById('mainboard');
 
+const content_type={
+	audio:{
+		'.mp3':{es:'audio/mpeg',fe:'audio/mpeg'},
+		'.ogg':{es:'audeo/ogg',fe:'audio/ogg'},
+		'.wav':{es:'audio/wav',fe:'audio/wav'},
+	},
+	video:{
+		'.avi':{es:'video/x-msvideo',fe:'video/x-msvideo'},
+		'.mkv':{es:'video/AV1',fe:'video/AV1'},
+		'.mp4':{es:'video/H264',fe:'video/H264'},
+		'.webm':{es:'video/webm',fe:'video/webm'},
+	},
+	image:{
+		'.gif':{es:'image/gif',fe:'image/gif'},
+		'.jpg':{es:'image/jpeg',fe:'image/jpeg'},
+		'.jpeg':{es:'image/jpeg',fe:'image/jpeg'},
+		'.png':{es:'image/png',fe:'image/png'},
+		'.svg':{es:'image/svg+xml',fe:'image/svg+xml'},
+		'.svg+sml':{es:'image/svg+xml',fe:'image/svg+xml'},
+	},
+	text:{
+		'.cbz':{es:'application/x-cbz',fe:'vnd.comicbook+zip'},
+		'.htm':{es:null,fe:'text/html'},
+		'.html':{es:null,fe:'text/html'},
+		'.pdf':{es:'application/pdf',fe:'application/pdf'},
+		'.txt':{es:null,fe:'text/plain'},
+	},
+}
+
+function filter_type(type,uc){
+	var t=[]
+	var reg=content_type[type]
+	for(var k in reg){
+		if(reg[k][uc])t.push(reg[k][uc]);
+	}
+	return t.join(',');
+}
+
+function getFullMediaType(path,uc){
+	var p=path.lastIndexOf('.');
+	var ext=(p<0)?'':path.substring(p).toLowerCase();
+	if(content_type.audio[ext])return content_type.audio[ext][uc];
+	if(content_type.video[ext])return content_type.video[ext][uc];
+	if(content_type.image[ext])return content_type.image[ext][uc];
+	if(content_type.text[ext])return content_type.text[ext][uc];
+	return '';
+}
+
+function getMajorMediaType(path){
+	var p=path.lastIndexOf('.');
+	var ext=(p<0)?'':path.substring(p).toLowerCase();
+	if(content_type.audio[ext])return 'audio';
+	if(content_type.video[ext])return 'video';
+	if(content_type.image[ext])return 'image';
+	if(content_type.text[ext])return 'text';
+	return '';
+}
+
 function httpGetJson(url,cbok=null,cbng=null){
 	fetch(url)
 		.then((res)=>{
@@ -32,8 +90,8 @@ function httpGetJson(url,cbok=null,cbng=null){
 				else console.log(JSON.stringify(err));
 			}
 		})
-		.then((xml)=>{
-			if(cbok)cbok(xml);
+		.then((json)=>{
+			if(cbok)cbok(json);
 		})
 		.catch((err)=>{
 			if(cbng)cbng({error:err.toString()});
@@ -87,8 +145,18 @@ function httpPostJson(url,data,cbok=null,cbng=null){
 		});
 }
 
-function httpPostFile(url,data,cbok=null,cbng=null){
-	fetch(url,{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:data})
+function httpPostFile(url,type,data,cbok=null,cbng=null){
+	fetch(url,{method:'POST',headers:{'Content-Type':type?type:'application/octet-stream'},body:data})
+		.then((res)=>{
+			if(res.status>=200 && res.status<300){
+				return res;
+			}
+			else{
+				var err={code:res.status,msg:res.statusText}
+				if(cbng)cbng(err);
+				else console.log(JSON.stringify(err));
+			}
+		})
 		.then((data)=>{
 			if(cbok)cbok(data);
 		})
@@ -256,7 +324,8 @@ function createRatingControl(gt,onchange){
 			tag:'span',
 			attr:{title:v},
 		}),
-		set:(v)=>{
+		set:(v2)=>{
+			v=v2;
 			for(var i=0;i<5;++i){
 				s[i].setAttribute('src',
 					'/resources/star_'+((i<v)?'filled.svg':'unfilled.svg'));
@@ -290,7 +359,8 @@ function createFavoriteButton(gt,onchange){
 	var f=gt.favorite=='true';
 	var t={
 		view:createElement({tag:'button',attr:{class:f?'btn_favorite':'btn_normal'},sub:['Favorite']}),
-		set:(f)=>{
+		set:(f2)=>{
+			f=f2;
 			t.view.setAttribute('class',f?'btn_favorite':'btn_normal');
 		},
 	}
@@ -307,7 +377,8 @@ function createHiddenButton(gt,onchange){
 	var f=gt.hidden=='true';
 	var t={
 		view:createElement({tag:'button',attr:{class:f?'btn_hidden':'btn_normal'},sub:['Hidden']}),
-		set:(f)=>{
+		set:(f2)=>{
+			f=f2;
 			t.view.setAttribute('class',f?'btn_hidden':'btn_normal');
 		},
 	}
@@ -324,7 +395,8 @@ function createRunnableButton(gt,onchange){
 	var f=gt.runnable=='true';
 	var t={
 		view:createElement({tag:'button',attr:{class:f?'btn_runnable':'btn_normal'},sub:['Runnable']}),
-		set:(f)=>{
+		set:(f2)=>{
+			f=f2;
 			t.view.setAttribute('class',f?'btn_runnable':'btn_normal');
 		},
 	}
@@ -341,7 +413,8 @@ function createKidGameButton(gt,onchange){
 	var f=gt.kidgame=='true';
 	var t={
 		view:createElement({tag:'button',attr:{class:f?'btn_kidgame':'btn_normal'},sub:['Kid Game']}),
-		set:(f)=>{
+		set:(f2)=>{
+			f=f2;
 			t.view.setAttribute('class',f?'btn_kidgame':'btn_normal');
 		},
 	}
@@ -362,11 +435,11 @@ function createMetaButton(st,gt,onsubmit){
 	return btn;
 }
 
-function createDetailButton(st,gt){
+function createDetailButton(st,gt,onsubmit,onerr){
 
 	var btn=createElement({tag:'button',sub:['Detail']});
 	btn.onclick=()=>{
-		updateGameView(st,gt);
+		updateGameView(st,gt,onsubmit,onerr);
 	}
 	return btn;
 }
@@ -835,6 +908,193 @@ function updateMetaEditor(st,gt,onsubmit){
 	main.append(panel_metaeditor);
 }
 
+function updateMediaCaption(loc,label,url=null){
+
+	createElement({
+		target:loc,
+		tag:url?'a':'span',
+		attr:url?{target:'_blank',href:url,class:'mediacaption'}:{class:'mediacaption'},
+		sub:[label]
+	});
+}
+
+function showReplacerButton(loc,onclick){
+
+	var btn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Edit']
+	});
+	btn.onclick=onclick;
+}
+
+function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
+
+	btnloc.innerHTML='';
+	pnlloc.innerHTML='';
+
+	var path=gt[it];
+	var abbtn=createElement({
+		target:pnlloc,
+		tag:'button',
+		sub:['Abort']
+	});
+	if(path){
+		var rmbtn=createElement({
+			target:pnlloc,
+			tag:'button',
+			sub:['Remove']
+		});
+		rmbtn.onclick=()=>{
+			pnlloc.innerHTML='';
+			createElement({
+				target:pnlloc,
+				tag:'div',
+				sub:['Remove this']
+			});
+			var okbtn=createElement({
+				target:pnlloc,
+				tag:'button',
+				sub:['OK']
+			});
+			var ngbtn=createElement({
+				target:pnlloc,
+				tag:'button',
+				sub:['Do not']
+			});
+
+			ngbtn.onclick=()=>{
+				pnlloc.innerHTML='';
+				showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+			}
+			okbtn.onclick=()=>{
+				pnlloc.innerHTML='';
+				var url='/systems/'+st.name+'/games/'+gt.id+'/remove_media/'+it;
+				httpPostJson(url,'{}',()=>{
+					if(gt[it])delete gt[it];
+					if(cbchg)cbchg(null);
+					updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+				},(err)=>{
+					createElement({
+						target:pnlloc,
+						tag:'div',
+						sub:[err]
+					});
+					updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+				});
+			}
+		}
+	}
+	var rgbtn=createElement({
+		target:pnlloc,
+		tag:'button',
+		sub:[path?'Replace':'Register']
+	});
+	var chsloc=createElement({
+		target:pnlloc,
+		tag:'span',
+	});
+
+	abbtn.onclick=()=>{
+		pnlloc.innerHTML='';
+		updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+	}
+
+	var chooser=null;
+	var srcfile=null;
+	rgbtn.onclick=()=>{
+		if(chooser){
+			chooser.click();
+			return;
+		}
+		chooser=createElement({
+			target:chsloc,
+			tag:'input',
+			attr:{type:'file',accept:filter},
+		});
+		chooser.addEventListener('cancel',()=>{
+			pnlloc.innerHTML='';
+			showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+		});
+		chooser.addEventListener('change',(e)=>{
+			var fs=e.target.files;
+			if(fs<1)return;
+			srcfile=e.target.files[0];
+			if(!srcfile)return;
+			chooser=null;
+			pnlloc.innerHTML='';
+			createElement({
+				target:pnlloc,
+				tag:'div',
+				sub:['Upload ['+srcfile.name+']']
+			});
+			var okbtn=createElement({
+				target:pnlloc,
+				tag:'button',
+				sub:['OK']
+			});
+			var ngbtn=createElement({
+				target:pnlloc,
+				tag:'button',
+				sub:['Do not']
+			});
+
+			ngbtn.onclick=()=>{
+				pnlloc.innerHTML='';
+				showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+			}
+			okbtn.onclick=()=>{
+				pnlloc.innerHTML='';
+				var fd=new FileReader();
+				fd.readAsArrayBuffer(srcfile);
+				fd.addEventListener('load',()=>{
+					var url='/systems/'+st.name+'/games/'+gt.id+'/media/'+it;
+					httpPostFile(url,getFullMediaType(srcfile.name,'es'),fd.result,()=>{
+						gt[it]=url;
+						if(cbchg)cbchg(url);
+						updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+					},(err)=>{
+						createElement({
+							target:pnlloc,
+							tag:'div',
+							attr:{class:'instanterror'},
+							sub:[JSON.stringify(err)]
+						});
+						updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+					});
+				});
+			}
+		});
+		chooser.click();
+	}
+}
+
+function updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg){
+
+	showReplacerButton(btnloc,()=>{
+		showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+	});
+}
+
+function updateMediaView(st,gt,it,tray,path){
+
+	tray.loc.innerHTML='';
+	if(!path)return;
+
+	if(tray.elem)tray.elem.remove();
+	tray.elem=createElement({
+		target:tray.loc,
+		tag:'p',
+		sub:[
+			(it=='video')?
+				createElement({tag:'video',attr:{controls:'controls'},sub:[
+					createElement({tag:'source',attr:{src:gt[it]}})
+				]}):
+			createElement({tag:'img',attr:{src:gt[it]}})
+		],
+	});
+}
+
 function updateGameView(st,gt,cbchg,cberr){
 
 	panel_sysview.innerHTML='';
@@ -907,7 +1167,7 @@ function updateGameView(st,gt,cbchg,cberr){
 
 	panel_gameview.append(createMetaButton(st,gt,(dst)=>{
 		for(var k in dst)gt[k]=dst[k];
-		if(cbchg)cbchg();
+		if(cbchg)cbchg(dst);
 		var url='/systems/'+st.name+'/games';
 		var post2=url+'/'+gt.id;
 		httpPostJson(post2,dst,null,(err)=>{
@@ -936,30 +1196,25 @@ function updateGameView(st,gt,cbchg,cberr){
 		});
 
 		var path=gt[it];
-		createElement({
+		var captloc=createElement({
 			target:frm,
-			tag:path?'a':'span',
-			attr:path?{target:'_blank',href:gt[it],class:'mediacaption'}:{class:'mediacaption'},
-			sub:[meta[it]]
+			tag:'span',
 		});
+		updateMediaCaption(captloc,meta[it],path);
 		createElement({target:frm,tag:'span',sub:[' ']});
-//		var file=createElement({
-//			target:frm,
-//			tag:'input',
-//			type:'file',
-//			accept:'.pdf,.cbz',
-//		});
-//		var btn=createElement({
-//			target:frm,
-//			tag:'button',
-//			sub:[path?'Replace':'Register']
-//		});
-//		((file_,btn_)=>{
-//			btn_.onclick=()=>{
-//				var url='/systems/'+st.name+'/games/'+gt.id+'/media/'+it;
-//				httpPostFile(url,file_.);
-//			}
-//		})(file,btn);
+		var btnloc=createElement({
+			target:frm,
+			tag:'span',
+		});
+		var pnlloc=createElement({
+			target:frm,
+			tag:'div',
+		});
+		((it_)=>{
+			updateReplacer(st,gt,it_,btnloc,pnlloc,filter_type('text','es'),(url)=>{
+				updateMediaCaption(captloc,meta[it_]??'',url);
+			});
+		})(it);
 	}
 
 	if(gt.docsAvailable=='true'){
@@ -976,13 +1231,7 @@ function updateGameView(st,gt,cbchg,cberr){
 					target:list,
 					tag:'p',
 				});
-
-				createElement({
-					target:frm,
-					tag:'a',
-					attr:{target:'_blank',href:(path.indexOf(':')<0)?(pref+encodeURI(path)):path},
-					sub:[it]
-				});
+				updateMediaCaption(frm,it,(path.indexOf(':')<0)?(pref+encodeURI(path)):path);
 			}
 		},(err)=>{
 			list.innerHTML='';
@@ -1021,26 +1270,27 @@ function updateGameView(st,gt,cbchg,cberr){
 
 		var path=gt[it];
 
-		createElement({
+		updateMediaCaption(frm,meta[it]);
+		createElement({target:frm,tag:'span',sub:[' ']});
+		var btnloc=createElement({
 			target:frm,
-			tag:'p',
-			sub:[
-				createElement({tag:'span',attr:{class:'mediacaption'},sub:[meta[it]+' ']}),
-//				createElement({tag:'button',sub:[path?'Replace':'Register']})
-			],
+			tag:'span',
 		});
-		if(!path)continue;
-		createElement({
+		var pnlloc=createElement({
 			target:frm,
-			tag:'p',
-			sub:[
-				(it=='video')?
-					createElement({tag:'video',attr:{controls:'controls'},sub:[
-						createElement({tag:'source',attr:{src:gt[it]}})
-					]}):
-				createElement({tag:'img',attr:{src:gt[it]}})
-			],
+			tag:'div',
 		});
+		var imgloc=createElement({
+			target:frm,
+			tag:'div',
+		});
+		var imgtray={loc:imgloc,elem:null};
+		((it_,imgtray_)=>{
+			updateReplacer(st,gt,it_,btnloc,pnlloc,filter_type((it=='video')?'video':'image','es'),(url)=>{
+				updateMediaView(st,gt,it_,imgtray_,url);
+			});
+		})(it,imgtray);
+		updateMediaView(st,gt,it,imgtray,path);
 	}
 
 	var btn=createElement({
@@ -1327,7 +1577,7 @@ function updateGameList(ctrl){
 						createElement({tag:'td',attr:{class:'tbltool'},sub:[
 							c_favorite.view,
 							c_hidden.view,
-							createDetailButton(st,gt_,()=>{
+							createDetailButton(st,gt_,(dst)=>{
 								errview.clear();
 								c_rating.set(Math.floor(dst.rating*5+0.5));
 								c_favorite.set(dst.favorite=='true');
@@ -1348,56 +1598,12 @@ function updateGameList(ctrl){
 	panel_sysview.append(panel_gamelist);
 }
 
-function getMediaType(path){
-	var p=path.lastIndexOf('.');
-	var ext=(p<0)?'':path.substring(p+1);
-	switch(ext){
-		case 'avi':
-		case 'mpg':
-		case 'mkv':
-		case 'mp4':
-		case 'webm':
-		return 'video';
-
-		case 'mp3':
-		case 'ogg':
-		case 'flac':
-		case 'wav':
-		return 'audio';
-
-		case 'gif':
-		case 'jfif':
-		case 'jpg':
-		case 'jpeg':
-		case 'png':
-		case 'bmp':
-		return 'image';
-
-		case 'cbz':
-		case 'doc':
-		case 'docx':
-		case 'htm':
-		case 'html':
-		case 'md':
-		case 'nfo':
-		case 'pdf':
-		case 'ppt':
-		case 'pptx':
-		case 'txt':
-		case 'xls':
-		case 'xlsx':
-		case 'xml':
-		return 'text';
-	}
-	return '';
-}
-
 function showImage(title,canvas,capt,url){
 
 	title.innerHTML=capt;
 	canvas.innerHTML='';
 
-	switch(getMediaType(url)){
+	switch(getMajorMediaType(url)){
 		case 'video':
 		createElement({
 			target:canvas,
@@ -1620,7 +1826,13 @@ httpGetJson('/systems',(data)=>{
 	main.innerHTML='';
 	main.append(panel_mainboard);
 },(err)=>{
-	main.innerHTML=JSON.stringify(err);
+	main.innerHTML='';
+	createElement({
+		target:main,
+		tag:'div',
+		attr:{class:'instanterror'},
+		sub:[JSON.stringify(err)]
+	});
 });
 
 //--></script>
