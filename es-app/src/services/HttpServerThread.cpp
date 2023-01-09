@@ -451,6 +451,10 @@ void HttpServerThread::run()
 
 						return;
 					}
+					else{
+						res.set_content(std::string("415 unsupported media type; ")+contentType, "text/html");
+						res.status = 415;
+					}
 				}
 			}
 		}
@@ -459,6 +463,55 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
+	mHttpServer->Post(R"(/systems/(.+)/games/(.+)/remove_media/(.+))", [this](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		if (req.body.empty())
+		{
+			res.set_content("400 bad request - body is missing", "text/html");
+			res.status = 400;
+			return;
+		}
+
+		if (!req.has_header("Content-Type"))
+		{
+			res.set_content("400 missing content-type", "text/html");
+			res.status = 400;
+			return;
+		}
+
+		std::string systemName = req.matches[1];
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			std::string gameId = req.matches[2];
+			auto game = HttpApi::findFileData(system, gameId);
+			if (game != nullptr)
+			{
+				std::string metadataName = req.matches[3];
+
+				if (game->getMetadata().getType(metadataName) == MD_PATH)
+				{
+					if (HttpApi::RemoveMedia(game, metadataName))
+					{
+						if (ViewController::hasInstance())
+							mWindow->postToUiThread([game]() { ViewController::get()->onFileChanged(game, FileChangeType::FILE_METADATA_CHANGED); });
+
+						return;
+					}
+					else{
+						res.set_content("404 already not found; ", "text/html");
+						res.status = 404;
+					}
+				}
+			}
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
 
 	mHttpServer->Post(R"(/systems/(.+)/games/(.+))", [this](const httplib::Request& req, httplib::Response& res)
 	{

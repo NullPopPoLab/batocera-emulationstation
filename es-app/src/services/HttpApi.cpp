@@ -242,7 +242,7 @@ bool HttpApi::ImportMedia(FileData* file, const std::string& mediaType, const st
 
 	for (auto mdd : MetaDataList::getMDD())
 	{
-		if (mdd.key != mediaType && mdd.type != MD_PATH)
+		if (mdd.key != mediaType || mdd.type != MD_PATH)
 			continue;
 
 		if (mdd.id == MetaDataId::Video)
@@ -268,6 +268,23 @@ bool HttpApi::ImportMedia(FileData* file, const std::string& mediaType, const st
 		Utils::FileSystem::writeAllText(path, mediaBytes);
 		file->setMetadata(mdd.id, path);
 		saveToGamelistRecovery(file);
+		return true;
+	}
+
+	return false;
+}
+
+bool HttpApi::RemoveMedia(FileData* file, const std::string& mediaType){
+
+	for (auto mdd : MetaDataList::getMDD())
+	{
+		if (mdd.key != mediaType || mdd.type != MD_PATH)
+			continue;
+		if (!file->hasMetadata(mdd.id)) return false;
+
+		auto path=file->getMetaPath(mdd.id);
+		Utils::FileSystem::removeFile(path);
+		file->setMetadata(mdd.id, "");
 		return true;
 	}
 
