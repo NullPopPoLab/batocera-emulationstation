@@ -256,7 +256,8 @@ function createRatingControl(gt,onchange){
 			tag:'span',
 			attr:{title:v},
 		}),
-		set:(v)=>{
+		set:(v2)=>{
+			v=v2;
 			for(var i=0;i<5;++i){
 				s[i].setAttribute('src',
 					'/resources/star_'+((i<v)?'filled.svg':'unfilled.svg'));
@@ -290,7 +291,8 @@ function createFavoriteButton(gt,onchange){
 	var f=gt.favorite=='true';
 	var t={
 		view:createElement({tag:'button',attr:{class:f?'btn_favorite':'btn_normal'},sub:['Favorite']}),
-		set:(f)=>{
+		set:(f2)=>{
+			f=f2;
 			t.view.setAttribute('class',f?'btn_favorite':'btn_normal');
 		},
 	}
@@ -307,7 +309,8 @@ function createHiddenButton(gt,onchange){
 	var f=gt.hidden=='true';
 	var t={
 		view:createElement({tag:'button',attr:{class:f?'btn_hidden':'btn_normal'},sub:['Hidden']}),
-		set:(f)=>{
+		set:(f2)=>{
+			f=f2;
 			t.view.setAttribute('class',f?'btn_hidden':'btn_normal');
 		},
 	}
@@ -324,7 +327,8 @@ function createRunnableButton(gt,onchange){
 	var f=gt.runnable=='true';
 	var t={
 		view:createElement({tag:'button',attr:{class:f?'btn_runnable':'btn_normal'},sub:['Runnable']}),
-		set:(f)=>{
+		set:(f2)=>{
+			f=f2;
 			t.view.setAttribute('class',f?'btn_runnable':'btn_normal');
 		},
 	}
@@ -341,7 +345,8 @@ function createKidGameButton(gt,onchange){
 	var f=gt.kidgame=='true';
 	var t={
 		view:createElement({tag:'button',attr:{class:f?'btn_kidgame':'btn_normal'},sub:['Kid Game']}),
-		set:(f)=>{
+		set:(f2)=>{
+			f=f2;
 			t.view.setAttribute('class',f?'btn_kidgame':'btn_normal');
 		},
 	}
