@@ -26,7 +26,7 @@ public:
 	static bool ImportFromJson(FileData* file, const std::string& json);
 
 	static bool ImportMedia(FileData* file, const std::string& mediaType, const std::string& contentType, const std::string& mediaBytes);
-	
+	static bool RemoveMedia(FileData* file, const std::string& mediaType);
 
 private:
 	static std::string getFileDataId(FileData* game);

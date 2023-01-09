@@ -274,6 +274,23 @@ bool HttpApi::ImportMedia(FileData* file, const std::string& mediaType, const st
 	return false;
 }
 
+bool HttpApi::RemoveMedia(FileData* file, const std::string& mediaType){
+
+	for (auto mdd : MetaDataList::getMDD())
+	{
+		if (mdd.key != mediaType || mdd.type != MD_PATH)
+			continue;
+		if (!file->hasMetadata(mdd.id)) return false;
+
+		auto path=file->getMetaPath(mdd.id);
+		Utils::FileSystem::removeFile(path);
+		file->setMetadata(mdd.id, "");
+		return true;
+	}
+
+	return false;
+}
+
 std::string HttpApi::ToJson(FileData* file)
 {
 	rapidjson::StringBuffer s;
