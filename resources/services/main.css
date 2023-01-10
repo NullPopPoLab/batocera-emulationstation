@@ -88,6 +88,35 @@ main {
 .workspace {
 }
 
+.audiohead {
+	flex-shrink:0;
+	width: 99%;
+	height: 6em;
+}
+.audioctrl {
+	flex-grow:1;
+}
+.music_title{
+	font-size:150%;
+}
+.music_play{
+}
+.music_opt{
+}
+.music_list{
+	max-height: calc(100vh - 3em - 6em);
+}
+.music_listed{
+}
+.music_current{
+	background-color:#005070; 
+}
+.music_mode_on{
+	background-color:#aaffff;
+}
+.music_mode_off{
+}
+
 .imageviewer {
 	text-align:center;
 	display:flex;
@@ -122,6 +151,13 @@ main {
 .imagecanvas {
 	border:groove;
 }
+.ssmode_on{
+	font-size:150%;
+	background-color:#aaffff;
+}
+.ssmode_off{
+	font-size:150%;
+}
 
 .gamelist {
 	color:white;
@@ -151,6 +187,8 @@ main {
 	color:white;
 	background-color:#202020; 
 	text-align:center;
+}
+.mediatray {
 }
 .mediaviewer {
 	flex-grow:1;

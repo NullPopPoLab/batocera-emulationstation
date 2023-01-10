@@ -78,6 +78,24 @@ function getMajorMediaType(path){
 	return '';
 }
 
+function delayExec(delay,exec){
+
+	var t={
+		abf:false,
+		toid:setTimeout(()=>{
+			if(t.abf)return;
+			t.abf=true;
+			if(exec)exec();
+		},delay),
+		abort:()=>{
+			if(t.abf)return;
+			t.abf=true;
+			clearTimeout(t.toid);
+		}
+	}
+	return t;
+}
+
 function httpGetJson(url,cbok=null,cbng=null){
 	fetch(url)
 		.then((res)=>{
@@ -439,7 +457,7 @@ function createDetailButton(st,gt,onsubmit,onerr){
 
 	var btn=createElement({tag:'button',sub:['Detail']});
 	btn.onclick=()=>{
-		updateGameView(st,gt,onsubmit,onerr);
+		updateGameView(system_ctrl[gt.systemName].src,gt,onsubmit,onerr);
 	}
 	return btn;
 }
@@ -1085,6 +1103,7 @@ function updateMediaView(st,gt,it,tray,path){
 	tray.elem=createElement({
 		target:tray.loc,
 		tag:'p',
+		attr:{class:'mediatray'},
 		sub:[
 			(it=='video')?
 				createElement({tag:'video',attr:{controls:'controls'},sub:[
@@ -1121,7 +1140,7 @@ function updateGameView(st,gt,cbchg,cberr){
 		});
 		btn.onclick=()=>{
 			var url='/systems/'+st.name+'/games/'+gt.id;
-			updateImageViewer(url+'/scraper/jukebox',0,(data)=>{
+			updateJukeBox(url+'/scraper/jukebox',0,(data)=>{
 				var a={base:url+'/scraper/jukebox/',dir:[],file:[]}
 				for(var b of data.dirs){
 					// from ./ 
@@ -1251,7 +1270,7 @@ function updateGameView(st,gt,cbchg,cberr){
 		'ingame':'Ingame Shot',
 		'bezel':'Bezel',
 		'marquee':'Marquee',
-		'boxart':'Box Front',
+		'boxart':'Box Face',
 		'boxback':'Box Back',
 		'cartridge':'Cartridge',
 		'pcb':'PCB',
@@ -1299,8 +1318,8 @@ function updateGameView(st,gt,cbchg,cberr){
 		sub:['Quit'],
 	});
 	btn.onclick=()=>{
-		main.innerHTML='';
-		main.append(panel_mainboard);
+		panel_sysview.innerHTML='';
+		panel_sysview.append(panel_gamelist);
 	}
 
 	panel_sysview.append(panel_gameview);
@@ -1598,28 +1617,269 @@ function updateGameList(ctrl){
 	panel_sysview.append(panel_gamelist);
 }
 
-function showImage(title,canvas,capt,url){
+function updateJukeBox(url,depth,onload,onquit){
+
+	panel_imageviewer.innerHTML='';
+	main.innerHTML='';
+
+	var head=createElement({
+		target:panel_imageviewer,
+		tag:'div',
+		attr:{class:'audiohead'},
+	});
+	var tool=createElement({
+		target:head,
+		tag:'div',
+		attr:{class:'imagetool'},
+	});
+	var ctrl=createElement({
+		target:tool,
+		tag:'div',
+		attr:{class:'audioctrl'},
+	});
+	var btns=createElement({
+		target:tool,
+		tag:'div',
+		attr:{class:'imagebtns'},
+	});
+	var btnq=createElement({
+		target:btns,
+		tag:'button',
+		attr:{class:'imagebtn'},
+		sub:['×']
+	});
+	var view=createElement({
+		target:panel_imageviewer,
+		tag:'div',
+		attr:{class:'imageview'},
+	});
+	var dirsel=createElement({
+		target:view,
+		tag:'div',
+		attr:{class:'imagedir'},
+	});
+	var selector=createElement({
+		target:view,
+		tag:'div',
+	});
+	main.append(panel_imageviewer);
+
+	btnq.onclick=()=>{
+		onquit();
+	}
+
+	ctrl.innerHTML='Now Loading...';
+	httpGetJson(url,(data)=>{
+		var attr=onload(data);
+
+		attr.dir.sort((a,b)=>{return (a<b)?-1:1});
+		attr.file.sort((a,b)=>{return (a<b)?-1:1});
+
+		ctrl.innerHTML='';
+		var titleboard=createElement({
+			target:ctrl,
+			tag:'div',
+			attr:{class:'music_title'},
+		});
+		var playboard=createElement({
+			target:ctrl,
+			tag:'div',
+			attr:{class:'music_play'},
+		});
+		var optboard=createElement({
+			target:ctrl,
+			tag:'div',
+			attr:{class:'music_opt'},
+		});
+
+		var playmode='';
+		var playnext=()=>{}
+		var optbtns={
+			manual:createElement({
+				target:optboard,
+				tag:'button',
+				attr:{class:'music_mode_off'},
+				sub:['Manual']
+			}),
+			repeat:createElement({
+				target:optboard,
+				tag:'button',
+				attr:{class:'music_mode_off'},
+				sub:['Repeat']
+			}),
+			sequence:createElement({
+				target:optboard,
+				tag:'button',
+				attr:{class:'music_mode_off'},
+				sub:['Sequence']
+			}),
+			random:createElement({
+				target:optboard,
+				tag:'button',
+				attr:{class:'music_mode_off'},
+				sub:['Random']
+			}),
+		}
+
+		var to=null;
+		var opt_select=(mode)=>{
+			if(mode==playmode)return false;
+			if(playmode)optbtns[playmode].setAttribute('class','music_mode_off');
+			playmode=mode;
+			optbtns[mode].setAttribute('class','music_mode_on');
+			return true;
+		}
+		optbtns.manual.onclick=()=>{
+			if(!opt_select('manual'))return;
+			if(to)to.abort();
+			to=null;
+			playnext=()=>{}
+		}
+		optbtns.repeat.onclick=()=>{
+			if(!opt_select('repeat'))return;
+			if(to)to.abort();
+			to=null;
+			playnext=()=>{show(cur,true);}
+		}
+		optbtns.sequence.onclick=()=>{
+			if(!opt_select('sequence'))return;
+			playnext=()=>{
+				var next=parseInt(cur)+1;
+				if(next>=max)next=0;
+				if(to)to.abort();
+				to=delayExec(3000,()=>{show(next,true);});
+			}
+		}
+		optbtns.random.onclick=()=>{
+			if(!opt_select('random'))return;
+			playnext=()=>{
+				var next=Math.floor(Math.random()*max);
+				if(to)to.abort();
+				to=delayExec(3000,()=>{show(next,true);});
+			}
+		}
+		optbtns.manual.click();
+
+		var cur=-1;
+		var show=(idx,play)=>{
+			var name=attr.file[idx];
+			var url=attr.base+name;
+			titleboard.innerHTML=name;
+			playboard.innerHTML='';
+			var p=createElement({
+				target:playboard,
+				tag:'audio',
+				attr:{controls:'controls'},
+				sub:[createElement({tag:'source',attr:{src:url}})
+			]});
+			p.onended=(ev)=>{playnext();}
+			if(cur>=0)trs[cur].setAttribute('class','music_listed');
+			cur=idx;
+			trs[idx].setAttribute('class','music_current');
+			if(play)p.setAttribute('autoplay','autoplay');
+		}
+
+		var dirs=attr.dir;
+		if(depth>0)dirs.unshift('..');
+		for(var name of dirs){
+			var btn=createElement({
+				target:dirsel,
+				tag:'button',
+				sub:[name]
+			});
+			((name_,btn_)=>btn_.onclick=()=>{
+				var url=attr.base+name_+'/';
+				updateJukeBox(url,depth+((name=='..')?-1:+1),(data)=>{
+					var a={base:url,dir:[],file:[]}
+					for(var b of data.dirs){
+						// from ./ 
+						a.dir.push(b.substring(2));
+					}
+					for(var b of data.files){
+						// from ./ 
+						a.file.push(b.substring(2));
+					}
+					return a;
+				},onquit);
+			})(name,btn);
+		}
+
+		var tbl=createElement({
+			target:selector,
+			tag:'table',
+			attr:{class:'music_list',align:'center',border:'border'},
+		});
+		var trs=[]
+		for(var idx in attr.file){
+			var tr=createElement({
+				target:tbl,
+				tag:'tr',
+				attr:{class:'music_listed'},
+			});
+			trs.push(tr);
+			var btntray=createElement({
+				target:tr,
+				tag:'td',
+			});
+			createElement({
+				target:tr,
+				tag:'td',
+				sub:[attr.file[idx]]
+			});
+			var btn=createElement({
+				target:btntray,
+				tag:'button',
+				sub:['Play']
+			});
+			((idx_)=>{
+				btn.onclick=()=>{show(idx_,true);}
+			})(idx);
+		}
+
+		var max=attr.file.length;
+		if(max>0){
+			show(0,false);
+		}
+		else{
+			titleboard.innerHTML='(empty)';
+		}
+
+	},(err)=>{
+		ctrl.innerHTML=JSON.stringify(err);
+	});
+}
+
+function showImage(title,canvas,capt,url,play,onend){
 
 	title.innerHTML=capt;
 	canvas.innerHTML='';
 
+	var to=null;
 	switch(getMajorMediaType(url)){
 		case 'video':
-		createElement({
+		var p=createElement({
 			target:canvas,
 			tag:'video',
 			attr:{controls:'controls'},
 			sub:[createElement({tag:'source',attr:{src:url}})
 		]});
+		p.onended=(ev)=>{
+			if(onend)onend();
+		}
+		if(play)p.setAttribute('autoplay','autoplay');
 		break;
 
 		case 'audio':
-		createElement({
+		var p=createElement({
 			target:canvas,
 			tag:'audio',
 			attr:{controls:'controls'},
 			sub:[createElement({tag:'source',attr:{src:url}})
 		]});
+		p.onended=(ev)=>{
+			if(onend)onend();
+		}
+		if(play)p.setAttribute('autoplay','autoplay');
 		break;
 
 		case 'image':
@@ -1627,6 +1887,9 @@ function showImage(title,canvas,capt,url){
 			target:canvas,
 			tag:'img',
 			attr:{src:url}
+		});
+		to=delayExec(2000,()=>{
+			if(onend)onend();
 		});
 		break;
 
@@ -1637,6 +1900,7 @@ function showImage(title,canvas,capt,url){
 			sub:['(Unknown Type)']
 		});
 	}
+	return to;
 }
 
 function updateImageViewer(url,depth,onload,onquit){
@@ -1659,29 +1923,49 @@ function updateImageViewer(url,depth,onload,onquit){
 		tag:'div',
 		attr:{class:'imagectrl'},
 	});
-	var btns=createElement({
+	var btnbar=createElement({
 		target:tool,
 		tag:'div',
 		attr:{class:'imagebtns'},
 	});
-	var btnl=createElement({
-		target:btns,
-		tag:'button',
-		attr:{class:'imagebtn'},
-		sub:['←']
-	});
-	var btnr=createElement({
-		target:btns,
-		tag:'button',
-		attr:{class:'imagebtn'},
-		sub:['→']
-	});
-	var btnq=createElement({
-		target:btns,
-		tag:'button',
-		attr:{class:'imagebtn'},
-		sub:['×']
-	});
+	var btns={
+		ss_off:createElement({
+			target:btnbar,
+			tag:'button',
+			attr:{class:'ssmode_off'},
+			sub:['Off']
+		}),
+		ss_seq:createElement({
+			target:btnbar,
+			tag:'button',
+			attr:{class:'ssmode_off'},
+			sub:['Seq']
+		}),
+		ss_rnd:createElement({
+			target:btnbar,
+			tag:'button',
+			attr:{class:'ssmode_off'},
+			sub:['Rnd']
+		}),
+		left:createElement({
+			target:btnbar,
+			tag:'button',
+			attr:{class:'imagebtn'},
+			sub:['←']
+		}),
+		right:createElement({
+			target:btnbar,
+			tag:'button',
+			attr:{class:'imagebtn'},
+			sub:['→']
+		}),
+		quit:createElement({
+			target:btnbar,
+			tag:'button',
+			attr:{class:'imagebtn'},
+			sub:['×']
+		}),
+	}
 	var view=createElement({
 		target:panel_imageviewer,
 		tag:'div',
@@ -1699,40 +1983,25 @@ function updateImageViewer(url,depth,onload,onquit){
 	});
 	main.append(panel_imageviewer);
 
-	btnq.onclick=()=>{
+	btns.quit.onclick=()=>{
 		onquit();
 	}
 
 	ctrl.innerHTML='Now Loading...';
 	httpGetJson(url,(data)=>{
 		var attr=onload(data);
-		var idx=0;
+		var cur=0;
 
 		attr.dir.sort((a,b)=>{return (a<b)?-1:1});
 		attr.file.sort((a,b)=>{return (a<b)?-1:1});
 
-		var show=(idx)=>{
+		var to=null;
+		var show=(idx,play)=>{
+			cur=idx;
 			var name=attr.file[idx];
 			var url=attr.base+name;
-			showImage(ctrl,canvas,name,url);
-		}
-
-		var max=attr.file.length;
-		if(max>0){
-			show(idx);
-			btnl.onclick=()=>{
-				idx=(idx+max-1)%max;
-				show(idx);
-			}
-			btnr.onclick=()=>{
-				idx=(idx+1)%max;
-				show(idx);
-			}
-		}
-		else{
-			ctrl.innerHTML='(empty)';
-			btnl.onclick=()=>{}
-			btnr.onclick=()=>{}
+			if(to)to.abort();
+			to=showImage(ctrl,canvas,name,url,play,ssnext);
 		}
 
 		var dirs=attr.dir;
@@ -1759,6 +2028,62 @@ function updateImageViewer(url,depth,onload,onquit){
 				},onquit);
 			})(name,btn);
 		}
+
+		var max=attr.file.length;
+		if(max>0){
+			show(cur,false);
+			btns.left.onclick=()=>{
+				cur=(cur+max-1)%max;
+				show(cur,false);
+			}
+			btns.right.onclick=()=>{
+				cur=(cur+1)%max;
+				show(cur,false);
+			}
+		}
+		else{
+			ctrl.innerHTML='(empty)';
+			btns.left.onclick=()=>{}
+			btns.right.onclick=()=>{}
+			return;
+		}
+
+		var ssmode='';
+		var ssnext=()=>{}
+		var ss_select=(mode)=>{
+			if(mode==ssmode)return false;
+			if(ssmode)btns['ss_'+ssmode].setAttribute('class','ssmode_off');
+			ssmode=mode;
+			btns['ss_'+ssmode].setAttribute('class','ssmode_on');
+			return true;
+		}
+		btns.ss_off.onclick=()=>{
+			if(!ss_select('off'))return;
+			if(to)to.abort();
+			to=null;
+			ssnext=()=>{}
+		}
+		btns.ss_seq.onclick=()=>{
+			if(!ss_select('seq'))return;
+			if(to)to.abort();
+			to=null;
+			ssnext=()=>{
+				var next=(cur+1)%max;
+				to=delayExec(3000,()=>{show(next,true);});
+			}
+			ssnext();
+		}
+		btns.ss_rnd.onclick=()=>{
+			if(!ss_select('rnd'))return;
+			if(to)to.abort();
+			to=null;
+			ssnext=()=>{
+				var next=Math.floor(Math.random()*max);
+				to=delayExec(3000,()=>{show(next,true);});
+			}
+			ssnext();
+		}
+		btns.ss_off.click();
 
 	},(err)=>{
 		ctrl.innerHTML=JSON.stringify(err);
