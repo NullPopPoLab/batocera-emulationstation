@@ -96,6 +96,28 @@ function delayExec(delay,exec){
 	return t;
 }
 
+function httpGetText(url,cbok=null,cbng=null){
+
+	fetch(url)
+		.then((res)=>{
+			if(res.status>=200 && res.status<300){
+				return res.text();
+			}
+			else{
+				var err={code:res.status,msg:res.statusText}
+				if(cbng)cbng(err);
+				else console.log(JSON.stringify(err));
+			}
+		})
+		.then((text)=>{
+			if(cbok)cbok(text);
+		})
+		.catch((err)=>{
+			if(cbng)cbng({error:err.toString()});
+			else console.log(err.toString());
+		});
+}
+
 function httpGetJson(url,cbok=null,cbng=null){
 	fetch(url)
 		.then((res)=>{
@@ -243,6 +265,10 @@ const panel_sysview=createElement({
 	target:panel_mainboard,
 	tag:'div',
 	attr:{class:'systemview'},
+});
+const panel_homeview=createElement({
+	tag:'div',
+	attr:{class:'homeview'},
 });
 const panel_screenshots=createElement({
 	tag:'div',
@@ -777,7 +803,7 @@ function updateMetaEditor(st,gt,onsubmit){
 		target:panel_metaeditor,
 		tag:'div',
 		attr:{class:'gamecaption'},
-		sub:[gt.name]
+		sub:[gt.title?gt.title:gt.name]
 	});
 
 	var btn=createElement({
@@ -946,6 +972,89 @@ function showReplacerButton(loc,onclick){
 	btn.onclick=onclick;
 }
 
+function showConfirmPanel(loc,capt,cbok,cbng){
+
+	createElement({
+		target:loc,
+		tag:'div',
+		sub:[capt]
+	});
+
+	var okbtn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['OK']
+	});
+	var ngbtn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Do not']
+	});
+
+	okbtn.onclick=()=>{
+		loc.innerHTML='';
+		if(cbok)cbok();
+	}
+	ngbtn.onclick=()=>{
+		loc.innerHTML='';
+		if(cbng)cbng();
+	}
+}
+
+function createFileChooser(bin,buttonloc,panelloc,filter,action,onload=null,oncancel=null){
+
+	var t={
+		Selected:null,
+		View:null,
+	}
+	t.open=()=>{
+		if(t.View){
+			t.View.click();
+			return;
+		}
+
+		t.View=createElement({
+			target:buttonloc,
+			tag:'input',
+			attr:{type:'file',accept:filter},
+		});
+		t.View.addEventListener('cancel',()=>{
+			buttonloc.innerHTML='';
+			panelloc.innerHTML='';
+			if(oncancel)oncancel();
+		});
+		t.View.addEventListener('change',(e)=>{
+			var fs=e.target.files;
+			if(fs<1)return;
+			t.Selected=e.target.files[0];
+			buttonloc.innerHTML='';
+			if(!t.Selected)return;
+			t.View=null;
+			panelloc.innerHTML='';
+			showConfirmPanel(panelloc,action+' ['+t.Selected.name+']',()=>{
+				var fd=new FileReader();
+				if(bin){
+					fd.readAsArrayBuffer(t.Selected);
+					fd.addEventListener('load',()=>{
+						if(onload)onload(t.Selected.name,fd.result);
+					});
+				}
+				else{
+					fd.readAsText(t.Selected);
+					fd.addEventListener('load',()=>{
+						if(onload)onload(t.Selected.name,fd.result);
+					});
+				}
+			},()=>{
+				if(oncancel)oncancel();
+			});
+		});
+		t.View.click();
+	}
+
+	return t;
+}
+
 function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
 
 	btnloc.innerHTML='';
@@ -965,28 +1074,7 @@ function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
 		});
 		rmbtn.onclick=()=>{
 			pnlloc.innerHTML='';
-			createElement({
-				target:pnlloc,
-				tag:'div',
-				sub:['Remove this']
-			});
-			var okbtn=createElement({
-				target:pnlloc,
-				tag:'button',
-				sub:['OK']
-			});
-			var ngbtn=createElement({
-				target:pnlloc,
-				tag:'button',
-				sub:['Do not']
-			});
-
-			ngbtn.onclick=()=>{
-				pnlloc.innerHTML='';
-				showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
-			}
-			okbtn.onclick=()=>{
-				pnlloc.innerHTML='';
+			showConfirmPanel(pnlloc,'Remove this',()=>{
 				var url='/systems/'+st.name+'/games/'+gt.id+'/remove_media/'+it;
 				httpPostJson(url,'{}',()=>{
 					if(gt[it])delete gt[it];
@@ -1000,7 +1088,9 @@ function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
 					});
 					updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
 				});
-			}
+			},()=>{
+				showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+			});
 		}
 	}
 	var rgbtn=createElement({
@@ -1018,72 +1108,26 @@ function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
 		updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
 	}
 
-	var chooser=null;
-	var srcfile=null;
-	rgbtn.onclick=()=>{
-		if(chooser){
-			chooser.click();
-			return;
-		}
-		chooser=createElement({
-			target:chsloc,
-			tag:'input',
-			attr:{type:'file',accept:filter},
-		});
-		chooser.addEventListener('cancel',()=>{
-			pnlloc.innerHTML='';
-			showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
-		});
-		chooser.addEventListener('change',(e)=>{
-			var fs=e.target.files;
-			if(fs<1)return;
-			srcfile=e.target.files[0];
-			if(!srcfile)return;
-			chooser=null;
-			pnlloc.innerHTML='';
+	var chooser=createFileChooser(true,chsloc,pnlloc,filter,'Upload',(name,data)=>{
+		var url='/systems/'+st.name+'/games/'+gt.id+'/media/'+it;
+		httpPostFile(url,getFullMediaType(name,'es'),data,()=>{
+			gt[it]=url;
+			if(cbchg)cbchg(url);
+			updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+		},(err)=>{
 			createElement({
 				target:pnlloc,
 				tag:'div',
-				sub:['Upload ['+srcfile.name+']']
+				attr:{class:'instanterror'},
+				sub:[JSON.stringify(err)]
 			});
-			var okbtn=createElement({
-				target:pnlloc,
-				tag:'button',
-				sub:['OK']
-			});
-			var ngbtn=createElement({
-				target:pnlloc,
-				tag:'button',
-				sub:['Do not']
-			});
-
-			ngbtn.onclick=()=>{
-				pnlloc.innerHTML='';
-				showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
-			}
-			okbtn.onclick=()=>{
-				pnlloc.innerHTML='';
-				var fd=new FileReader();
-				fd.readAsArrayBuffer(srcfile);
-				fd.addEventListener('load',()=>{
-					var url='/systems/'+st.name+'/games/'+gt.id+'/media/'+it;
-					httpPostFile(url,getFullMediaType(srcfile.name,'es'),fd.result,()=>{
-						gt[it]=url;
-						if(cbchg)cbchg(url);
-						updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
-					},(err)=>{
-						createElement({
-							target:pnlloc,
-							tag:'div',
-							attr:{class:'instanterror'},
-							sub:[JSON.stringify(err)]
-						});
-						updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
-					});
-				});
-			}
+			updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
 		});
-		chooser.click();
+	},()=>{
+		showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+	});
+	rgbtn.onclick=()=>{
+		chooser.open();
 	}
 }
 
@@ -1129,7 +1173,7 @@ function updateGameView(st,gt,cbchg,cberr){
 		target:panel_gameview,
 		tag:'div',
 		attr:{class:'gamecaption'},
-		sub:[gt.name]
+		sub:[gt.title?gt.title:gt.name]
 	});
 
 	if(gt.jukeboxAvailable=='true'){
@@ -1510,35 +1554,34 @@ function updateGameList(ctrl){
 			saver.download=st.name+'.tsv';
 			saver.click();
 		}
-		var srcfile=null;
+
+//		var srcfile=null;
 		btn=createElement({
 			target:games,
 			tag:'button',
 			sub:['Import'],
 		});
-		btn.onclick=()=>{
-			if(!srcfile)return;
-			var fd=new FileReader();
-			fd.readAsText(srcfile);
-			fd.addEventListener('load',()=>{
-				importTSV(st,data,fd.result);
-			},()=>{
-				updateGameList(ctrl)
-			},
-			()=>{
-				updateGameList(ctrl)
-			});
-		}
-		var chooser=createElement({
+		var chsloc=createElement({
 			target:games,
-			tag:'input',
-			attr:{type:'file',accept:'.tsv'},
+			tag:'span',
 		});
-		chooser.addEventListener('change',(e)=>{
-			var fs=e.target.files;
-			if(fs<1)return;
-			srcfile=e.target.files[0];
+		var pnlloc=createElement({
+			target:games,
+			tag:'div',
 		});
+
+		var chooser=createFileChooser(false,chsloc,pnlloc,'.tsv','Import',(n,tsv)=>{
+			importTSV(st,data,tsv,()=>{
+				updateGameList(ctrl);
+			},(err)=>{
+				updateGameList(ctrl);
+			});
+		},()=>{
+			updateGameList(ctrl)
+		});
+		btn.onclick=()=>{
+			chooser.open();
+		}
 
 		var tbl=createElement({
 			target:games,
@@ -1551,6 +1594,7 @@ function updateGameList(ctrl){
 			tag:'tr',
 			sub:[
 				createElement({tag:'th',sub:['Name']}),
+				createElement({tag:'th',sub:['System']}),
 				createElement({tag:'th',sub:['Count']}),
 				createElement({tag:'th',sub:['Total Time']}),
 				createElement({tag:'th',sub:['Last Played']}),
@@ -1562,7 +1606,7 @@ function updateGameList(ctrl){
 		for(var gt of data){
 			((gt_)=>{
 				var post2=url+'/'+gt_.id;
-				var errview=createInstantErrorView(6);
+				var errview=createInstantErrorView(7);
 				var c_rating=createRatingControl(gt_,(score)=>{
 					gt_.rating=ratingscore[score];
 					errview.clear();
@@ -1589,6 +1633,7 @@ function updateGameList(ctrl){
 					tag:'tr',
 					sub:[
 						createElement({tag:'td',attr:{class:'tblcapt'},sub:[gt_.name]}),
+						createElement({tag:'td',attr:{class:'tblcapt'},sub:[gt_.systemName]}),
 						createElement({tag:'td',attr:{class:'tblnum'},sub:[gt_.playcount]}),
 						createElement({tag:'td',attr:{class:'tblnum'},sub:[createSecondsTime(gt_.gametime)]}),
 						createElement({tag:'td',attr:{class:'tblnum'},sub:[createDateTime(gt_.lastplayed)]}),
@@ -2090,11 +2135,142 @@ function updateImageViewer(url,depth,onload,onquit){
 	});
 }
 
+function updateHome(){
+
+	panel_sysview.innerHTML='';
+	panel_homeview.innerHTML='';
+
+	createElement({
+		target:panel_homeview,
+		tag:'div',
+		attr:{class:'homecaption'},
+		sub:['Batocera.linux']
+	});
+	createElement({
+		target:panel_homeview,
+		tag:'div',
+		attr:{class:'secondcaption'},
+		sub:['Web Frontend']
+	});
+
+	var backctrl=createElement({
+		target:panel_homeview,
+		tag:'div',
+	});
+
+	var reloadbtn=createElement({
+		target:panel_homeview,
+		tag:'button',
+		sub:['Reload the Game List']
+	});
+	reloadbtn.onclick=()=>{
+		httpGetText('/reloadgames',()=>{
+		},(err)=>{
+		});
+	}
+
+	var curgame=createElement({
+		target:panel_homeview,
+		tag:'div',
+		attr:{class:'currentgame'},
+		sub:['Now Loading...']
+	});
+	httpGetJson('/runningGame',(gt)=>{
+		curgame.innerHTML='';
+		createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'curgamecaption'},
+			sub:['Now Playing']
+		});
+		createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'systemcaption'},
+			sub:[gt.systemName]
+		});
+		createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'gamecaption'},
+			sub:[gt.title?gt.title:gt.name]
+		});
+
+		var gamectrl=createElement({
+			target:curgame,
+			tag:'div',
+		});
+		var showctrl=()=>{
+			var rstbtn=createElement({
+				target:gamectrl,
+				tag:'button',
+				sub:['Restart']
+			});
+			var quitbtn=createElement({
+				target:gamectrl,
+				tag:'button',
+				sub:['Quit']
+			});
+			var killbtn=createElement({
+				target:gamectrl,
+				tag:'button',
+				sub:['Kill']
+			});
+
+			rstbtn.onclick=()=>{
+				showConfirmPanel(gamectrl,'Restart the Game Process',()=>{
+					httpGetText('/restart',()=>{
+					},(err)=>{
+					});
+				},()=>{
+					showctrl();
+				});
+			}
+			quitbtn.onclick=()=>{
+				showConfirmPanel(gamectrl,'Quit the Game Process',()=>{
+					httpGetText('/quit',()=>{
+					},(err)=>{
+					});
+				},()=>{
+					showctrl();
+				});
+			}
+			killbtn.onclick=()=>{
+				showConfirmPanel(gamectrl,'Kill the Game Process',()=>{
+					httpGetText('/emukill',()=>{
+					},(err)=>{
+					});
+				},()=>{
+					showctrl();
+				});
+			}
+		}
+		showctrl();
+
+	},(err)=>{
+		curgame.innerHTML='';
+		createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'curgamecaption'},
+			sub:['Now Playing']
+		});
+		createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'gamecaption'},
+			sub:['Not recognized.']
+		});
+	});
+
+	panel_sysview.append(panel_homeview);
+}
+
 function updateMainBoard(data){
 
 	panel_syslist.innerHTML='';
 
-	var st={Collection:[],Gallery:[]}
+	var st={'':[{name:'',fullname:'Home'}],Collection:[],Gallery:[]}
 	for(var src of data){
 		switch(src.manufacturer){
 			case 'Collections': st.Collection.push(src); break;
@@ -2107,7 +2283,7 @@ function updateMainBoard(data){
 
 	for(var k in st){
 		if(st[k].length<1)continue;
-		createElement({target:panel_syslist,tag:'div',attr:{class:'cardgroup'},sub:k});
+		if(k)createElement({target:panel_syslist,tag:'div',attr:{class:'cardgroup'},sub:k});
 		for(var src of st[k]){
 			var n=src.name;
 			var t=system_ctrl[n]={
@@ -2117,11 +2293,14 @@ function updateMainBoard(data){
 			((n_,t_)=>{
 				t_.btn.onclick=()=>{
 					if(n_==selected_system)return;
-					if(selected_system)system_ctrl[selected_system].btn.setAttribute('class','card_others');
+					if(selected_system!==null)system_ctrl[selected_system].btn.setAttribute('class','card_others');
 					system_ctrl[n_].btn.setAttribute('class','card_selected');
 					selected_system=n_;
 					panel_screenshots.innerHTML='Now Loading...';
-					if(n_=='imageviewer'){
+					if(n_==''){
+						updateHome();
+					}
+					else if(n_=='imageviewer'){
 						updateImageViewer('/systems/imageviewer/games',0,(data)=>{
 							var a={base:'/screenshots/',dir:[],file:[]}
 							for(var b of data){
@@ -2130,7 +2309,7 @@ function updateMainBoard(data){
 							}
 							return a;
 						},()=>{
-							if(selected_system)system_ctrl[selected_system].btn.setAttribute('class','card_others');
+							if(selected_system!==null)system_ctrl[selected_system].btn.setAttribute('class','card_others');
 							panel_screenshots.innerHTML='';
 							selected_system='';
 							main.innerHTML='';
@@ -2143,6 +2322,7 @@ function updateMainBoard(data){
 			})(n,t);
 		}
 	}
+	system_ctrl[''].btn.click();
 }
 
 main.append(panel_progress);
