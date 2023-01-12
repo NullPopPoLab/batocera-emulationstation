@@ -55,8 +55,10 @@ GET /{path relative to resources/services}"						-> any other file in resources/
 
 NullPopPo Custom APIs
 ---------------------
+GET /caps                                                       -> capability info
 GET /screenshots/{fileName}                                     -> download a screenshot image
 GET /systems/{systemName}/games/{gameId}/scraper                -> any file in /userdata/scraper/{systemName}/{gameName}/
+POST /systems/{systemName}/games/{gameId}/remove_media/{mediaType}	-> remove MetaData media
 
 */
 HttpServerThread::HttpServerThread(Window* window) : mWindow(window)
@@ -240,6 +242,14 @@ void HttpServerThread::run()
 			return;
 
 		ApiSystem::getInstance()->emuKill();
+	});
+
+	mHttpServer->Get("/caps", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		res.set_content(HttpApi::getCaps(), "application/json");
 	});
 
 	mHttpServer->Get("/systems", [](const httplib::Request& req, httplib::Response& res)

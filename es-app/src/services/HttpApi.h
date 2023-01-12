@@ -12,6 +12,7 @@ class FileData;
 class HttpApi
 {
 public:
+	static std::string getCaps();
 	static std::string getSystemList();
 	static std::string getSystemGames(SystemData* system);
 	static std::string getScraperFiles(FileData* file, const std::string& path);
