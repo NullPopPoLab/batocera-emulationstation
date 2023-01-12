@@ -5,6 +5,7 @@
 #endif
 
 #include "platform.h"
+#include "ApiSystem.h"
 #include "Gamelist.h"
 #include "SystemData.h"
 #include "FileData.h"
@@ -370,3 +371,24 @@ std::string HttpApi::getRunnningGameInfo()
 	return ToJson(file);
 }
 
+std::string HttpApi::getCaps()
+{
+	rapidjson::StringBuffer s;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+
+	writer.StartObject();
+
+	writer.Key("Version"); writer.String(ApiSystem::getInstance()->getVersion().c_str());
+	writer.Key("Documentation"); writer.Bool(true);
+	writer.Key("GetScraperMedia"); writer.Bool(true);
+	writer.Key("GetScreenshot"); writer.Bool(true);
+	writer.Key("JukeBox"); writer.Bool(true);
+	writer.Key("RemoveMedia"); writer.Bool(true);
+	writer.Key("SlideShow"); writer.Bool(true);
+	writer.Key("SortableName"); writer.Bool(true);
+	writer.Key("StrictTitle"); writer.Bool(true);
+
+	writer.EndObject();
+
+	return s.GetString();
+}
