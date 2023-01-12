@@ -88,6 +88,17 @@ main {
 .workspace {
 }
 
+.homeview{
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
+.currentgame{
+	margin-top: 1.5em;
+	border: ridge;
+	font-size:150%;
+}
+
 .audiohead {
 	flex-shrink:0;
 	width: 99%;
@@ -272,6 +283,16 @@ main {
 	overflow:scroll;
 }
 
+.homecaption{
+	font-size:300%;
+}
+.secondcaption{
+	font-size:150%;
+}
+.curgamecaption{
+	font-size:120%;
+	padding-bottom:0.5em;
+}
 .systemcaption{
 	font-size:150%;
 }
