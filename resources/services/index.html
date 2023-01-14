@@ -14,11 +14,39 @@
 <script type="text/javascript"><!--
 
 const ratingscore=['0','0.2','0.4','0.6','0.8','1']
+var caps={
+	Version:'unknown (maybe official)',
+	books:['manual','magazine'],
+	videos:['video'],
+	images:['thumbnail','image','titleshot','bezel','marquee',
+		'boxart','boxback','cartridge','wheel','fanart','mix','map'],
+}
 
 var system_ctrl={}
-var selected_system=null;
+var selected_system='';
 
 var main=document.getElementById('mainboard');
+
+const MediaCaption={
+	'manual':'Manual',
+	'magazine':'Magazine',
+	'video':'Video',
+	'image':'Image',
+	'thumbnail':'Thumbnail',
+	'titleshot':'Title Shot',
+	'ingame':'Ingame Shot',
+	'bezel':'Bezel',
+	'marquee':'Marquee',
+	'boxart':'Box Face',
+	'boxback':'Box Back',
+	'cartridge':'Cartridge',
+	'pcb':'PCB',
+	'wheel':'Wheel',
+	'flyer':'Flyer',
+	'fanart':'Fan Art',
+	'mix':'Mix',
+	'map':'Map',
+}
 
 const content_type={
 	audio:{
@@ -96,114 +124,196 @@ function delayExec(delay,exec){
 	return t;
 }
 
-function httpGetText(url,cbok=null,cbng=null){
+function httpRequest(url,opt,cbres=null,cbok=null,cbng=null){
 
-	fetch(url)
+	var t={
+		url:url,
+		opt:opt,
+		end:false,
+		abort:()=>{
+			end=true;
+		},
+	}
+
+	fetch(url,opt)
 		.then((res)=>{
-			if(res.status>=200 && res.status<300){
-				return res.text();
-			}
-			else{
-				var err={code:res.status,msg:res.statusText}
-				if(cbng)cbng(err);
-				else console.log(JSON.stringify(err));
-			}
+			if(t.end)return res;
+			var r=cbres?cbres(res):res;
+			if(r!==null)return r;
+			t.end=true;
+			var err={code:res.status,msg:res.statusText}
+			if(cbng)cbng(err);
+			else console.log(JSON.stringify(err));
 		})
-		.then((text)=>{
-			if(cbok)cbok(text);
+		.then((data)=>{
+			if(t.end)return;
+			t.end=true;
+			if(cbok)cbok(data);
 		})
 		.catch((err)=>{
+			if(t.end)return;
+			t.end=true;
 			if(cbng)cbng({error:err.toString()});
 			else console.log(err.toString());
 		});
+
+	return t;
+}
+
+function httpGetText(url,cbok=null,cbng=null){
+
+	return httpRequest(url,{
+		method:'GET',
+	},(res)=>{
+		return (res.status==200)?res.text():null;
+	},cbok,cbng);
 }
 
 function httpGetJson(url,cbok=null,cbng=null){
-	fetch(url)
-		.then((res)=>{
-			if(res.status>=200 && res.status<300){
-				return res.json();
-			}
-			else{
-				var err={code:res.status,msg:res.statusText}
-				if(cbng)cbng(err);
-				else console.log(JSON.stringify(err));
-			}
-		})
-		.then((json)=>{
-			if(cbok)cbok(json);
-		})
-		.catch((err)=>{
-			if(cbng)cbng({error:err.toString()});
-			else console.log(err.toString());
-		});
+
+	return httpRequest(url,{
+		method:'GET',
+	},(res)=>{
+		return (res.status==200)?res.json():null;
+	},cbok,cbng);
 }
 
 function httpGetXML(url,cbok=null,cbng=null){
-	fetch(url)
-		.then((res)=>{
-			if(res.status>=200 && res.status<300){
-				return res;
-			}
-			else{
-				var err={code:res.status,msg:res.statusText}
-				if(cbng)cbng(err);
-				else console.log(JSON.stringify(err));
-			}
-		})
-		.then((res)=>{
-			return res.text().then((xml)=>{
-				var psr=new DOMParser();
-				var data=psr.parseFromString(xml, "text/xml");
-				if(cbok)cbok(data);
-			});
-		})
-		.catch((err)=>{
-			if(cbng)cbng({error:err.toString()});
-			else console.log(err.toString());
+
+	return httpRequest(url,{
+		method:'GET',
+	},(res)=>{
+		return (res.status==200)?res:null;
+	},(res)=>{
+		return res.text().then((xml)=>{
+			var psr=new DOMParser();
+			var data=psr.parseFromString(xml, "text/xml");
+			if(cbok)cbok(data);
 		});
+	},cbng);
+}
+
+function httpPostText(url,text,cbok=null,cbng=null){
+
+	return httpRequest(url,{
+		method:'POST',
+		headers:{'Content-Type':'text/plain'},
+		body:text
+	},(res)=>{
+		return (res.status>=200 && res.status<300)?res:null;
+	},cbok,cbng);
 }
 
 function httpPostJson(url,data,cbok=null,cbng=null){
-	fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
-		.then((res)=>{
-			if(res.status>=200 && res.status<300){
-				return res;
-			}
-			else{
-				var err={code:res.status,msg:res.statusText}
-				if(cbng)cbng(err);
-				else console.log(JSON.stringify(err));
-			}
-		})
-		.then((data)=>{
-			if(cbok)cbok(data);
-		})
-		.catch((err)=>{
-			if(cbng)cbng({error:err.toString()});
-			else console.log(err.toString());
-		});
+
+	return httpRequest(url,{
+		method:'POST',
+		headers:{'Content-Type':'application/json'},
+		body:JSON.stringify(data)
+	},(res)=>{
+		return (res.status>=200 && res.status<300)?res:null;
+	},cbok,cbng);
 }
 
 function httpPostFile(url,type,data,cbok=null,cbng=null){
-	fetch(url,{method:'POST',headers:{'Content-Type':type?type:'application/octet-stream'},body:data})
-		.then((res)=>{
-			if(res.status>=200 && res.status<300){
-				return res;
-			}
-			else{
-				var err={code:res.status,msg:res.statusText}
-				if(cbng)cbng(err);
-				else console.log(JSON.stringify(err));
-			}
-		})
-		.then((data)=>{
-			if(cbok)cbok(data);
-		})
-		.catch((err)=>{
-			if(cbng)cbng({error:err.toString()});
-			else console.log(err.toString());
-		});
+
+	return httpRequest(url,{
+		method:'POST',
+		headers:{'Content-Type':type?type:'application/octet-stream'},
+		body:data
+	},(res)=>{
+		return (res.status>=200 && res.status<300)?res:null;
+	},cbok,cbng);
+}
+
+function retrieveCaps(cbok,cbng){
+
+	httpGetJson('/caps',(data)=>{
+		if(cbok)cbok(data);
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function retrieveSystems(cbok,cbng){
+
+	httpGetJson('/systems',(data)=>{
+		if(cbok)cbok(data);
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function retrieveRunning(cbok,cbng){
+
+	httpGetJson('/runningGame',(data)=>{
+		if(cbok)cbok(data);
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function reloadGames(cbok,cbng){
+
+	httpGetText('/reloadgames',()=>{
+		if(cbok)cbok();
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function restartGame(cbok,cbng){
+
+	httpGetText('/restart',()=>{
+		if(cbok)cbok();
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function quitGame(cbok,cbng){
+
+	httpGetText('/quit',()=>{
+		if(cbok)cbok();
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function killGame(cbok,cbng){
+
+	httpGetText('/emukill',()=>{
+		if(cbok)cbok();
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function launchGame(path,cbok,cbng){
+
+	httpPostText('/launch',path,()=>{
+		if(cbok)cbok();
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function notify(path,cbok,cbng){
+
+	httpPostText('/notify',path,()=>{
+		if(cbok)cbok();
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
+}
+
+function message(path,cbok,cbng){
+
+	httpPostText('/messagebox',path,()=>{
+		if(cbok)cbok();
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
 }
 
 function createElement(prm){
@@ -307,6 +417,22 @@ const panel_doclist=createElement({
 	attr:{class:'doclist'},
 });
 
+function getSystemCaption(gt){
+	return system_ctrl[gt.systemName].src.fullname;
+}
+
+function getGameCaption(gt){
+	return gt.title?gt.title:gt.name;
+}
+
+function getSyetemURL(gt){
+	return '/systems/'+system_ctrl[gt.systemName].src.name;
+}
+
+function getGameURL(gt){
+	return getSyetemURL(gt)+'/games/'+gt.id;
+}
+
 function createSecondsTime(v){
 	var h=Math.floor(v/3600);
 	v-=h*3600;
@@ -357,6 +483,16 @@ function createDateTime(v){
 		h.substring(h.length-2,h.length)+':'+
 		i.substring(i.length-2,i.length)+':'+
 		s.substring(s.length-2,s.length);
+}
+
+function showError(target,err){
+
+	createElement({
+		target:target,
+		tag:'div',
+		attr:{class:'instanterror'},
+		sub:[JSON.stringify(err)]
+	});
 }
 
 function createRatingControl(gt,onchange){
@@ -470,20 +606,20 @@ function createKidGameButton(gt,onchange){
 	return t;
 }
 
-function createMetaButton(st,gt,onsubmit){
+function createMetaButton(gt,onsubmit){
 
 	var btn=createElement({tag:'button',sub:['Meta']});
 	btn.onclick=()=>{
-		updateMetaEditor(st,gt,onsubmit);
+		updateMetaEditor(gt,onsubmit);
 	}
 	return btn;
 }
 
-function createDetailButton(st,gt,onsubmit,onerr){
+function createDetailButton(gt,onquit,onsubmit,onerr){
 
 	var btn=createElement({tag:'button',sub:['Detail']});
 	btn.onclick=()=>{
-		updateGameView(system_ctrl[gt.systemName].src,gt,onsubmit,onerr);
+		updateGameView(gt,onquit,onsubmit,onerr);
 	}
 	return btn;
 }
@@ -724,7 +860,7 @@ function updateGenreList(gs){
 	}
 }
 
-function updateGenreEditor(gt,st,gs,onsubmit){
+function updateGenreEditor(gt,gs,onsubmit){
 	gs=gs?gs.split(','):[];
 
 	main.innerHTML='';
@@ -734,13 +870,13 @@ function updateGenreEditor(gt,st,gs,onsubmit){
 		target:panel_genreeditor,
 		tag:'div',
 		attr:{class:'systemcaption'},
-		sub:[st.fullname]
+		sub:[getSystemCaption(gt)]
 	});
 	createElement({
 		target:panel_genreeditor,
 		tag:'div',
 		attr:{class:'gamecaption'},
-		sub:[gt.name]
+		sub:[getGameCaption(gt)]
 	});
 
 	var btn=createElement({
@@ -788,7 +924,7 @@ function updateGenreEditor(gt,st,gs,onsubmit){
 	}
 }
 
-function updateMetaEditor(st,gt,onsubmit){
+function updateMetaEditor(gt,onsubmit){
 
 	main.innerHTML='';
 	panel_metaeditor.innerHTML='';
@@ -797,13 +933,13 @@ function updateMetaEditor(st,gt,onsubmit){
 		target:panel_metaeditor,
 		tag:'div',
 		attr:{class:'systemcaption'},
-		sub:[st.fullname]
+		sub:[getSystemCaption(gt)]
 	});
 	createElement({
 		target:panel_metaeditor,
 		tag:'div',
 		attr:{class:'gamecaption'},
-		sub:[gt.title?gt.title:gt.name]
+		sub:[getGameCaption(gt)]
 	});
 
 	var btn=createElement({
@@ -926,7 +1062,7 @@ function updateMetaEditor(st,gt,onsubmit){
 			var btn=createElement({tag:'button',sub:['Edit']});
 			var gv=createElement({tag:'span',sub:[gt.genre]});
 			((gs_,gv_)=>{btn.onclick=()=>{
-				updateGenreEditor(gt,st,gs_,(ids,nms)=>{
+				updateGenreEditor(gt,gs_,(ids,nms)=>{
 					dst.genres=ids.join(',');
 					dst.genre=nms;
 					gv_.innerHTML=dst.genre;
@@ -1055,7 +1191,7 @@ function createFileChooser(bin,buttonloc,panelloc,filter,action,onload=null,onca
 	return t;
 }
 
-function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
+function showReplacerPanel(gt,it,btnloc,pnlloc,filter,cbchg){
 
 	btnloc.innerHTML='';
 	pnlloc.innerHTML='';
@@ -1066,7 +1202,7 @@ function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
 		tag:'button',
 		sub:['Abort']
 	});
-	if(path){
+	if(path && caps.RemoveMedia){
 		var rmbtn=createElement({
 			target:pnlloc,
 			tag:'button',
@@ -1075,21 +1211,21 @@ function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
 		rmbtn.onclick=()=>{
 			pnlloc.innerHTML='';
 			showConfirmPanel(pnlloc,'Remove this',()=>{
-				var url='/systems/'+st.name+'/games/'+gt.id+'/remove_media/'+it;
+				var url=getGameURL(gt)+'/remove_media/'+it;
 				httpPostJson(url,'{}',()=>{
 					if(gt[it])delete gt[it];
 					if(cbchg)cbchg(null);
-					updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+					updateReplacer(gt,it,btnloc,pnlloc,filter,cbchg);
 				},(err)=>{
 					createElement({
 						target:pnlloc,
 						tag:'div',
 						sub:[err]
 					});
-					updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+					updateReplacer(gt,it,btnloc,pnlloc,filter,cbchg);
 				});
 			},()=>{
-				showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+				showReplacerPanel(gt,it,btnloc,pnlloc,filter,cbchg);
 			});
 		}
 	}
@@ -1105,15 +1241,15 @@ function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
 
 	abbtn.onclick=()=>{
 		pnlloc.innerHTML='';
-		updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+		updateReplacer(gt,it,btnloc,pnlloc,filter,cbchg);
 	}
 
 	var chooser=createFileChooser(true,chsloc,pnlloc,filter,'Upload',(name,data)=>{
-		var url='/systems/'+st.name+'/games/'+gt.id+'/media/'+it;
+		var url=getGameURL(gt)+'/media/'+it;
 		httpPostFile(url,getFullMediaType(name,'es'),data,()=>{
 			gt[it]=url;
 			if(cbchg)cbchg(url);
-			updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+			updateReplacer(gt,it,btnloc,pnlloc,filter,cbchg);
 		},(err)=>{
 			createElement({
 				target:pnlloc,
@@ -1121,24 +1257,24 @@ function showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg){
 				attr:{class:'instanterror'},
 				sub:[JSON.stringify(err)]
 			});
-			updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg);
+			updateReplacer(gt,it,btnloc,pnlloc,filter,cbchg);
 		});
 	},()=>{
-		showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+		showReplacerPanel(gt,it,btnloc,pnlloc,filter,cbchg);
 	});
 	rgbtn.onclick=()=>{
 		chooser.open();
 	}
 }
 
-function updateReplacer(st,gt,it,btnloc,pnlloc,filter,cbchg){
+function updateReplacer(gt,it,btnloc,pnlloc,filter,cbchg){
 
 	showReplacerButton(btnloc,()=>{
-		showReplacerPanel(st,gt,it,btnloc,pnlloc,filter,cbchg);
+		showReplacerPanel(gt,it,btnloc,pnlloc,filter,cbchg);
 	});
 }
 
-function updateMediaView(st,gt,it,tray,path){
+function updateMediaView(gt,it,tray,path){
 
 	tray.loc.innerHTML='';
 	if(!path)return;
@@ -1158,7 +1294,29 @@ function updateMediaView(st,gt,it,tray,path){
 	});
 }
 
-function updateGameView(st,gt,cbchg,cberr){
+function updateLaunchControl(launchloc,confirmloc,cbok,cbng){
+
+	var btn=createElement({
+		target:launchloc,
+		tag:'button',
+		sub:['Launch'],
+	});
+	btn.onclick=()=>{
+		launchloc.innerHTML='';
+		confirmloc.innerHTML='';
+		showConfirmPanel(confirmloc,'Launch the Game',()=>{
+			confirmloc.innerHTML='';
+			if(cbok)cbok();
+			updateLaunchControl(launchloc,confirmloc,cbok,cbng);
+		},()=>{
+			confirmloc.innerHTML='';
+			if(cbng)cbng();
+			updateLaunchControl(launchloc,confirmloc,cbok,cbng);
+		});
+	}
+}
+
+function updateGameView(gt,cbquit,cbchg,cberr){
 
 	panel_sysview.innerHTML='';
 	panel_gameview.innerHTML='';
@@ -1167,23 +1325,29 @@ function updateGameView(st,gt,cbchg,cberr){
 		target:panel_gameview,
 		tag:'div',
 		attr:{class:'systemcaption'},
-		sub:[st.fullname]
+		sub:[getSystemCaption(gt)]
 	});
 	createElement({
 		target:panel_gameview,
 		tag:'div',
 		attr:{class:'gamecaption'},
-		sub:[gt.title?gt.title:gt.name]
+		sub:[getGameCaption(gt)]
 	});
 
+	var launchloc=createElement({
+		target:panel_gameview,
+		tag:'span',
+	});
+
+	var btn=null;
 	if(gt.jukeboxAvailable=='true'){
-		var btn=createElement({
+		btn=createElement({
 			target:panel_gameview,
 			tag:'button',
 			sub:['JukeBox'],
 		});
 		btn.onclick=()=>{
-			var url='/systems/'+st.name+'/games/'+gt.id;
+			var url=getGameURL(gt);
 			updateJukeBox(url+'/scraper/jukebox',0,(data)=>{
 				var a={base:url+'/scraper/jukebox/',dir:[],file:[]}
 				for(var b of data.dirs){
@@ -1203,13 +1367,13 @@ function updateGameView(st,gt,cbchg,cberr){
 	}
 
 	if(gt.slideshowAvailable=='true'){
-		var btn=createElement({
+		btn=createElement({
 			target:panel_gameview,
 			tag:'button',
 			sub:['SlideShow'],
 		});
 		btn.onclick=()=>{
-			var url='/systems/'+st.name+'/games/'+gt.id;
+			var url=getGameURL(gt);
 			updateImageViewer(url+'/scraper/slideshow',0,(data)=>{
 				var a={base:url+'/scraper/slideshow/',dir:[],file:[]}
 				for(var b of data.dirs){
@@ -1228,31 +1392,47 @@ function updateGameView(st,gt,cbchg,cberr){
 		}
 	}
 
-	panel_gameview.append(createMetaButton(st,gt,(dst)=>{
+	panel_gameview.append(createMetaButton(gt,(dst)=>{
 		for(var k in dst)gt[k]=dst[k];
 		if(cbchg)cbchg(dst);
-		var url='/systems/'+st.name+'/games';
+		var url='/systems/'+system_ctrl[gt.systemName].src.name+'/games';
 		var post2=url+'/'+gt.id;
 		httpPostJson(post2,dst,null,(err)=>{
 			if(cberr)cberr(err);
 		});
 	}));
 
-	var btn=createElement({
+	btn=createElement({
 		target:panel_gameview,
 		tag:'button',
 		sub:['Quit'],
 	});
 	btn.onclick=()=>{
-		panel_sysview.innerHTML='';
-		panel_sysview.append(panel_gamelist);
+		if(cbquit)cbquit();
 	}
+	var confirmloc=createElement({
+		target:panel_gameview,
+		tag:'div',
+	});
 
-	var meta={
-		'manual':'Manual',
-		'magazine':'Magazine',
-	}
-	for(var it in meta){
+	updateLaunchControl(launchloc,confirmloc,()=>{
+		var launch=()=>{
+			launchGame(gt.path,()=>{
+				createElement({
+					target:confirmloc,
+					tag:'span',
+					sub:['enjoy!']
+				});
+			},(err)=>{
+				showError(confirmloc,err);
+			});
+		}
+		killGame(()=>{launch();},()=>{launch();});
+	},()=>{
+	});
+
+
+	for(var it of caps.books){
 		var frm=createElement({
 			target:panel_gameview,
 			tag:'p',
@@ -1263,7 +1443,7 @@ function updateGameView(st,gt,cbchg,cberr){
 			target:frm,
 			tag:'span',
 		});
-		updateMediaCaption(captloc,meta[it],path);
+		updateMediaCaption(captloc,MediaCaption[it],path);
 		createElement({target:frm,tag:'span',sub:[' ']});
 		var btnloc=createElement({
 			target:frm,
@@ -1274,8 +1454,35 @@ function updateGameView(st,gt,cbchg,cberr){
 			tag:'div',
 		});
 		((it_)=>{
-			updateReplacer(st,gt,it_,btnloc,pnlloc,filter_type('text','es'),(url)=>{
-				updateMediaCaption(captloc,meta[it_]??'',url);
+			updateReplacer(gt,it_,btnloc,pnlloc,filter_type('text','es'),(url)=>{
+				updateMediaCaption(captloc,MediaCaption[it_]??'',url);
+			});
+		})(it);
+	}
+	for(var it of caps.texts){
+		var frm=createElement({
+			target:panel_gameview,
+			tag:'p',
+		});
+
+		var path=gt[it];
+		var captloc=createElement({
+			target:frm,
+			tag:'span',
+		});
+		updateMediaCaption(captloc,MediaCaption[it],path);
+		createElement({target:frm,tag:'span',sub:[' ']});
+		var btnloc=createElement({
+			target:frm,
+			tag:'span',
+		});
+		var pnlloc=createElement({
+			target:frm,
+			tag:'div',
+		});
+		((it_)=>{
+			updateReplacer(gt,it_,btnloc,pnlloc,filter_type('text','es'),(url)=>{
+				updateMediaCaption(captloc,MediaCaption[it_]??'',url);
 			});
 		})(it);
 	}
@@ -1306,25 +1513,7 @@ function updateGameView(st,gt,cbchg,cberr){
 		});
 	}
 
-	meta={
-		'video':'Video',
-		'image':'Image',
-		'thumbnail':'Thumbnail',
-		'titleshot':'Title Shot',
-		'ingame':'Ingame Shot',
-		'bezel':'Bezel',
-		'marquee':'Marquee',
-		'boxart':'Box Face',
-		'boxback':'Box Back',
-		'cartridge':'Cartridge',
-		'pcb':'PCB',
-		'wheel':'Wheel',
-		'flyer':'Flyer',
-		'fanart':'Fan Art',
-		'mix':'Mix',
-		'map':'Map',
-	}
-	for(var it in meta){
+	for(var it of caps.videos){
 		var frm=createElement({
 			target:panel_gameview,
 			tag:'div',
@@ -1333,7 +1522,7 @@ function updateGameView(st,gt,cbchg,cberr){
 
 		var path=gt[it];
 
-		updateMediaCaption(frm,meta[it]);
+		updateMediaCaption(frm,MediaCaption[it]);
 		createElement({target:frm,tag:'span',sub:[' ']});
 		var btnloc=createElement({
 			target:frm,
@@ -1349,11 +1538,42 @@ function updateGameView(st,gt,cbchg,cberr){
 		});
 		var imgtray={loc:imgloc,elem:null};
 		((it_,imgtray_)=>{
-			updateReplacer(st,gt,it_,btnloc,pnlloc,filter_type((it=='video')?'video':'image','es'),(url)=>{
-				updateMediaView(st,gt,it_,imgtray_,url);
+			updateReplacer(gt,it_,btnloc,pnlloc,filter_type('video','es'),(url)=>{
+				updateMediaView(gt,it_,imgtray_,url);
 			});
 		})(it,imgtray);
-		updateMediaView(st,gt,it,imgtray,path);
+		updateMediaView(gt,it,imgtray,path);
+	}
+	for(var it of caps.images){
+		var frm=createElement({
+			target:panel_gameview,
+			tag:'div',
+			attr:{class:'imgframe'},
+		});
+
+		var path=gt[it];
+
+		updateMediaCaption(frm,MediaCaption[it]);
+		createElement({target:frm,tag:'span',sub:[' ']});
+		var btnloc=createElement({
+			target:frm,
+			tag:'span',
+		});
+		var pnlloc=createElement({
+			target:frm,
+			tag:'div',
+		});
+		var imgloc=createElement({
+			target:frm,
+			tag:'div',
+		});
+		var imgtray={loc:imgloc,elem:null};
+		((it_,imgtray_)=>{
+			updateReplacer(gt,it_,btnloc,pnlloc,filter_type('image','es'),(url)=>{
+				updateMediaView(gt,it_,imgtray_,url);
+			});
+		})(it,imgtray);
+		updateMediaView(gt,it,imgtray,path);
 	}
 
 	var btn=createElement({
@@ -1362,8 +1582,7 @@ function updateGameView(st,gt,cbchg,cberr){
 		sub:['Quit'],
 	});
 	btn.onclick=()=>{
-		panel_sysview.innerHTML='';
-		panel_sysview.append(panel_gamelist);
+		if(cbquit)cbquit();
 	}
 
 	panel_sysview.append(panel_gameview);
@@ -1641,7 +1860,10 @@ function updateGameList(ctrl){
 						createElement({tag:'td',attr:{class:'tbltool'},sub:[
 							c_favorite.view,
 							c_hidden.view,
-							createDetailButton(st,gt_,(dst)=>{
+							createDetailButton(gt_,()=>{
+								panel_sysview.innerHTML='';
+								panel_sysview.append(panel_gamelist);
+							},(dst)=>{
 								errview.clear();
 								c_rating.set(Math.floor(dst.rating*5+0.5));
 								c_favorite.set(dst.favorite=='true');
@@ -2135,7 +2357,280 @@ function updateImageViewer(url,depth,onload,onquit){
 	});
 }
 
-function updateHome(){
+function updateRunningControlError(loc,err,cbupd){
+
+	loc.innerHTML='';
+
+	showError(loc,err);
+
+	var updbtn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Refresh']
+	});
+
+	updbtn.onclick=()=>{
+		if(cbupd)cbupd();
+	}
+}
+
+function updateRunningControl(loc,cbupd){
+
+	loc.innerHTML='';
+
+	var updbtn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Refresh']
+	});
+	var killbtn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Kill']
+	});
+
+	updbtn.onclick=()=>{
+		if(cbupd)cbupd();
+	}
+	killbtn.onclick=()=>{
+		showConfirmPanel(loc,'Kill the Game Process',()=>{
+			killGame(()=>{
+				updateRunningControl(loc,cbupd);
+			},(err)=>{
+				updateRunningControlError(loc,err,cbupd)
+			});
+		},()=>{
+			updateRunningControl(loc,cbupd);
+		});
+	}
+
+
+}
+
+function updateIdlingControl(loc,cbupd){
+
+	loc.innerHTML='';
+
+	var updbtn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Refresh']
+	});
+	var rstbtn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Restart']
+	});
+	var quitbtn=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Quit']
+	});
+
+	updbtn.onclick=()=>{
+		if(cbupd)cbupd();
+	}
+	rstbtn.onclick=()=>{
+		showConfirmPanel(loc,'Restart EmulationStation',()=>{
+			restartGame(()=>{
+				updateIdlingControl(loc,cbupd);
+			},(err)=>{
+				updateRunningControlError(loc,err,cbupd)
+			});
+		},()=>{
+			updateIdlingControl(loc,cbupd);
+		});
+	}
+	quitbtn.onclick=()=>{
+		showConfirmPanel(loc,'Quit EmulationStation',()=>{
+			quitGame(()=>{
+				updateIdlingControl(loc,cbupd);
+			},(err)=>{
+				updateRunningControlError(loc,err,cbupd)
+			});
+		},()=>{
+			updateIdlingControl(loc,cbupd);
+		});
+	}
+
+	var msgloc=createElement({
+		target:loc,
+		tag:'div',
+	});
+	var msgbox=createElement({
+		target:msgloc,
+		tag:'textarea',
+	});
+	var btn_msg=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Message']
+	});
+	var btn_noti=createElement({
+		target:loc,
+		tag:'button',
+		sub:['Notify']
+	});
+	var msgerr=createElement({
+		target:loc,
+		tag:'div',
+	});
+	btn_msg.onclick=()=>{
+		msgerr.innerHTML='';
+		message(msgbox.value,()=>{
+			msgbox.value='';
+		},(err)=>{
+			showError(msgerr,err);
+		});
+	}
+	btn_noti.onclick=()=>{
+		msgerr.innerHTML='';
+		notify(msgbox.value,()=>{
+			msgbox.value='';
+		},(err)=>{
+			showError(msgerr,err);
+		});
+	}
+}
+
+function updateGameThumb(gt,loc){
+
+	var url=null;
+	if(gt.marquee)url=gt.marquee;
+	else if(gt.thumb)url=gt.thumb;
+	else if(gt.image)url=gt.image;
+	else if(gt.ingameshot)url=gt.ingameshot;
+	else if(gt.titleshot)url=gt.titleshot;
+
+	if(!url)return;
+
+	createElement({
+		target:loc,
+		tag:'img',
+		attr:{src:url,class:'gamethumb'},
+	})
+}
+
+function updateRunningInfo(loc){
+
+	loc.innerHTML='';
+
+	var curgame=createElement({
+		target:loc,
+		tag:'div',
+		attr:{class:'currentgame'},
+		sub:['Now Loading...']
+	});
+	retrieveRunning((gt)=>{
+		curgame.innerHTML='';
+		createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'curgamecaption'},
+			sub:['Now Playing']
+		});
+		createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'systemcaption'},
+			sub:[getSystemCaption(gt)]
+		});
+		createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'gamecaption'},
+			sub:[gt.title?gt.title:gt.name]
+		});
+
+		var gamectrl=createElement({
+			target:curgame,
+			tag:'div',
+		});
+		updateRunningControl(gamectrl,()=>{
+			updateRunningInfo(loc);
+		});
+
+		var url='/systems/'+gt.systemName+'/games/'+gt.id;
+		curgame.append(createDetailButton(gt,()=>{
+			panel_sysview.innerHTML='';
+			panel_sysview.append(panel_homeview);
+		},(dst)=>{
+			metaerr.innerHTML='';
+		},(err)=>{
+			showError(metaerr,err);
+		}));
+		curgame.append(createRunnableButton(gt,(f)=>{
+			gt.runnable=f?'true':'false';
+			metaerr.innerHTML='';
+			httpPostJson(url,{runnable:gt.runnable},null,(err)=>{
+				showError(metaerr,err);
+			});
+		}).view);
+		curgame.append(createKidGameButton(gt,(f)=>{
+			gt.kidgame=f?'true':'false';
+			metaerr.innerHTML='';
+			httpPostJson(url,{kidgame:gt.kidgame},null,(err)=>{
+				showError(metaerr,err);
+			});
+		}).view);
+		curgame.append(createFavoriteButton(gt,(f)=>{
+			gt.favorite=f?'true':'false';
+			metaerr.innerHTML='';
+			httpPostJson(url,{favorite:gt.favorite},null,(err)=>{
+				showError(metaerr,err);
+			});
+		}).view);
+		curgame.append(createHiddenButton(gt,(f)=>{
+			gt.hidden=f?'true':'false';
+			metaerr.innerHTML='';
+			httpPostJson(url,{hidden:gt.hidden},null,(err)=>{
+				showError(metaerr,err);
+			});
+		}).view);
+		curgame.append(createRatingControl(gt,(score)=>{
+			gt.rating=ratingscore[score];
+			metaerr.innerHTML='';
+			httpPostJson(url,{rating:gt.rating},null,(err)=>{
+				showError(metaerr,err);
+			});
+		}).view);
+
+		var metaerr=createElement({
+			target:curgame,
+			tag:'div',
+		});
+
+		var thumb=createElement({
+			target:curgame,
+			tag:'div',
+		})
+		updateGameThumb(gt,thumb);
+
+	},(err)=>{
+		curgame.innerHTML='';
+		if(err.code==404){
+			createElement({
+				target:curgame,
+				tag:'div',
+				attr:{class:'curgamecaption'},
+				sub:['...Now Idling...']
+			});
+		}
+		else{
+			showError(curgame,err);
+		}
+
+		var gamectrl=createElement({
+			target:curgame,
+			tag:'div',
+		});
+		updateIdlingControl(gamectrl,()=>{
+			updateRunningInfo(loc);
+		});
+	});
+}
+
+function updateHomeView(){
 
 	panel_sysview.innerHTML='';
 	panel_homeview.innerHTML='';
@@ -2150,7 +2645,7 @@ function updateHome(){
 		target:panel_homeview,
 		tag:'div',
 		attr:{class:'secondcaption'},
-		sub:['Web Frontend']
+		sub:[caps.Version?caps.Version:'']
 	});
 
 	var backctrl=createElement({
@@ -2158,119 +2653,43 @@ function updateHome(){
 		tag:'div',
 	});
 
+	var runinfo=createElement({
+		target:panel_homeview,
+		tag:'div',
+	});
+	updateRunningInfo(runinfo);
+
 	var reloadbtn=createElement({
 		target:panel_homeview,
 		tag:'button',
 		sub:['Reload the Game List']
 	});
-	reloadbtn.onclick=()=>{
-		httpGetText('/reloadgames',()=>{
-		},(err)=>{
-		});
-	}
-
-	var curgame=createElement({
+	var reloaderr=createElement({
 		target:panel_homeview,
 		tag:'div',
-		attr:{class:'currentgame'},
-		sub:['Now Loading...']
+		attr:{class:'instanterror'}
 	});
-	httpGetJson('/runningGame',(gt)=>{
-		curgame.innerHTML='';
-		createElement({
-			target:curgame,
-			tag:'div',
-			attr:{class:'curgamecaption'},
-			sub:['Now Playing']
-		});
-		createElement({
-			target:curgame,
-			tag:'div',
-			attr:{class:'systemcaption'},
-			sub:[gt.systemName]
-		});
-		createElement({
-			target:curgame,
-			tag:'div',
-			attr:{class:'gamecaption'},
-			sub:[gt.title?gt.title:gt.name]
-		});
-
-		var gamectrl=createElement({
-			target:curgame,
-			tag:'div',
-		});
-		var showctrl=()=>{
-			var rstbtn=createElement({
-				target:gamectrl,
-				tag:'button',
-				sub:['Restart']
+	reloadbtn.onclick=()=>{
+		reloadGames(()=>{
+			retrieveSystems((data)=>{
+				updateSystemList(data);
+			},(err)=>{
+				showError(reloaderr,err);
 			});
-			var quitbtn=createElement({
-				target:gamectrl,
-				tag:'button',
-				sub:['Quit']
-			});
-			var killbtn=createElement({
-				target:gamectrl,
-				tag:'button',
-				sub:['Kill']
-			});
-
-			rstbtn.onclick=()=>{
-				showConfirmPanel(gamectrl,'Restart the Game Process',()=>{
-					httpGetText('/restart',()=>{
-					},(err)=>{
-					});
-				},()=>{
-					showctrl();
-				});
-			}
-			quitbtn.onclick=()=>{
-				showConfirmPanel(gamectrl,'Quit the Game Process',()=>{
-					httpGetText('/quit',()=>{
-					},(err)=>{
-					});
-				},()=>{
-					showctrl();
-				});
-			}
-			killbtn.onclick=()=>{
-				showConfirmPanel(gamectrl,'Kill the Game Process',()=>{
-					httpGetText('/emukill',()=>{
-					},(err)=>{
-					});
-				},()=>{
-					showctrl();
-				});
-			}
-		}
-		showctrl();
-
-	},(err)=>{
-		curgame.innerHTML='';
-		createElement({
-			target:curgame,
-			tag:'div',
-			attr:{class:'curgamecaption'},
-			sub:['Now Playing']
+		},(err)=>{
+			showError(reloaderr,err);
 		});
-		createElement({
-			target:curgame,
-			tag:'div',
-			attr:{class:'gamecaption'},
-			sub:['Not recognized.']
-		});
-	});
+	}
 
 	panel_sysview.append(panel_homeview);
 }
 
-function updateMainBoard(data){
+function updateSystemList(data){
 
 	panel_syslist.innerHTML='';
+	system_ctrl={}
 
-	var st={'':[{name:'',fullname:'Home'}],Collection:[],Gallery:[]}
+	var st={'':[{name:'',fullname:'Home'}],Gallery:[],Collection:[]}
 	for(var src of data){
 		switch(src.manufacturer){
 			case 'Collections': st.Collection.push(src); break;
@@ -2289,7 +2708,7 @@ function updateMainBoard(data){
 			var t=system_ctrl[n]={
 				src:src,
 			}
-			t.btn=createElement({target:panel_syslist,tag:'div',attr:{class:'card_others'},sub:src.fullname});
+			t.btn=createElement({target:panel_syslist,tag:'div',attr:{class:(n==selected_system)?'card_selected':'card_others'},sub:src.fullname});
 			((n_,t_)=>{
 				t_.btn.onclick=()=>{
 					if(n_==selected_system)return;
@@ -2298,9 +2717,9 @@ function updateMainBoard(data){
 					selected_system=n_;
 					panel_screenshots.innerHTML='Now Loading...';
 					if(n_==''){
-						updateHome();
+						updateHomeView();
 					}
-					else if(n_=='imageviewer'){
+					else if(n_=='imageviewer' && caps.GetScreenshot){
 						updateImageViewer('/systems/imageviewer/games',0,(data)=>{
 							var a={base:'/screenshots/',dir:[],file:[]}
 							for(var b of data){
@@ -2322,22 +2741,23 @@ function updateMainBoard(data){
 			})(n,t);
 		}
 	}
-	system_ctrl[''].btn.click();
 }
 
 main.append(panel_progress);
-httpGetJson('/systems',(data)=>{
-	updateMainBoard(data);
-	main.innerHTML='';
-	main.append(panel_mainboard);
+retrieveCaps((data)=>{
+	caps=data;
+	retrieveSystems((data)=>{
+		updateSystemList(data);
+		updateHomeView();
+		main.innerHTML='';
+		main.append(panel_mainboard);
+	},(err)=>{
+		main.innerHTML='';
+		showError(main,err);
+	});
 },(err)=>{
 	main.innerHTML='';
-	createElement({
-		target:main,
-		tag:'div',
-		attr:{class:'instanterror'},
-		sub:[JSON.stringify(err)]
-	});
+	showError(main,err);
 });
 
 //--></script>

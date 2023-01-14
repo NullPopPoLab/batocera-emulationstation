@@ -257,7 +257,7 @@ main {
 
 .btn_normal{
 }
-.btn_startable{
+.btn_runnable{
 	background-color:#aaffff;
 }
 .btn_kidgame{
@@ -283,6 +283,10 @@ main {
 	overflow:scroll;
 }
 
+.gamethumb{
+	max-width:60vw;
+}
+
 .homecaption{
 	font-size:300%;
 }
@@ -290,7 +294,7 @@ main {
 	font-size:150%;
 }
 .curgamecaption{
-	font-size:120%;
+	font-size:100%;
 	padding-bottom:0.5em;
 }
 .systemcaption{
