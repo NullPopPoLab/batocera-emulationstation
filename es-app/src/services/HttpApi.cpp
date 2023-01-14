@@ -409,6 +409,38 @@ std::string HttpApi::getCaps()
 	writer.Key("SortableName"); writer.Bool(true);
 	writer.Key("StrictTitle"); writer.Bool(true);
 
+	writer.Key("texts");
+	writer.StartArray();
+	writer.EndArray();
+
+	writer.Key("books");
+	writer.StartArray();
+	writer.String("manual");
+	writer.String("magazine");
+	writer.EndArray();
+
+	writer.Key("videos");
+	writer.StartArray();
+	writer.String("video");
+	writer.EndArray();
+
+	writer.Key("images");
+	writer.StartArray();
+	for (auto mdd : MetaDataList::getMDD()){
+		if(mdd.type!=MD_PATH)continue;
+		switch(mdd.id){
+			case MetaDataId::Video:
+			case MetaDataId::Manual:
+			case MetaDataId::Magazine:
+			break;
+
+			default:
+			writer.String(mdd.key.c_str());
+		}
+	}
+	writer.EndArray();
+
+
 	writer.EndObject();
 
 	return s.GetString();
