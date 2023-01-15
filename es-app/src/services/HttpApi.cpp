@@ -409,23 +409,48 @@ std::string HttpApi::getCaps()
 	writer.Key("SortableName"); writer.Bool(true);
 	writer.Key("StrictTitle"); writer.Bool(true);
 
+	const char* flags[]={"runnable","kidgame","favorite","hidden"};
+	writer.Key("flags");
+	writer.StartObject();
+	for(auto* k: flags){
+		auto& d=MetaDataList::getDecl(k);
+		writer.Key(k);
+		writer.String(d.displayName.c_str());
+	}
+	writer.EndObject();
+
+	const char* texts[]={"premise","story","rule","operation","credit","tips","notes","bugs"};
 	writer.Key("texts");
-	writer.StartArray();
-	writer.EndArray();
+	writer.StartObject();
+	for(auto* k: texts){
+		auto& d=MetaDataList::getDecl(k);
+		writer.Key(k);
+		writer.String(d.displayName.c_str());
+	}
+	writer.EndObject();
 
+	const char* books[]={"manual","magazine"};
 	writer.Key("books");
-	writer.StartArray();
-	writer.String("manual");
-	writer.String("magazine");
-	writer.EndArray();
+	writer.StartObject();
+	for(auto* k: books){
+		auto& d=MetaDataList::getDecl(k);
+		writer.Key(k);
+		writer.String(d.displayName.c_str());
+	}
+	writer.EndObject();
 
+	const char* videos[]={"video"};
 	writer.Key("videos");
-	writer.StartArray();
-	writer.String("video");
-	writer.EndArray();
+	writer.StartObject();
+	for(auto* k: videos){
+		auto& d=MetaDataList::getDecl(k);
+		writer.Key(k);
+		writer.String(d.displayName.c_str());
+	}
+	writer.EndObject();
 
 	writer.Key("images");
-	writer.StartArray();
+	writer.StartObject();
 	for (auto mdd : MetaDataList::getMDD()){
 		if(mdd.type!=MD_PATH)continue;
 		switch(mdd.id){
@@ -435,11 +460,11 @@ std::string HttpApi::getCaps()
 			break;
 
 			default:
-			writer.String(mdd.key.c_str());
+			writer.Key(mdd.key.c_str());
+			writer.String(mdd.displayName.c_str());
 		}
 	}
-	writer.EndArray();
-
+	writer.EndObject();
 
 	writer.EndObject();
 
