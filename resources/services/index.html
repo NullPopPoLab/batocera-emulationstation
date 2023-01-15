@@ -16,37 +16,32 @@
 const ratingscore=['0','0.2','0.4','0.6','0.8','1']
 var caps={
 	Version:'unknown (maybe official)',
-	books:['manual','magazine'],
-	videos:['video'],
-	images:['thumbnail','image','titleshot','bezel','marquee',
-		'boxart','boxback','cartridge','wheel','fanart','mix','map'],
+	texts:{},
+	books:{
+		'manual':'Manual',
+		'magazine':'Magazine'
+	},
+	videos:{'video':'Video'},
+	images:{
+		'thumbnail':'Box',
+		'image':'Image',
+		'titleshot':'Title shot',
+		'bezel':'Bezel (16:9)',
+		'marquee':'Logo',
+		'boxart':'Alt Boxart',
+		'boxback':'Box backside',
+		'cartridge':'Cartridge',
+		'wheel':'Wheel',
+		'fanart':'Fan art',
+		'mix':'Mix',
+		'map':'Map',
+	},
 }
 
 var system_ctrl={}
 var selected_system='';
 
 var main=document.getElementById('mainboard');
-
-const MediaCaption={
-	'manual':'Manual',
-	'magazine':'Magazine',
-	'video':'Video',
-	'image':'Image',
-	'thumbnail':'Thumbnail',
-	'titleshot':'Title Shot',
-	'ingame':'Ingame Shot',
-	'bezel':'Bezel',
-	'marquee':'Marquee',
-	'boxart':'Box Face',
-	'boxback':'Box Back',
-	'cartridge':'Cartridge',
-	'pcb':'PCB',
-	'wheel':'Wheel',
-	'flyer':'Flyer',
-	'fanart':'Fan Art',
-	'mix':'Mix',
-	'map':'Map',
-}
 
 const content_type={
 	audio:{
@@ -987,14 +982,9 @@ function updateMetaEditor(gt,onsubmit){
 		publisher:{capt:'Publisher',type:'lineinput'},
 		genres:{capt:'Genres',type:'genres'},
 		players:{capt:'Players',type:'lineinput'},
-		premise:{capt:'Premise',type:'textinput'},
-		story:{capt:'Story',type:'textinput'},
-		rule:{capt:'Rule',type:'textinput'},
-		operation:{capt:'Operation',type:'textinput'},
-		credit:{capt:'Credit',type:'textinput'},
-		tips:{capt:'Tips',type:'textinput'},
-		notes:{capt:'Notes',type:'textinput'},
-		bugs:{capt:'Bugs',type:'textinput'},
+	}
+	for(var it in caps.texts){
+		meta[it]={capt:caps.texts[it],type:'textinput'}
 	}
 
 	for(var it in meta){
@@ -1432,7 +1422,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 	});
 
 
-	for(var it of caps.books){
+	for(var it in caps.books){
 		var frm=createElement({
 			target:panel_gameview,
 			tag:'p',
@@ -1443,7 +1433,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 			target:frm,
 			tag:'span',
 		});
-		updateMediaCaption(captloc,MediaCaption[it],path);
+		updateMediaCaption(captloc,caps.books[it],path);
 		createElement({target:frm,tag:'span',sub:[' ']});
 		var btnloc=createElement({
 			target:frm,
@@ -1455,34 +1445,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		});
 		((it_)=>{
 			updateReplacer(gt,it_,btnloc,pnlloc,filter_type('text','es'),(url)=>{
-				updateMediaCaption(captloc,MediaCaption[it_]??'',url);
-			});
-		})(it);
-	}
-	for(var it of caps.texts){
-		var frm=createElement({
-			target:panel_gameview,
-			tag:'p',
-		});
-
-		var path=gt[it];
-		var captloc=createElement({
-			target:frm,
-			tag:'span',
-		});
-		updateMediaCaption(captloc,MediaCaption[it],path);
-		createElement({target:frm,tag:'span',sub:[' ']});
-		var btnloc=createElement({
-			target:frm,
-			tag:'span',
-		});
-		var pnlloc=createElement({
-			target:frm,
-			tag:'div',
-		});
-		((it_)=>{
-			updateReplacer(gt,it_,btnloc,pnlloc,filter_type('text','es'),(url)=>{
-				updateMediaCaption(captloc,MediaCaption[it_]??'',url);
+				updateMediaCaption(captloc,caps.books[it_]??'',url);
 			});
 		})(it);
 	}
@@ -1513,7 +1476,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		});
 	}
 
-	for(var it of caps.videos){
+	for(var it in caps.videos){
 		var frm=createElement({
 			target:panel_gameview,
 			tag:'div',
@@ -1522,7 +1485,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 
 		var path=gt[it];
 
-		updateMediaCaption(frm,MediaCaption[it]);
+		updateMediaCaption(frm,caps.videos[it]);
 		createElement({target:frm,tag:'span',sub:[' ']});
 		var btnloc=createElement({
 			target:frm,
@@ -1544,7 +1507,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		})(it,imgtray);
 		updateMediaView(gt,it,imgtray,path);
 	}
-	for(var it of caps.images){
+	for(var it in caps.images){
 		var frm=createElement({
 			target:panel_gameview,
 			tag:'div',
@@ -1553,7 +1516,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 
 		var path=gt[it];
 
-		updateMediaCaption(frm,MediaCaption[it]);
+		updateMediaCaption(frm,caps.images[it]);
 		createElement({target:frm,tag:'span',sub:[' ']});
 		var btnloc=createElement({
 			target:frm,
@@ -2386,14 +2349,14 @@ function updateRunningControl(loc,cbupd){
 	var killbtn=createElement({
 		target:loc,
 		tag:'button',
-		sub:['Kill']
+		sub:['Terminate']
 	});
 
 	updbtn.onclick=()=>{
 		if(cbupd)cbupd();
 	}
 	killbtn.onclick=()=>{
-		showConfirmPanel(loc,'Kill the Game Process',()=>{
+		showConfirmPanel(loc,'Terminate the Game Process',()=>{
 			killGame(()=>{
 				updateRunningControl(loc,cbupd);
 			},(err)=>{
@@ -2743,9 +2706,8 @@ function updateSystemList(data){
 	}
 }
 
-main.append(panel_progress);
-retrieveCaps((data)=>{
-	caps=data;
+function updateMain(){
+
 	retrieveSystems((data)=>{
 		updateSystemList(data);
 		updateHomeView();
@@ -2755,9 +2717,14 @@ retrieveCaps((data)=>{
 		main.innerHTML='';
 		showError(main,err);
 	});
+}
+
+main.append(panel_progress);
+retrieveCaps((data)=>{
+	caps=data;
+	updateMain();
 },(err)=>{
-	main.innerHTML='';
-	showError(main,err);
+	updateMain();
 });
 
 //--></script>
