@@ -1,17 +1,210 @@
 html, body { 
 	margin:0px; 
 	padding:0px; 
-	font-family: Open Sans, sans-serif; 
-	font-size:12pt;
-	height:100%;
+	background-color:#202020; 
+	color:white;
 	overflow:hidden;
+	height: 100vh;
+	width: 100vw;
 }
 
-.title { 
-	background-color:#F0F0F0; 	
-	padding:4px 8px;
-	text-align: left;
-	font-size:16pt;
+screen{
+	display:flex;
+	flex-direction:column;
+}
+
+header {
+	width: 100%;
+	height: 1.5em;
+	background-color:#F0F0F0;
+	color:black;
+	flex-shrink:0;
+}
+
+footer{
+	width: 100%;
+	height: 1.5em;
+	background-color:#F0F0F0;
+	color:black;
+	flex-shrink:0;
+}
+
+main {
+}
+.mainboard{
+	flex-grow:1;
+	display: flex;
+}
+
+.centering{
+	display: flex;
+}
+.sidespace{
+	flex-grow: 1;
+}
+
+.systemlist {
+	color:white;
+	background-color:#202020; 
+	flex-shrink:0;
+	overflow-y: auto;
+	max-height: calc(100vh - 5em);
+}
+.systemview {
+	flex-grow:1;
+	overflow-y: auto;
+	max-height: calc(100vh - 3em);
+}
+.screenshots {
+	flex-grow:1;
+	overflow-y: auto;
+	max-height: calc(100vh - 3em);
+}
+.workspace {
+}
+
+.imageviewer {
+	text-align:center;
+	display:flex;
+	flex-direction:column;
+}
+
+.imagehead {
+	width: 99%;
+	height: 3.5em;
+}
+.imagetool {
+	display:flex;
+}
+.imagecapt {
+	height:100%;
+	flex-grow:1;
+	font-size:150%;
+}
+.imagebtns {
+	height:100%;
+}
+.imagebtn {
+	font-size:200%;
+}
+.imagecanvas {
+	flex-grow:1;
+	overflow-y: scroll;
+	border:groove;
+	overflow-y: auto;
+	max-height: calc(100vh - 3em - 3.5em);
+}
+.imagefit {
+	overflow-x: scroll;
+}
+.gamelist {
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
+.gameview{
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
+.genreeditor {
+	flex-grow:1;
+	max-height: calc(100vh - 3em);
+	overflow-y: scroll;
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
+.genretree {
+	font-size:200%;
+}
+.metaeditor {
+	flex-grow:1;
+	max-height: calc(100vh - 3em);
+	overflow-y: scroll;
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
+.mediaviewer {
+	flex-grow:1;
+	max-height: calc(100vh - 3em);
+	overflow-y: scroll;
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
+.doclist {
+	flex-grow:1;
+	max-height: calc(100vh - 3em);
+	overflow-y: scroll;
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
+
+.cardgroup{
+	color:white;
+	background-color:#202020; 
+	text-align:center;
+}
+.card_others{
+	border:outset;
+	background-color:#777777; 
+	color:black;
+}
+.card_selected{
+	border:inset;
+	background-color:#444444; 
+	color:white;
+}
+
+.btn_normal{
+}
+.btn_startable{
+	background-color:#aaffff;
+}
+.btn_kidgame{
+	background-color:#aaffaa;
+}
+.btn_favorite{
+	background-color:#ffdd00;
+}
+.btn_hidden{
+	background-color:#444444;
+}
+
+.imgframe{
+	border:ridge;
+}
+.metatextbox{
+	width:40vw;
+}
+.metatextarea{
+	width:40vw;
+	height:5em;
+	overflow:scroll;
+}
+
+.systemcaption{
+	font-size:150%;
+}
+.gamecaption{
+	font-size:200%;
+}
+.editorcaption{
+	font-size:300%;
+}
+.mediacaption{
+	font-size:150%;
+}
+.instanterror{
+	color:#ff6666;
+}
+.systemicon{
+	max-width:60vw;
+	max-height:10vh;
+	font-size:350%;
 }
 
 .toolbar {
@@ -30,12 +223,6 @@ html, body {
 
 .toolbarbutton:hover {
 	background-color:#405080FF;
-}
-
-.systemlist {
-	color:white;
-	background-color:#202020; 
-	overflow-y:scroll;
 }
 
 .system:hover {

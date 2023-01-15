@@ -151,7 +151,8 @@ class MetaDataList
 public:
 	static void initMetadata();
 
-	void loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system, FileData* file);
+	void init(SystemData* system, FileData* file);
+	void loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system);
 	void appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths = false) const;
 
 	void migrate(FileData* file, pugi::xml_node& node);
@@ -192,6 +193,10 @@ public:
 
 	void setScrapeDate(const std::string& scraper);
 	Utils::Time::DateTime* getScrapeDate(const std::string& scraper);
+
+	bool isSlideShowAvailable();
+	bool isJukeBoxAvailable();
+	bool isDocumentationAvailable();
 
 private:
 	void complement(const std::string& key, const std::vector<std::string>& extlist);

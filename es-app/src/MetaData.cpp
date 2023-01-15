@@ -67,7 +67,6 @@ void MetaDataList::initMetadata()
 
 		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Arcade system"),        _("this game's arcade system"), false },
 		{ Genre,            "genre",       MD_STRING,              "",                 false,      _("Genre"),                _("enter game genre"),		false }, 
-		// GenreIds is not serialized
 		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genres"),				  _("enter game genres"),		false },
 		{ Players,          "players",     MD_INT,                 "",                 false,      _("Players"),              _("this game's number of players"),	false },
 		{ Premise,          "premise",     MD_MULTILINE_STRING,    "",                 false,      _("Premise"),              _("premise for this game"),	false },
@@ -152,10 +151,15 @@ MetaDataList::MetaDataList(MetaDataListType type) : mType(type), mWasChanged(fal
 
 }
 
-void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system, FileData* file)
+void MetaDataList::init(SystemData* system, FileData* file)
+{
+	mRelativeTo = system;	
+	mTargetFile = file;
+}
+
+void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system)
 {
 	mType = type;
-	mTargetFile = file;
 	mRelativeTo = system;	
 
 	mUnKnownElements.clear();
@@ -214,9 +218,6 @@ void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, Syst
 			mName = value;
 			continue;
 		}
-
-		if (mdd.id == MetaDataId::GenreIds)
-			continue;
 
 		if (value == mdd.defaultValue)
 			continue;
@@ -284,11 +285,20 @@ void MetaDataList::migrate(FileData* file, pugi::xml_node& node)
 
 void MetaDataList::complement(const std::string& key, const std::vector<std::string>& extlist){
 
+	auto path = get(key);
+	if (path != ""){
+		if(Utils::FileSystem::exists(path))return;
+		mMap.erase(getId(key));
+		mWasChanged = true;
+	}
+
+	bool f=false;
 	for(auto& it: extlist){
-		std::string path = mTargetFile->getScraperPathPrefix() + key + *&it;
+		path = mTargetFile->getScraperPathPrefix() + key + *&it;
 
 		if(!Utils::FileSystem::exists(path))continue;
 		set(key,path);
+		f=true;
 	}
 }
 
@@ -339,10 +349,6 @@ void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, cons
 			parent.append_child("name").text().set(mName.c_str());
 			continue;
 		}
-
-		// Don't save GenreIds
-		if (mddIter->id == MetaDataId::GenreIds)
-			continue;
 
 		auto mapIter = mMap.find(mddIter->id);
 		if(mapIter != mMap.cend())
@@ -621,4 +627,19 @@ Utils::Time::DateTime* MetaDataList::getScrapeDate(const std::string& scraper)
 	}
 
 	return nullptr;
+}
+
+bool MetaDataList::isSlideShowAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./slideshow", getScraperDir(), true);
+	return Utils::FileSystem::isDirectory(path);
+}
+
+bool MetaDataList::isJukeBoxAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./jukebox", getScraperDir(), true);
+	return Utils::FileSystem::isDirectory(path);
+}
+
+bool MetaDataList::isDocumentationAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./docs.json", getScraperDir(), true);
+	return Utils::FileSystem::isRegularFile(path);
 }

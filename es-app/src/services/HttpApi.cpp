@@ -159,6 +159,10 @@ void HttpApi::getFileDataJson(rapidjson::PrettyWriter<rapidjson::StringBuffer>& 
 		}
 	}
 
+	writer.Key("docsAvailable"); writer.String(meta.isDocumentationAvailable()?"true":"false");
+	writer.Key("slideshowAvailable"); writer.String(meta.isSlideShowAvailable()?"true":"false");
+	writer.Key("jukeboxAvailable"); writer.String(meta.isJukeBoxAvailable()?"true":"false");
+
 	writer.EndObject();
 }
 
@@ -189,10 +193,21 @@ bool HttpApi::ImportFromJson(FileData* file, const std::string& json)
 
 		std::string newValue = value.GetString();
 		std::string currentValue = meta.get(mdd.id);
-		if (newValue != currentValue)
-		{
+		if (newValue == currentValue){
+			continue;
+		}
+
+		switch(mdd.type){
+			case MD_STRING:
+			case MD_INT:
+			case MD_FLOAT:
+			case MD_BOOL:
+			case MD_MULTILINE_STRING:
+			case MD_RATING:
+			case MD_DATE:
 			meta.set(mdd.id, newValue);
 			changed = true;
+			break;
 		}
 	}
 
@@ -300,11 +315,32 @@ std::string HttpApi::getSystemGames(SystemData* system)
 		}
 	}
 
-	for (auto game : files)
+	for (auto game : files){
 		getFileDataJson(writer, game);
+	}
 
 	writer.EndArray();
 
+	return s.GetString();
+}
+
+std::string HttpApi::getScraperFiles(FileData* file, const std::string& path){
+
+	auto dir=file->getScraperDir();
+	if(path!="")dir+="/"+path;
+	if(!Utils::FileSystem::isDirectory(dir))return "[]";
+
+	rapidjson::StringBuffer s;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+	writer.StartArray();
+
+	auto contents = Utils::FileSystem::getDirectoryFiles(dir);
+	for (auto& ent : contents){
+		auto p2=Utils::FileSystem::createRelativePath(ent.path, file->getScraperDir(), false);
+		writer.String(p2.c_str());
+	}
+
+	writer.EndArray();
 	return s.GetString();
 }
 

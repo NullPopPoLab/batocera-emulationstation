@@ -53,6 +53,11 @@ File APIs
 GET /resources/{path relative to resources}"					-> any file in resources
 GET /{path relative to resources/services}"						-> any other file in resources/services
 
+NullPopPo Custom APIs
+---------------------
+GET /screenshots/{fileName}                                     -> download a screenshot image
+GET /systems/{systemName}/games/{gameId}/scraper                -> any file in /userdata/scraper/{systemName}/{gameName}/
+
 */
 HttpServerThread::HttpServerThread(Window* window) : mWindow(window)
 {
@@ -309,6 +314,64 @@ void HttpServerThread::run()
 		res.status = 404;		
 	});
 
+	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/scraper/(/?.*))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			std::string gameId = req.matches[2];
+			auto game = HttpApi::findFileData(system, gameId);
+			if (game != nullptr) {
+				std::string name = req.matches[3];
+				std::string path = game->getScraperDir()+"/"+name;
+				if(Utils::FileSystem::isDirectory(path)){
+					res.set_content(HttpApi::getScraperFiles(game,name), "application/json");
+					return;
+				}
+				else if(Utils::FileSystem::isRegularFile(path)){
+					auto data = ResourceManager::getInstance()->getFileData(path);
+					if (data.ptr)
+					{
+						res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+						return;
+					}
+
+					res.set_content("503 cannot read", "text/html");
+					res.status = 503;
+					return;
+				}
+			}
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/scraper)", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			std::string gameId = req.matches[2];
+			auto game = HttpApi::findFileData(system, gameId);
+			if (game != nullptr) {
+				res.set_content(HttpApi::getScraperFiles(game,""), "application/json");
+				return;
+			}
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
 	mHttpServer->Get(R"(/systems/(/?.*)/games/(/?.*)/media/(/?.*))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
@@ -336,6 +399,8 @@ void HttpServerThread::run()
 							return;
 						}
 
+						res.set_content("503 cannot read", "text/html");
+						res.status = 503;
 						return;
 					}
 				}
@@ -420,6 +485,11 @@ void HttpServerThread::run()
 					if (ViewController::hasInstance())
 						mWindow->postToUiThread([game]() { ViewController::get()->onFileChanged(game, FileChangeType::FILE_METADATA_CHANGED); });					
 
+					return;
+				}
+				else{
+					res.set_content("204 not changed", "text/html");
+					res.status = 204;
 					return;
 				}
 			}
@@ -711,13 +781,13 @@ void HttpServerThread::run()
 		}
 	});
 
-	mHttpServer->Get(R"(/scraper/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
+	mHttpServer->Get(R"(/screenshots/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
 	{
 		if (!isAllowed(req, res))
 			return;
 
 		std::string url = req.matches[1];
-		auto path="/userdata/scraper/"+url;
+		auto path="/userdata/screenshots/"+url;
 		auto data = ResourceManager::getInstance()->getFileData(path);
 		if (data.ptr)
 			res.set_content((char*)data.ptr.get(), data.length, getMimeType(url).c_str());
