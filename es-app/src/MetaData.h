@@ -29,7 +29,10 @@ enum MetaDataType
 	MD_RATING,
 	MD_DATE,
 	MD_TIME, //used for lastplayed
-    MD_LIST 
+    MD_LIST,
+
+	// NullPopPoCustom 
+	MD_INVALID,
 };
 
 enum MetaDataId
@@ -80,10 +83,12 @@ enum MetaDataId
 	Sortname,
 	// NullPopPoCustom 
 	Ingame,
+	Outgame,
+	Visual,
 	PCB,
 	Flyer,
 	Title,
-	Startable,
+	Runnable,
 	Premise,
 	Story,
 	Rule,
@@ -93,6 +98,7 @@ enum MetaDataId
 	Notes,
 	Bugs,
 	Max,
+	Invalid=-1,
 };
 
 namespace MetaDataImportType
@@ -185,7 +191,10 @@ public:
 	inline MetaDataListType getType() const { return mType; }
 	static const std::vector<MetaDataDecl>& getMDD() { return mMetaDataDecls; }
 	inline const std::string& getName() const { return mName; }
-	
+
+	static const MetaDataDecl& getDecl(MetaDataId id);
+	static const MetaDataDecl& getDecl(const std::string& key);
+
 	void importScrappedMetadata(const MetaDataList& source);
 
 	std::string getRelativeRootPath();
