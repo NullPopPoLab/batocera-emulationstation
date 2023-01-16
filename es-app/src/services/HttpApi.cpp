@@ -405,9 +405,20 @@ std::string HttpApi::getCaps()
 	writer.Key("GetScreenshot"); writer.Bool(true);
 	writer.Key("JukeBox"); writer.Bool(true);
 	writer.Key("RemoveMedia"); writer.Bool(true);
+	writer.Key("SaveGenreByIDs"); writer.Bool(true);
 	writer.Key("SlideShow"); writer.Bool(true);
 	writer.Key("SortableName"); writer.Bool(true);
 	writer.Key("StrictTitle"); writer.Bool(true);
+
+	writer.Key("GenreLanguages");
+	writer.StartObject();
+	writer.Key("de"); writer.String("Deutsch");
+	writer.Key("en"); writer.String("English");
+	writer.Key("es"); writer.String("espanol");
+	writer.Key("fr"); writer.String("francais");
+	writer.Key("ja"); writer.String("“ú–{Œê");
+	writer.Key("pt"); writer.String("portugues");
+	writer.EndObject();
 
 	const char* flags[]={"runnable","kidgame","favorite","hidden"};
 	writer.Key("Flags");
