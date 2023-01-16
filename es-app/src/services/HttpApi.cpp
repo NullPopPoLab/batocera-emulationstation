@@ -410,7 +410,7 @@ std::string HttpApi::getCaps()
 	writer.Key("StrictTitle"); writer.Bool(true);
 
 	const char* flags[]={"runnable","kidgame","favorite","hidden"};
-	writer.Key("flags");
+	writer.Key("Flags");
 	writer.StartObject();
 	for(auto* k: flags){
 		auto& d=MetaDataList::getDecl(k);
@@ -420,7 +420,7 @@ std::string HttpApi::getCaps()
 	writer.EndObject();
 
 	const char* texts[]={"premise","story","rule","operation","credit","tips","notes","bugs"};
-	writer.Key("texts");
+	writer.Key("Texts");
 	writer.StartObject();
 	for(auto* k: texts){
 		auto& d=MetaDataList::getDecl(k);
@@ -430,7 +430,7 @@ std::string HttpApi::getCaps()
 	writer.EndObject();
 
 	const char* books[]={"manual","magazine"};
-	writer.Key("books");
+	writer.Key("Books");
 	writer.StartObject();
 	for(auto* k: books){
 		auto& d=MetaDataList::getDecl(k);
@@ -440,7 +440,7 @@ std::string HttpApi::getCaps()
 	writer.EndObject();
 
 	const char* videos[]={"video"};
-	writer.Key("videos");
+	writer.Key("Videos");
 	writer.StartObject();
 	for(auto* k: videos){
 		auto& d=MetaDataList::getDecl(k);
@@ -449,7 +449,7 @@ std::string HttpApi::getCaps()
 	}
 	writer.EndObject();
 
-	writer.Key("images");
+	writer.Key("Images");
 	writer.StartObject();
 	for (auto mdd : MetaDataList::getMDD()){
 		if(mdd.type!=MD_PATH)continue;
