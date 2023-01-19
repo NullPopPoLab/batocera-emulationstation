@@ -348,7 +348,7 @@
     <nom_de>Run and Shoot</nom_de>
     <nom_en>Run and Shoot</nom_en>
     <nom_es>Corre y Dispara</nom_es>
-    <nom_ja>歩兵系</nom_ja>
+    <nom_ja>アクションシューティング</nom_ja>
     <nom_pt>Corra e Atire</nom_pt>
     <parent>2646</parent>
   </genre>
@@ -1835,6 +1835,30 @@
     <id>29910</id>
     <nom_en>Cyberpunk</nom_en>
     <nom_ja>サイバーパンク</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29930</id>
+    <nom_en>American</nom_en>
+    <nom_ja>アメリカン</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29931</id>
+    <nom_en>Europian</nom_en>
+    <nom_ja>ヨーロピアン</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29932</id>
+    <nom_en>Arabian</nom_en>
+    <nom_ja>アラビアン</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29933</id>
+    <nom_en>Oriental</nom_en>
+    <nom_ja>東洋風</nom_ja>
     <parent>29999</parent>
   </genre>
 
