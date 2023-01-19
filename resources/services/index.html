@@ -16,13 +16,25 @@
 const ratingscore=['0','0.2','0.4','0.6','0.8','1']
 var caps={
 	Version:'unknown (maybe official)',
-	texts:{},
-	books:{
+	GenreLanguages:{
+		'de':'Deutsch',
+		'en':'English',
+		'es':'Español',
+		'fr':'Français',
+		'pt':'Português',
+	},
+	Flags:{
+		'kidgame':"Kid's Game",
+		'favorite':'Favorite',
+		'hidden':'Hidden'
+	},
+	Texts:{},
+	Books:{
 		'manual':'Manual',
 		'magazine':'Magazine'
 	},
-	videos:{'video':'Video'},
-	images:{
+	Videos:{'video':'Video'},
+	Images:{
 		'thumbnail':'Box',
 		'image':'Image',
 		'titleshot':'Title shot',
@@ -241,11 +253,11 @@ function retrieveSystems(cbok,cbng){
 
 function retrieveRunning(cbok,cbng){
 
-	httpGetJson('/runningGame',(data)=>{
-		if(cbok)cbok(data);
-	},(err)=>{
-		if(cbng)cbng(err);
-	});
+	return httpRequest('/runningGame',{
+		method:'GET',
+	},(res)=>{
+		return (res.status==200)?res.json():null;
+	},cbok,cbng);
 }
 
 function reloadGames(cbok,cbng){
@@ -587,7 +599,7 @@ function createKidGameButton(gt,onchange){
 
 	var f=gt.kidgame=='true';
 	var t={
-		view:createElement({tag:'button',attr:{class:f?'btn_kidgame':'btn_normal'},sub:['Kid Game']}),
+		view:createElement({tag:'button',attr:{class:f?'btn_kidgame':'btn_normal'},sub:["Kid's Game"]}),
 		set:(f2)=>{
 			f=f2;
 			t.view.setAttribute('class',f?'btn_kidgame':'btn_normal');
@@ -741,19 +753,11 @@ function buildGenreList(xml,onsubmit){
 		tag:'div',
 	});
 
-	var langs={
-		'de':'Deutsch',
-		'en':'English',
-		'es':'Español',
-		'fr':'Français',
-		'ja':'日本語',
-		'pt':'Português',
-	}
 	createElement({
 		target:t.view,
 		tag:'div',
 		attr:{class:'langslect'},
-		sub:[createLangSelect(langs,(lang)=>{
+		sub:[createLangSelect(caps.GenreLanguages,(lang)=>{
 			for(var id in t.flat){
 				t.flat[id].btn.view.innerHTML=t.flat[id].nom[lang]??t.flat[id].nom.en;
 		}})]
@@ -827,12 +831,21 @@ function buildGenreList(xml,onsubmit){
 					nms.push(u1.nom.en);
 					continue;
 				}
-				var a=[]
-				for(var id2 of tree[id1]){
-					var u2=t.flat[id2]
-					a.push(u2.nom.en);
+
+				if(caps.SaveGenreByIDs){
+					var a=[]
+					for(var id2 of tree[id1]){
+						var u2=t.flat[id2]
+						a.push(u2.nom.en);
+					}
+					nms.push(u1.nom.en+'('+a.join('; ')+')');
 				}
-				nms.push(u1.nom.en+'('+a.join('; ')+')');
+				else{
+					for(var id2 of tree[id1]){
+						var u2=t.flat[id2]
+						nms.push(u1.nom.en+' / '+u2.nom.en);
+					}
+				}
 			}
 
 			onsubmit(ids,nms.join(', '));
@@ -983,8 +996,10 @@ function updateMetaEditor(gt,onsubmit){
 		genres:{capt:'Genres',type:'genres'},
 		players:{capt:'Players',type:'lineinput'},
 	}
-	for(var it in caps.texts){
-		meta[it]={capt:caps.texts[it],type:'textinput'}
+	if(!caps.StrictTitle)delete meta.title;
+	if(!caps.SortName)delete meta.sortname;
+	for(var it in caps.Texts){
+		meta[it]={capt:caps.Texts[it],type:'textinput'}
 	}
 
 	for(var it in meta){
@@ -1030,10 +1045,12 @@ function updateMetaEditor(gt,onsubmit){
 			break;
 
 			case 'flags':
-			var c_runnable=createRunnableButton(gt,(f)=>{
-				dst.runnable=f?'true':'false';
-			});
-			sub.push(c_runnable.view);
+			if(caps.Flags.runnable){
+				var c_runnable=createRunnableButton(gt,(f)=>{
+					dst.runnable=f?'true':'false';
+				});
+				sub.push(c_runnable.view);
+			}
 			var c_kidgame=createKidGameButton(gt,(f)=>{
 				dst.kidgame=f?'true':'false';
 			});
@@ -1422,7 +1439,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 	});
 
 
-	for(var it in caps.books){
+	for(var it in caps.Books){
 		var frm=createElement({
 			target:panel_gameview,
 			tag:'p',
@@ -1433,7 +1450,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 			target:frm,
 			tag:'span',
 		});
-		updateMediaCaption(captloc,caps.books[it],path);
+		updateMediaCaption(captloc,caps.Books[it],path);
 		createElement({target:frm,tag:'span',sub:[' ']});
 		var btnloc=createElement({
 			target:frm,
@@ -1445,7 +1462,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		});
 		((it_)=>{
 			updateReplacer(gt,it_,btnloc,pnlloc,filter_type('text','es'),(url)=>{
-				updateMediaCaption(captloc,caps.books[it_]??'',url);
+				updateMediaCaption(captloc,caps.Books[it_]??'',url);
 			});
 		})(it);
 	}
@@ -1476,7 +1493,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		});
 	}
 
-	for(var it in caps.videos){
+	for(var it in caps.Videos){
 		var frm=createElement({
 			target:panel_gameview,
 			tag:'div',
@@ -1485,7 +1502,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 
 		var path=gt[it];
 
-		updateMediaCaption(frm,caps.videos[it]);
+		updateMediaCaption(frm,caps.Videos[it]);
 		createElement({target:frm,tag:'span',sub:[' ']});
 		var btnloc=createElement({
 			target:frm,
@@ -1507,7 +1524,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		})(it,imgtray);
 		updateMediaView(gt,it,imgtray,path);
 	}
-	for(var it in caps.images){
+	for(var it in caps.Images){
 		var frm=createElement({
 			target:panel_gameview,
 			tag:'div',
@@ -1516,7 +1533,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 
 		var path=gt[it];
 
-		updateMediaCaption(frm,caps.images[it]);
+		updateMediaCaption(frm,caps.Images[it]);
 		createElement({target:frm,tag:'span',sub:[' ']});
 		var btnloc=createElement({
 			target:frm,
@@ -2522,13 +2539,15 @@ function updateRunningInfo(loc){
 		},(err)=>{
 			showError(metaerr,err);
 		}));
-		curgame.append(createRunnableButton(gt,(f)=>{
-			gt.runnable=f?'true':'false';
-			metaerr.innerHTML='';
-			httpPostJson(url,{runnable:gt.runnable},null,(err)=>{
-				showError(metaerr,err);
-			});
-		}).view);
+		if(caps.Flags.runnable){
+			curgame.append(createRunnableButton(gt,(f)=>{
+				gt.runnable=f?'true':'false';
+				metaerr.innerHTML='';
+				httpPostJson(url,{runnable:gt.runnable},null,(err)=>{
+					showError(metaerr,err);
+				});
+			}).view);
+		}
 		curgame.append(createKidGameButton(gt,(f)=>{
 			gt.kidgame=f?'true':'false';
 			metaerr.innerHTML='';
@@ -2571,7 +2590,7 @@ function updateRunningInfo(loc){
 
 	},(err)=>{
 		curgame.innerHTML='';
-		if(err.code==404){
+		if(err.code==404 || err.code==201){
 			createElement({
 				target:curgame,
 				tag:'div',
