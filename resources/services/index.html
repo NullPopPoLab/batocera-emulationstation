@@ -16,8 +16,15 @@
 const ratingscore=['0','0.2','0.4','0.6','0.8','1']
 var caps={
 	Version:'unknown (maybe official)',
+	GenreLanguages:{
+		'de':'Deutsch',
+		'en':'English',
+		'es':'Español',
+		'fr':'Français',
+		'pt':'Português',
+	},
 	Flags:{
-		'kidgame':'Kid Game',
+		'kidgame':"Kid's Game",
 		'favorite':'Favorite',
 		'hidden':'Hidden'
 	},
@@ -246,11 +253,11 @@ function retrieveSystems(cbok,cbng){
 
 function retrieveRunning(cbok,cbng){
 
-	httpGetJson('/runningGame',(data)=>{
-		if(cbok)cbok(data);
-	},(err)=>{
-		if(cbng)cbng(err);
-	});
+	return httpRequest('/runningGame',{
+		method:'GET',
+	},(res)=>{
+		return (res.status==200)?res.json():null;
+	},cbok,cbng);
 }
 
 function reloadGames(cbok,cbng){
@@ -592,7 +599,7 @@ function createKidGameButton(gt,onchange){
 
 	var f=gt.kidgame=='true';
 	var t={
-		view:createElement({tag:'button',attr:{class:f?'btn_kidgame':'btn_normal'},sub:['Kid Game']}),
+		view:createElement({tag:'button',attr:{class:f?'btn_kidgame':'btn_normal'},sub:["Kid's Game"]}),
 		set:(f2)=>{
 			f=f2;
 			t.view.setAttribute('class',f?'btn_kidgame':'btn_normal');
@@ -746,19 +753,11 @@ function buildGenreList(xml,onsubmit){
 		tag:'div',
 	});
 
-	var langs={
-		'de':'Deutsch',
-		'en':'English',
-		'es':'Español',
-		'fr':'Français',
-		'ja':'日本語',
-		'pt':'Português',
-	}
 	createElement({
 		target:t.view,
 		tag:'div',
 		attr:{class:'langslect'},
-		sub:[createLangSelect(langs,(lang)=>{
+		sub:[createLangSelect(caps.GenreLanguages,(lang)=>{
 			for(var id in t.flat){
 				t.flat[id].btn.view.innerHTML=t.flat[id].nom[lang]??t.flat[id].nom.en;
 		}})]
@@ -832,12 +831,21 @@ function buildGenreList(xml,onsubmit){
 					nms.push(u1.nom.en);
 					continue;
 				}
-				var a=[]
-				for(var id2 of tree[id1]){
-					var u2=t.flat[id2]
-					a.push(u2.nom.en);
+
+				if(caps.SaveGenreByIDs){
+					var a=[]
+					for(var id2 of tree[id1]){
+						var u2=t.flat[id2]
+						a.push(u2.nom.en);
+					}
+					nms.push(u1.nom.en+'('+a.join('; ')+')');
 				}
-				nms.push(u1.nom.en+'('+a.join('; ')+')');
+				else{
+					for(var id2 of tree[id1]){
+						var u2=t.flat[id2]
+						nms.push(u1.nom.en+' / '+u2.nom.en);
+					}
+				}
 			}
 
 			onsubmit(ids,nms.join(', '));
@@ -988,6 +996,8 @@ function updateMetaEditor(gt,onsubmit){
 		genres:{capt:'Genres',type:'genres'},
 		players:{capt:'Players',type:'lineinput'},
 	}
+	if(!caps.StrictTitle)delete meta.title;
+	if(!caps.SortName)delete meta.sortname;
 	for(var it in caps.Texts){
 		meta[it]={capt:caps.Texts[it],type:'textinput'}
 	}
@@ -2580,7 +2590,7 @@ function updateRunningInfo(loc){
 
 	},(err)=>{
 		curgame.innerHTML='';
-		if(err.code==404){
+		if(err.code==404 || err.code==201){
 			createElement({
 				target:curgame,
 				tag:'div',
