@@ -1,4 +1,4 @@
-#include "HttpApi.h"
+﻿#include "HttpApi.h"
 
 #ifdef WIN32
 #include <Windows.h>
@@ -387,6 +387,16 @@ std::string HttpApi::getCaps()
 	writer.Key("SlideShow"); writer.Bool(true);
 	writer.Key("SortableName"); writer.Bool(true);
 	writer.Key("StrictTitle"); writer.Bool(true);
+
+	writer.Key("GenreLanguages");
+	writer.StartObject();
+	writer.Key("de"); writer.String("Deutsch");
+	writer.Key("en"); writer.String("English");
+	writer.Key("es"); writer.String("español");
+	writer.Key("fr"); writer.String("français");
+	writer.Key("ja"); writer.String("日本語");
+	writer.Key("pt"); writer.String("português");
+	writer.EndObject();
 
 	const char* flags[]={"runnable","kidgame","favorite","hidden"};
 	writer.Key("flags");
