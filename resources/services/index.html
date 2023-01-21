@@ -21,6 +21,7 @@ var caps={
 		'en':'English',
 		'es':'Español',
 		'fr':'Français',
+		'ja':'日本語',
 		'pt':'Português',
 	},
 	Flags:{
@@ -1296,7 +1297,7 @@ function updateMediaView(gt,it,tray,path){
 				createElement({tag:'video',attr:{controls:'controls'},sub:[
 					createElement({tag:'source',attr:{src:gt[it]}})
 				]}):
-			createElement({tag:'img',attr:{src:gt[it]}})
+			createElement({tag:'img',attr:{src:gt[it]},style:{'max-width':'100%'}})
 		],
 	});
 }
@@ -1341,15 +1342,20 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		sub:[getGameCaption(gt)]
 	});
 
-	var launchloc=createElement({
+	var btntray=createElement({
 		target:panel_gameview,
+		tag:'div',
+		attr:{class:'buttontray'}
+	});
+	var launchloc=createElement({
+		target:btntray,
 		tag:'span',
 	});
 
 	var btn=null;
 	if(gt.jukeboxAvailable=='true'){
 		btn=createElement({
-			target:panel_gameview,
+			target:btntray,
 			tag:'button',
 			sub:['JukeBox'],
 		});
@@ -1375,7 +1381,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 
 	if(gt.slideshowAvailable=='true'){
 		btn=createElement({
-			target:panel_gameview,
+			target:btntray,
 			tag:'button',
 			sub:['SlideShow'],
 		});
@@ -1399,7 +1405,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		}
 	}
 
-	panel_gameview.append(createMetaButton(gt,(dst)=>{
+	btntray.append(createMetaButton(gt,(dst)=>{
 		for(var k in dst)gt[k]=dst[k];
 		if(cbchg)cbchg(dst);
 		var url='/systems/'+system_ctrl[gt.systemName].src.name+'/games';
@@ -1410,7 +1416,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 	}));
 
 	btn=createElement({
-		target:panel_gameview,
+		target:btntray,
 		tag:'button',
 		sub:['Quit'],
 	});
@@ -2108,6 +2114,7 @@ function showImage(title,canvas,capt,url,play,onend){
 			target:canvas,
 			tag:'video',
 			attr:{controls:'controls'},
+			style:{'max-width':'100%'},
 			sub:[createElement({tag:'source',attr:{src:url}})
 		]});
 		p.onended=(ev)=>{
@@ -2133,7 +2140,8 @@ function showImage(title,canvas,capt,url,play,onend){
 		createElement({
 			target:canvas,
 			tag:'img',
-			attr:{src:url}
+			attr:{src:url},
+			style:{'max-width':'100%'},
 		});
 		to=delayExec(2000,()=>{
 			if(onend)onend();
@@ -2522,16 +2530,28 @@ function updateRunningInfo(loc){
 			sub:[gt.title?gt.title:gt.name]
 		});
 
-		var gamectrl=createElement({
+		var runinfo=createElement({
 			target:curgame,
 			tag:'div',
+			attr:{class:'buttontray'},
 		});
-		updateRunningControl(gamectrl,()=>{
+		updateRunningControl(runinfo,()=>{
 			updateRunningInfo(loc);
 		});
 
+		var metactrl=createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'buttontray'},
+		});
+		var ratingtray=createElement({
+			target:curgame,
+			tag:'div',
+			attr:{class:'ratingtray'},
+		});
+
 		var url='/systems/'+gt.systemName+'/games/'+gt.id;
-		curgame.append(createDetailButton(gt,()=>{
+		metactrl.append(createDetailButton(gt,()=>{
 			panel_sysview.innerHTML='';
 			panel_sysview.append(panel_homeview);
 		},(dst)=>{
@@ -2540,7 +2560,7 @@ function updateRunningInfo(loc){
 			showError(metaerr,err);
 		}));
 		if(caps.Flags.runnable){
-			curgame.append(createRunnableButton(gt,(f)=>{
+			metactrl.append(createRunnableButton(gt,(f)=>{
 				gt.runnable=f?'true':'false';
 				metaerr.innerHTML='';
 				httpPostJson(url,{runnable:gt.runnable},null,(err)=>{
@@ -2548,28 +2568,28 @@ function updateRunningInfo(loc){
 				});
 			}).view);
 		}
-		curgame.append(createKidGameButton(gt,(f)=>{
+		metactrl.append(createKidGameButton(gt,(f)=>{
 			gt.kidgame=f?'true':'false';
 			metaerr.innerHTML='';
 			httpPostJson(url,{kidgame:gt.kidgame},null,(err)=>{
 				showError(metaerr,err);
 			});
 		}).view);
-		curgame.append(createFavoriteButton(gt,(f)=>{
+		metactrl.append(createFavoriteButton(gt,(f)=>{
 			gt.favorite=f?'true':'false';
 			metaerr.innerHTML='';
 			httpPostJson(url,{favorite:gt.favorite},null,(err)=>{
 				showError(metaerr,err);
 			});
 		}).view);
-		curgame.append(createHiddenButton(gt,(f)=>{
+		metactrl.append(createHiddenButton(gt,(f)=>{
 			gt.hidden=f?'true':'false';
 			metaerr.innerHTML='';
 			httpPostJson(url,{hidden:gt.hidden},null,(err)=>{
 				showError(metaerr,err);
 			});
 		}).view);
-		curgame.append(createRatingControl(gt,(score)=>{
+		ratingtray.append(createRatingControl(gt,(score)=>{
 			gt.rating=ratingscore[score];
 			metaerr.innerHTML='';
 			httpPostJson(url,{rating:gt.rating},null,(err)=>{
@@ -2602,11 +2622,11 @@ function updateRunningInfo(loc){
 			showError(curgame,err);
 		}
 
-		var gamectrl=createElement({
+		var runinfo=createElement({
 			target:curgame,
 			tag:'div',
 		});
-		updateIdlingControl(gamectrl,()=>{
+		updateIdlingControl(runinfo,()=>{
 			updateRunningInfo(loc);
 		});
 	});

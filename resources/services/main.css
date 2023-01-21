@@ -199,7 +199,15 @@ main {
 	background-color:#202020; 
 	text-align:center;
 }
+.buttontray{
+	padding-top:0.3em;
+}
+.ratingtray{
+	padding-top:0.3em;
+	padding-bottom:0.5em;
+}
 .mediatray {
+	max-width:100%;
 }
 .mediaviewer {
 	flex-grow:1;
