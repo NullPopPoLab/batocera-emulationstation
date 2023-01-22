@@ -71,7 +71,7 @@ void MetaDataList::initMetadata()
 		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Powered by"),           _("arcade system, attachment, etc."), false },
 		{ Genre,            "genre",       MD_STRING,              "",                 false,      _("Genre"),                _("enter game genre"),		false }, 
 		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genre IDs"),            _("enter game genres"),		false },
-		{ Players,          "players",     MD_INT,                 "",                 false,      _("Players"),              _("this game's number of players"),	false },
+		{ Players,          "players",     MD_STRING,              "",                 false,      _("Players"),              _("this game's number of players"),	false },
 		{ Premise,          "premise",     MD_MULTILINE_STRING,    "",                 false,      _("Premise"),              _("premise for this game"),	false },
 		{ Story,            "story",       MD_MULTILINE_STRING,    "",                 false,      _("Story"),                _("this game's story"),		false },
 		{ Rule,             "rule",        MD_MULTILINE_STRING,    "",                 false,      _("Rule"),                 _("this game's rule"),		false },
