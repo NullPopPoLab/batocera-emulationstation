@@ -54,7 +54,7 @@ void MetaDataList::initMetadata()
 		{ Crc32,            "crc32",       MD_STRING,              "",                 true,       _("CRC32"),                _("CRC32 checksum"),			false },
 		{ Md5,              "md5",		   MD_STRING,              "",                 true,       _("MD5"),                  _("MD5 checksum"),			false },
 
-		{ Thumbnail,        "thumbnail",   MD_PATH,                "",                 false,      _("Thumbnail"),            _("enter path to box"),		 false },
+		{ Thumbnail,        "thumbnail",   MD_PATH,                "",                 false,      _("Thumbnail"),            _("enter path to thumbnail"),		 false },
 		{ Image,            "image",       MD_PATH,                "",                 false,      _("Image"),                _("enter path to image"),		 true },
 		{ TitleShot,        "titleshot",   MD_PATH,                "",                 false,      _("Title Shot"),           _("enter path to title shot"), true },
 		{ Ingame,			"ingame",	   MD_PATH,                "",                 false,      _("Ingame Shot"),		  _("enter path to ingame shot"), true },
