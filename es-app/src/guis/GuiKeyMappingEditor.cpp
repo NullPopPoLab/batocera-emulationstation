@@ -62,6 +62,10 @@ void GuiKeyMappingEditor::initMappingNames()
 
 		//{ "hotkey",          "HOTKEY",      ":/help/button_hotkey.svg" },
 
+		{ "hotkey + up",      "HOTKEY + UP",           ":/help/button_hotkey.svg", ":/help/dpad_up.svg" },
+		{ "hotkey + down",    "HOTKEY + DOWN",         ":/help/button_hotkey.svg", ":/help/dpad_down.svg" },
+		{ "hotkey + left",    "HOTKEY + LEFT",         ":/help/button_hotkey.svg", ":/help/dpad_left.svg" },
+		{ "hotkey + right",   "HOTKEY + RIGHT",        ":/help/button_hotkey.svg", ":/help/dpad_right.svg" },
 		{ "hotkey + start",          "HOTKEY + START",      ":/help/button_hotkey.svg", ":/help/button_start.svg" },
 		{ "hotkey + select",          "HOTKEY + SELECT",      ":/help/button_hotkey.svg", ":/help/button_select.svg" },
 		{ "hotkey + menu",          "HOTKEY + MENU",      ":/help/button_hotkey.svg", ":/help/button_menu.svg" },
