@@ -9,6 +9,7 @@
 #include "Settings.h"
 #include "FileData.h"
 #include "ImageIO.h"
+#include "scrapers/Scraper.h"
 
 std::vector<MetaDataDecl> MetaDataList::mMetaDataDecls;
 
@@ -291,7 +292,7 @@ void MetaDataList::complement(const std::string& key, const std::vector<std::str
 
 	bool f=false;
 	for(auto& it: extlist){
-		path = mTargetFile->getScraperPathPrefix() + key + *&it;
+		path = Scraper::getSaveAsPath(mTargetFile,getId(key),*&it);
 
 		if(!Utils::FileSystem::exists(path))continue;
 		set(key,path);
