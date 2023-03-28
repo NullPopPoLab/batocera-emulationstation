@@ -150,7 +150,17 @@ LangInfo LangInfo::parse(std::string rom, SystemData* system)
 }
 
 std::string LangInfo::getFlag(const std::string lang, const std::string region)
-{	
+{
+	auto tmp=region;
+	if(tmp.empty()){
+		auto p=lang.find("-");
+		if(p==std::string::npos)p=lang.find("_");
+		if(p!=std::string::npos)tmp=lang.substr(p);
+		else tmp=lang;
+	}
+	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+	return tmp;
+#if 0
 	if (lang.empty() && region.empty())
 		return "us";
 
@@ -188,4 +198,5 @@ std::string LangInfo::getFlag(const std::string lang, const std::string region)
 		return region;
 
 	return "eu";
+#endif
 }
