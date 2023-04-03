@@ -190,7 +190,7 @@ bool systemByManufacurerSort(SystemData* sys1, SystemData* sys2)
 	if (mf1 != mf2)
 		return mf1.compare(mf2) < 0;
 
-	// Then by release date 
+	// Then by release year 
 	if (sys1->getSystemMetadata().releaseYear < sys2->getSystemMetadata().releaseYear)
 		return true;
 	else if (sys1->getSystemMetadata().releaseYear > sys2->getSystemMetadata().releaseYear)
@@ -204,7 +204,7 @@ bool systemByManufacurerSort(SystemData* sys1, SystemData* sys2)
 
 bool systemByReleaseDate(SystemData* sys1, SystemData* sys2)
 {
-	// Order by hardware
+	// Then by release year 
 	int mf1 = sys1->getSystemMetadata().releaseYear;
 	int mf2 = sys2->getSystemMetadata().releaseYear;
 	if (mf1 != mf2)
@@ -231,6 +231,12 @@ bool systemByHardwareSort(SystemData* sys1, SystemData* sys2)
 	std::string mf2 = Utils::String::toUpper(sys2->getSystemMetadata().hardwareType);
 	if (mf1 != mf2)
 		return mf1.compare(mf2) < 0;
+
+	// Then by release year 
+	if (sys1->getSystemMetadata().releaseYear < sys2->getSystemMetadata().releaseYear)
+		return true;
+	else if (sys1->getSystemMetadata().releaseYear > sys2->getSystemMetadata().releaseYear)
+		return false;
 
 	// Then by name
 	std::string name1 = Utils::String::toUpper(sys1->getName());
