@@ -125,8 +125,10 @@ void GuiSaveState::loadGrid()
 	{
 		if (item->slot == -1)
 			mGrid->add(_("AUTO SAVE") + std::string("\r\n") + item->creationDate.toLocalTimeString(), item->getScreenShot(), "", "", false, false, false, false, *item);
-		else if (incrementalSaveStates)
-			mGrid->add(item->creationDate.toLocalTimeString(), item->getScreenShot(), "", "", false, false, false, false, *item);
+		else if (item->hasCaption())
+			mGrid->add(_("SLOT") + std::string(" ") + std::to_string(item->slot) + std::string("\r\n") + item->getCaptionContent(), item->getScreenShot(), "", "", false, false, false, false, *item);
+//		else if (incrementalSaveStates)
+//			mGrid->add(item->creationDate.toLocalTimeString(), item->getScreenShot(), "", "", false, false, false, false, *item);
 		else 
 			mGrid->add(_("SLOT") + std::string(" ") + std::to_string(item->slot) + std::string("\r\n") + item->creationDate.toLocalTimeString() , item->getScreenShot(), "", "", false, false, false, false, *item);
 	}

@@ -22,6 +22,9 @@ struct SaveState
 	std::string rom;
 	std::string fileName;
 	std::string getScreenShot() const;
+	bool hasCaption() const;
+	std::string getCaptionPath() const;
+	std::string getCaptionContent() const;
 	int slot;
 
 	void remove() const;
@@ -38,6 +41,7 @@ public:
 private:
 	std::string mAutoFileBackup;
 	std::string mAutoImageBackup;
+	std::string mAutoCaptionBackup;
 
 
 	std::string mNewSlotFile;	

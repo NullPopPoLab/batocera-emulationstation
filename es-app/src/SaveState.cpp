@@ -24,6 +24,26 @@ std::string SaveState::getScreenShot() const
 	return "";
 }
 
+bool SaveState::hasCaption() const
+{
+	if (fileName.empty()) return false;
+	if (!Utils::FileSystem::exists(fileName + ".txt")) return false;
+	return true;
+}
+
+std::string SaveState::getCaptionPath() const
+{
+	if (!hasCaption()) return "";
+	return fileName + ".txt";
+}
+
+std::string SaveState::getCaptionContent() const
+{
+	if (!hasCaption()) return "";
+
+	return Utils::FileSystem::readAllText(fileName + ".txt");
+}
+
 std::string SaveState::setupSaveState(FileData* game, const std::string& command)
 {
 	if (game == nullptr)
@@ -89,6 +109,14 @@ std::string SaveState::setupSaveState(FileData* game, const std::string& command
 			Utils::FileSystem::renameFile(autoImage, autoImage + ".bak");				
 		}
 
+		auto autoCaption = autoFilename + ".txt";
+		if (Utils::FileSystem::exists(autoCaption))
+		{
+			Utils::FileSystem::removeFile(autoCaption + ".bak");
+			Utils::FileSystem::renameFile(autoCaption, autoCaption + ".bak");				
+		}
+
+		mAutoCaptionBackup = autoCaption;
 		mAutoImageBackup = autoImage;
 		mAutoFileBackup = autoFilename;
 
@@ -135,6 +163,12 @@ void SaveState::onGameEnded(FileData* game)
 		Utils::FileSystem::renameFile(mAutoImageBackup + ".bak", mAutoImageBackup);
 	}
 
+	if (!mAutoCaptionBackup.empty())
+	{
+		Utils::FileSystem::removeFile(mAutoCaptionBackup);
+		Utils::FileSystem::renameFile(mAutoCaptionBackup + ".bak", mAutoCaptionBackup);
+	}
+
 	if (SystemConf::getIncrementalSaveStates())
 		SaveStateRepository::renumberSlots(game);
 }
@@ -166,13 +200,16 @@ bool SaveState::copyToSlot(int slot, bool move) const
 		Utils::FileSystem::renameFile(fileName, destState);
 		if (!getScreenShot().empty())
 			Utils::FileSystem::renameFile(getScreenShot(), destState + ".png");
-
+		if (hasCaption())
+			Utils::FileSystem::renameFile(getCaptionPath(), destState + ".txt");
 	}
 	else
 	{
 		Utils::FileSystem::copyFile(fileName, destState);
 		if (!getScreenShot().empty())
 			Utils::FileSystem::copyFile(getScreenShot(), destState + ".png");
+		if (hasCaption())
+			Utils::FileSystem::copyFile(getCaptionPath(), destState + ".txt");
 	}
 
 	return true;
