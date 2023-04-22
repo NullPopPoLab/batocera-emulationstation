@@ -997,8 +997,6 @@ function updateMetaEditor(gt,onsubmit){
 		genres:{capt:'Genres',type:'genres'},
 		players:{capt:'Players',type:'lineinput'},
 	}
-	if(!caps.StrictTitle)delete meta.title;
-	if(!caps.SortName)delete meta.sortname;
 	for(var it in caps.Texts){
 		meta[it]={capt:caps.Texts[it],type:'textinput'}
 	}
@@ -1406,6 +1404,8 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 	}
 
 	btntray.append(createMetaButton(gt,(dst)=>{
+		if(dst.title=='')delete dst.title;
+		if(dst.sortname=='')delete dst.sortname;
 		for(var k in dst)gt[k]=dst[k];
 		if(cbchg)cbchg(dst);
 		var url='/systems/'+system_ctrl[gt.systemName].src.name+'/games';
