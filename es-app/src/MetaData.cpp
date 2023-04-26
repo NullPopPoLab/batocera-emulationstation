@@ -357,6 +357,8 @@ void MetaDataList::complement()
 	complement_image("pcb");
 	complement_image("flyer");
 	complement_image("ingame");
+	complement_image("outgame");
+	complement_image("visual");
 }
 
 void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths) const
