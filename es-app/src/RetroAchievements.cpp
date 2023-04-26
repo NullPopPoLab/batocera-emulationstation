@@ -221,6 +221,8 @@ GameInfoAndUserProgress RetroAchievements::getGameInfoAndUserProgress(int gameId
 	ret.ImageIcon = jsonString(doc, "ImageIcon");
 	ret.ImageTitle = jsonString(doc, "ImageTitle");
 	ret.ImageIngame = jsonString(doc, "ImageIngame");
+	ret.ImageOutgame = jsonString(doc, "ImageOutgame");
+	ret.ImageVisual = jsonString(doc, "ImageVisual");
 	ret.ImageBoxArt = jsonString(doc, "ImageBoxArt");
 	ret.Publisher = jsonString(doc, "Publisher");
 	ret.Developer = jsonString(doc, "Developer");
