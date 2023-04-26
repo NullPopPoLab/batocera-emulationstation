@@ -317,6 +317,9 @@ void MetaDataList::complement_document(const std::string& key){
 
 void MetaDataList::complement()
 {
+	auto path = mTargetFile->getSourceFileData()->getScraperDir();
+	if(!Utils::FileSystem::exists(path))return;
+
 	complement_image("image");
 	complement_video("video");
 	complement_image("marquee");
