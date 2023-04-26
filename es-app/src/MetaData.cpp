@@ -333,6 +333,8 @@ void MetaDataList::complement()
 	complement_image("cartridge");
 	complement_image("boxback");
 	complement_image("wheel");
+	complement_image("outgame");
+	complement_image("visual");
 }
 
 void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths) const
