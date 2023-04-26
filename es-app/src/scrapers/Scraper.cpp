@@ -378,6 +378,8 @@ MDResolveHandle::MDResolveHandle(const ScraperSearchResult& result, const Scrape
 		case MetaDataId::Wheel: suffix = "wheel"; resize = false; break;		
 		case MetaDataId::TitleShot: suffix = "titleshot"; break;
 		case MetaDataId::Ingame: suffix = "ingame"; break;
+		case MetaDataId::Outgame: suffix = "outgame"; break;
+		case MetaDataId::Visual: suffix = "visual"; break;
 		case MetaDataId::Manual: suffix = "manual"; resize = false;  break;
 		case MetaDataId::Magazine: suffix = "magazine"; resize = false;  break;
 		case MetaDataId::Map: suffix = "map"; resize = false; break;
@@ -707,6 +709,8 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 	case MetaDataId::PCB: suffix = "pcb"; break;
 	case MetaDataId::Flyer: suffix = "flyer"; break;
 	case MetaDataId::Ingame: suffix = "ingame"; break;
+	case MetaDataId::Outgame: suffix = "outgame"; break;
+	case MetaDataId::Visual: suffix = "visual"; break;
 	case MetaDataId::BoxArt: suffix = "box"; break;
 	case MetaDataId::Wheel: suffix = "wheel"; break;
 	case MetaDataId::TitleShot: suffix = "titleshot"; break;
