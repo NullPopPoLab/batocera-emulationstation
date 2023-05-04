@@ -266,8 +266,8 @@ void HttpServerThread::run()
 		std::string ret = HttpApi::getRunnningGameInfo();
 		if (ret.empty())
 		{
-			res.set_content("201 NO GAME RUNNING", "text/html");
-			res.status = 201;
+			res.set_content("404 NO GAME RUNNING", "text/html");
+			res.status = 404;
 		}
 		else
 			res.set_content(ret, "application/json");
