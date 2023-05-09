@@ -16,8 +16,8 @@ GuiSaveState::GuiSaveState(Window* window, FileData* game, const std::function<v
 	GuiComponent(window), mGrid(nullptr), mBackground(window, ":/frame.png"),
 	mLayout(window, Vector2i(3, 5)), mTitle(nullptr)
 {
-	mGame = game;
-	mRepository = game->getSourceFileData()->getSystem()->getSaveStateRepository();
+	mGame = game->getSourceFileData();
+	mRepository = mGame->getSystem()->getSaveStateRepository();
 	mRunCallback = callback;
 
 	// Form background
