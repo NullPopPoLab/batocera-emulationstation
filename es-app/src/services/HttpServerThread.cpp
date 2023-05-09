@@ -272,8 +272,8 @@ void HttpServerThread::run()
 			return;
 		}
 
-		res.set_content("404 game not found", "text/html");
-		res.status = 404;
+		res.set_content("{}", "application/json");
+		res.status = 201;
 	});
 
 
