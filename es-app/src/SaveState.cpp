@@ -9,11 +9,13 @@
 
 std::string SaveState::makeStateFilename(int slot, bool fullPath) const
 {
-	std::string ret = this->rom + ".state" + (slot < 0 ? ".auto" : (slot == 0 ? "" : std::to_string(slot)));
-	if (fullPath) 
-		return Utils::FileSystem::combine(Utils::FileSystem::getParent(fileName), ret);
+	std::string ret = this->rom + "/state" + (slot < 0 ? ".auto" : std::to_string(slot));
+	if (!fullPath) return ret;
 
-	return ret;
+	return Utils::FileSystem::combine(
+		mRepository?mRepository->getSavesPath():
+			Utils::FileSystem::getParent(fileName),
+		ret);
 }
 
 std::string SaveState::getScreenShot() const

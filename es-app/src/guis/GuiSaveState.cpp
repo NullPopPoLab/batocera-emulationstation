@@ -118,7 +118,7 @@ void GuiSaveState::loadGrid()
 	{
 		auto autoSave = std::find_if(states.cbegin(), states.cend(), [](SaveState* x) { return x->slot == -1; });
 		if (autoSave == states.cend())
-			mGrid->add(_("START NEW AUTO SAVE"), ":/freeslot.svg", "", "", false, false, false, false, SaveState(-1));
+			mGrid->add(_("START FROM AUTO SAVE"), ":/freeslot.svg", "", "", false, false, false, false, SaveState(-1));
 	}
 
 	for (auto item : states)

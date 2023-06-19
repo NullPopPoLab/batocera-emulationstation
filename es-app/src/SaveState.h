@@ -4,11 +4,13 @@
 #include "utils/TimeUtil.h"
 
 class FileData;
+class SaveStateRepository;
 
 struct SaveState
 {
-	SaveState()
+	SaveState(SaveStateRepository* repo=nullptr)
 	{
+		mRepository=repo;
 		slot = -99;
 	}
 
@@ -39,6 +41,7 @@ public:
 	void onGameEnded(FileData* game);
 
 private:
+	SaveStateRepository* mRepository;
 	std::string mAutoFileBackup;
 	std::string mAutoImageBackup;
 	std::string mAutoCaptionBackup;

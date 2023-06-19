@@ -38,16 +38,16 @@ std::string SaveStateRepository::getSavesPath()
 std::string SaveStateRepository::getSaveName(const std::string& path)
 {
 	auto s=getSavesPath();
-	s=Utils::FileSystem::createRelativePath_undot(path,s,false);
-	s=Utils::FileSystem::changeExtension(s,"");
-	if (Utils::String::endsWith(s, ".state")) s = Utils::FileSystem::getStem(s);
+	s=Utils::FileSystem::createRelativePath(path,s,false);
+	s=Utils::FileSystem::getParent(s);
+	s=Utils::FileSystem::createRelativePath_undot(s,s,false);
+//	s=Utils::FileSystem::changeExtension(s,"");
+//	if (Utils::String::endsWith(s, ".state")) s = Utils::FileSystem::getStem(s);
 	return s;
 }
 	
 void SaveStateRepository::refresh(const std::string& path)
 {
-	clear();
-
 	if (!Utils::FileSystem::exists(path))
 		return;
 	
@@ -61,7 +61,8 @@ void SaveStateRepository::refresh(const std::string& path)
 			continue;
 		}
 
-		std::string ext = Utils::String::toLower(Utils::FileSystem::getExtension(file.path));
+		std::string lowpath=Utils::String::toLower(file.path);
+		std::string ext = Utils::FileSystem::getExtension(lowpath);
 
 		if (ext == ".bak")
 		{
@@ -71,19 +72,21 @@ void SaveStateRepository::refresh(const std::string& path)
 			// TODO RESTORE BAK FILE !? If board was turned off during a game ?
 		}
 
-		if (ext != ".auto" && !Utils::String::startsWith(ext, ".state"))
-			continue;
-
-		SaveState* state = new SaveState();
+		int slot=0;
+		std::string stem = Utils::FileSystem::getStem(lowpath);
 
 		if (ext == ".auto")
-			state->slot = -1;
-		else if (Utils::String::startsWith(ext, ".state"))
-			state->slot = Utils::String::toInteger(ext.substr(6));
+			slot = -1;
+		else if (ext=="" && Utils::String::startsWith(stem, "state"))
+			slot = Utils::String::toInteger(stem.substr(5));
+		else continue;
 
-		auto stem = getSaveName(file.path);
-				
-		state->rom = stem;
+		SaveState* state = new SaveState(this);
+		state->slot = slot;
+
+		auto game = getSaveName(file.path);
+
+		state->rom = game;
 		state->fileName = file.path;
 
 #if WIN32
@@ -92,38 +95,54 @@ void SaveStateRepository::refresh(const std::string& path)
 		state->creationDate = Utils::FileSystem::getFileModificationDate(state->fileName);
 #endif
 
-		mStates[stem].push_back(state);
+		mStates[game].push_back(state);
 	}
 }
 
 void SaveStateRepository::refresh()
 {
+	clear();
 	refresh(getSavesPath());
 }
 
 bool SaveStateRepository::hasSaveStates(FileData* game)
 {
-	if (mStates.size())
-	{
-		if (game->getSourceFileData()->getSystem() != mSystem)
-			return false;
+	SystemData* gsys=game->getSourceFileData()->getSystem();
+	if (gsys != mSystem){
+		return false;
+	}
 
-		auto name=game->getPathKey();
+	auto name=game->getPathKey();
+	if (!mStates.size()){
+		return false;
+	}
+
+	{
 		auto it = mStates.find(name);
-		if (it != mStates.cend())
+		if (it != mStates.cend()){
 			return true;
+		}
 	}
 
 	return false;
 }
 std::vector<SaveState*> SaveStateRepository::getSaveStates(FileData* game)
 {
-	if (isEnabled(game) && game->getSourceFileData()->getSystem() == mSystem)
+	SystemData* gsys=game->getSourceFileData()->getSystem();
+	if (gsys != mSystem){
+		return std::vector<SaveState*>();
+	}
+
+	auto name=game->getPathKey();
+	if(!isEnabled(game)){
+		return std::vector<SaveState*>();
+	}
+
 	{
-		auto name=game->getPathKey();
 		auto it = mStates.find(name);
-		if (it != mStates.cend())
+		if (it != mStates.cend()){
 			return it->second;
+		}
 	}
 
 	return std::vector<SaveState*>();
