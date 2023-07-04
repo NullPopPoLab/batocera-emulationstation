@@ -6,6 +6,14 @@
 #include "FileData.h"
 #include "SaveStateRepository.h"
 #include "SystemConf.h"
+#include "Log.h"
+
+#include <iostream>
+#include <fstream>
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
 
 std::string SaveState::makeStateFilename(int slot, bool fullPath) const
 {
@@ -26,24 +34,48 @@ std::string SaveState::getScreenShot() const
 	return "";
 }
 
-bool SaveState::hasCaption() const
+bool SaveState::hasMeta() const
 {
 	if (fileName.empty()) return false;
-	if (!Utils::FileSystem::exists(fileName + ".txt")) return false;
+	if (!Utils::FileSystem::exists(fileName + ".json")) return false;
 	return true;
 }
 
-std::string SaveState::getCaptionPath() const
+std::string SaveState::getMetaPath() const
 {
-	if (!hasCaption()) return "";
-	return fileName + ".txt";
+	if (!hasMeta()) return "";
+	return fileName + ".json";
 }
 
-std::string SaveState::getCaptionContent() const
+bool SaveState::getMetaContent(std::map<std::string,std::string>& dst) const
 {
-	if (!hasCaption()) return "";
+	dst.clear();
+	if (!hasMeta()) return false;
 
-	return Utils::FileSystem::readAllText(fileName + ".txt");
+	auto path=getMetaPath();
+	std::ifstream file(path);
+	if (!file.is_open()) {
+		LOG(LogError) << "cannot open: " << path;
+	}
+	else{
+		std::string json;
+		json=std::string(std::istreambuf_iterator<char>(file),std::istreambuf_iterator<char>());
+		file.close();
+
+		rapidjson::Document doc;
+		doc.Parse(json.c_str());
+		if (doc.HasParseError()){
+			LOG(LogError) << "invalid JSON: " << path;
+		}
+		else for (auto it = doc.MemberBegin(); it != doc.MemberEnd(); ++it){
+			auto k=it->name.GetString();
+			auto v=it->value.GetString();
+			if(!k || !v)continue;
+			dst[k]=v;
+		}
+	}
+
+	return true;
 }
 
 std::string SaveState::setupSaveState(FileData* game, const std::string& command)
@@ -111,14 +143,14 @@ std::string SaveState::setupSaveState(FileData* game, const std::string& command
 			Utils::FileSystem::renameFile(autoImage, autoImage + ".bak");				
 		}
 
-		auto autoCaption = autoFilename + ".txt";
-		if (Utils::FileSystem::exists(autoCaption))
+		auto autoMeta = autoFilename + ".json";
+		if (Utils::FileSystem::exists(autoMeta))
 		{
-			Utils::FileSystem::removeFile(autoCaption + ".bak");
-			Utils::FileSystem::renameFile(autoCaption, autoCaption + ".bak");				
+			Utils::FileSystem::removeFile(autoMeta + ".bak");
+			Utils::FileSystem::renameFile(autoMeta, autoMeta + ".bak");				
 		}
 
-		mAutoCaptionBackup = autoCaption;
+		mAutoMetaBackup = autoMeta;
 		mAutoImageBackup = autoImage;
 		mAutoFileBackup = autoFilename;
 
@@ -165,10 +197,10 @@ void SaveState::onGameEnded(FileData* game)
 		Utils::FileSystem::renameFile(mAutoImageBackup + ".bak", mAutoImageBackup);
 	}
 
-	if (!mAutoCaptionBackup.empty())
+	if (!mAutoMetaBackup.empty())
 	{
-		Utils::FileSystem::removeFile(mAutoCaptionBackup);
-		Utils::FileSystem::renameFile(mAutoCaptionBackup + ".bak", mAutoCaptionBackup);
+		Utils::FileSystem::removeFile(mAutoMetaBackup);
+		Utils::FileSystem::renameFile(mAutoMetaBackup + ".bak", mAutoMetaBackup);
 	}
 
 	if (SystemConf::getIncrementalSaveStates())
@@ -202,16 +234,16 @@ bool SaveState::copyToSlot(int slot, bool move) const
 		Utils::FileSystem::renameFile(fileName, destState);
 		if (!getScreenShot().empty())
 			Utils::FileSystem::renameFile(getScreenShot(), destState + ".png");
-		if (hasCaption())
-			Utils::FileSystem::renameFile(getCaptionPath(), destState + ".txt");
+		if (hasMeta())
+			Utils::FileSystem::renameFile(getMetaPath(), destState + ".json");
 	}
 	else
 	{
 		Utils::FileSystem::copyFile(fileName, destState);
 		if (!getScreenShot().empty())
 			Utils::FileSystem::copyFile(getScreenShot(), destState + ".png");
-		if (hasCaption())
-			Utils::FileSystem::copyFile(getCaptionPath(), destState + ".txt");
+		if (hasMeta())
+			Utils::FileSystem::copyFile(getMetaPath(), destState + ".json");
 	}
 
 	return true;
