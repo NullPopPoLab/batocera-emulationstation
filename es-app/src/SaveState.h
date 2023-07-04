@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include "utils/TimeUtil.h"
 
 class FileData;
@@ -22,9 +23,9 @@ struct SaveState
 	std::string rom;
 	std::string fileName;
 	std::string getScreenShot() const;
-	bool hasCaption() const;
-	std::string getCaptionPath() const;
-	std::string getCaptionContent() const;
+	bool hasMeta() const;
+	std::string getMetaPath() const;
+	bool getMetaContent(std::map<std::string,std::string>& dst) const;
 	int slot;
 
 	void remove() const;
@@ -41,7 +42,7 @@ public:
 private:
 	std::string mAutoFileBackup;
 	std::string mAutoImageBackup;
-	std::string mAutoCaptionBackup;
+	std::string mAutoMetaBackup;
 
 
 	std::string mNewSlotFile;	
