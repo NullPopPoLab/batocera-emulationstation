@@ -118,7 +118,8 @@ FileData::~FileData()
 std::string FileData::getDirKey(){
 
 	auto path=getPath();
-	auto dir=getSystem()->getStartPath();
+	auto dir=getSourceFileData()->getSystem()->getStartPath();
+	if(!dir.empty())return "";
 	if(path.size()>dir.size()+1)path=path.substr(dir.size()+1,path.size()-dir.size()-1);
 
 	auto p=path.find('/');
