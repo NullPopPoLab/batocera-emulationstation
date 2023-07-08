@@ -559,6 +559,9 @@ void SystemConfSub::save(std::vector<std::string>& fileLines, const std::string&
 		writer.Key("[End]"); writer.Null();
 		writer.EndObject();
 
+		if (!Utils::FileSystem::exists(mSaveDir))
+			Utils::FileSystem::createDirectory(mSaveDir);
+
 		auto path=mSaveDir+"/conf.json";
 		std::ofstream file(path.c_str());
 		if (!file.is_open()) {
