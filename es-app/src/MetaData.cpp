@@ -352,8 +352,10 @@ void MetaDataList::complement()
 	complement_image("boxart");
 	complement_image("boxback");
 	complement_image("wheel");
+	complement_image("cabinet");
 	complement_image("pcb");
 	complement_image("flyer");
+	complement_image("instcard");
 	complement_image("ingame");
 }
 
