@@ -80,10 +80,7 @@ public:
 	virtual SystemEnvironmentData* getSystemEnvData() const;
 
 	virtual const std::string getOfficialScraperDir();
-	virtual const std::string getDeepPrefix();
 	virtual const std::string getScraperDir();
-	virtual const std::string getScraperPrefix();
-	virtual const std::string getScraperPathPrefix();
 	virtual const std::string getThumbnailPath();
 	virtual const std::string getTitleShotPath();
 	virtual const std::string getVideoPath();
@@ -121,6 +118,7 @@ public:
 	virtual std::string getDirKey();
 	virtual std::string getFileKey();
 	virtual std::string getPathKey();
+	virtual std::string getGameKey();
 
 	// Returns our best guess at the "real" name for this file (will attempt to perform MAME name translation)
 	virtual std::string& getDisplayName();
