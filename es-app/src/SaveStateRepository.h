@@ -28,10 +28,11 @@ public:
 	std::string getSaveName(const std::string& path);
 
 	void clear();
-	void refresh(const std::string& path);
 	void refresh();
 
 private:
 	SystemData* mSystem;
 	std::map<std::string, std::vector<SaveState*>> mStates;
+
+	void refresh(const std::string& base, const std::string& path);
 };

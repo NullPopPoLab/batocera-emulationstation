@@ -46,20 +46,22 @@ std::string SaveStateRepository::getSaveName(const std::string& path)
 	return s;
 }
 	
-void SaveStateRepository::refresh(const std::string& path)
+void SaveStateRepository::refresh(const std::string& base, const std::string& path)
 {
 	if (!Utils::FileSystem::exists(path))
 		return;
 	
+	auto l0=base.size();
+	auto l1=path.size();
+	auto gname=path.substr(l0+1);
+
 	auto files = Utils::FileSystem::getDirectoryFiles(path);
 	for (auto file : files)
 	{
 		if (file.hidden)
 			continue;
-		if (file.directory){
-			refresh(file.path);
+		if (file.directory)
 			continue;
-		}
 
 		std::string lowpath=Utils::String::toLower(file.path);
 		std::string ext = Utils::FileSystem::getExtension(lowpath);
@@ -84,9 +86,8 @@ void SaveStateRepository::refresh(const std::string& path)
 		SaveState* state = new SaveState(this);
 		state->slot = slot;
 
-		auto game = getSaveName(file.path);
 
-		state->rom = game;
+		state->rom = gname;
 		state->fileName = file.path;
 
 #if WIN32
@@ -95,14 +96,25 @@ void SaveStateRepository::refresh(const std::string& path)
 		state->creationDate = Utils::FileSystem::getFileModificationDate(state->fileName);
 #endif
 
-		mStates[game].push_back(state);
+		mStates[gname].push_back(state);
 	}
 }
 
 void SaveStateRepository::refresh()
 {
 	clear();
-	refresh(getSavesPath());
+
+	auto path=getSavesPath();
+	auto files = Utils::FileSystem::getDirectoryFiles(path);
+	for (auto file : files)
+	{
+		if (!file.directory)
+			continue;
+		if (file.hidden)
+			continue;
+
+		refresh(path,file.path);
+	}
 }
 
 bool SaveStateRepository::hasSaveStates(FileData* game)
@@ -112,7 +124,7 @@ bool SaveStateRepository::hasSaveStates(FileData* game)
 		return false;
 	}
 
-	auto name=game->getPathKey();
+	auto name=game->getGameKey();
 	if (!mStates.size()){
 		return false;
 	}
@@ -133,7 +145,7 @@ std::vector<SaveState*> SaveStateRepository::getSaveStates(FileData* game)
 		return std::vector<SaveState*>();
 	}
 
-	auto name=game->getPathKey();
+	auto name=game->getGameKey();
 	if(!isEnabled(game)){
 		return std::vector<SaveState*>();
 	}
