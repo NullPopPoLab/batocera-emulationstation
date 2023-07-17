@@ -107,11 +107,6 @@ void GuiSaveState::loadGrid()
 
 	auto states = mRepository->getSaveStates(mGame);
 
-	if (incrementalSaveStates)
-		std::sort(states.begin(), states.end(), [](const SaveState* file1, const SaveState* file2) { return file1->creationDate >= file2->creationDate; });
-	else
-		std::sort(states.begin(), states.end(), [](const SaveState* file1, const SaveState* file2) { return file1->slot < file2->slot; });
-
 	mGrid->add(_("START NEW GAME"), ":/freeslot.svg", "", "", false, false, false, false, SaveState(-2));
 
 	if (mGame->getCurrentGameSetting("autosave") == "1")
@@ -121,8 +116,49 @@ void GuiSaveState::loadGrid()
 			mGrid->add(_("START FROM AUTO SAVE"), ":/freeslot.svg", "", "", false, false, false, false, SaveState(-1));
 	}
 
+	if (incrementalSaveStates)
+		std::sort(states.begin(), states.end(), [](const SaveState* file1, const SaveState* file2) {
+			if(file1->isSlotValid()){
+				if(file2->isSlotValid()){
+					return file1->creationDate >= file2->creationDate; 
+				}
+				else{
+					return true;
+				}
+			}
+			else{
+				if(file2->isSlotValid()){
+					return false;
+				}
+				else{
+					return file1->label < file2->label;
+				}
+			}
+		});
+	else
+		std::sort(states.begin(), states.end(), [](const SaveState* file1, const SaveState* file2) {
+			if(file1->isSlotValid()){
+				if(file2->isSlotValid()){
+					return file1->slot < file2->slot;
+				}
+				else{
+					return true;
+				}
+			}
+			else{
+				if(file2->isSlotValid()){
+					return false;
+				}
+				else{
+					return file1->label < file2->label;
+				}
+			}
+		});
+
 	for (auto item : states)
 	{
+		if (!item->isSlotValid())continue;
+
 		std::map<std::string,std::string> meta;
 		item->getMetaContent(meta);
 		auto cit=meta.find("Caption");
@@ -137,6 +173,12 @@ void GuiSaveState::loadGrid()
 			mGrid->add(_("SLOT") + std::string(" ") + std::to_string(item->slot) + std::string("\r\n") + item->creationDate.toLocalTimeString() , item->getScreenShot(), "", "", false, false, false, false, *item);
 	}
 
+	for (auto item : states)
+	{
+		if (!item->isLabelValid())continue;
+
+		mGrid->add(item->label + std::string("\r\n") + item->creationDate.toLocalTimeString() , item->getScreenShot(), "", "", false, false, false, false, *item);
+	}
 }
 
 void GuiSaveState::onSizeChanged()

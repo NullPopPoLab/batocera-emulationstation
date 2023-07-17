@@ -19,8 +19,14 @@ struct SaveState
 	{
 		slot = slotId;
 	}
+
+	SaveState(const std::string& lab)
+	{
+		label = lab;
+	}
 	
 	bool isSlotValid() const { return slot != -99; }
+	bool isLabelValid() const { return !label.empty(); }
 	
 	std::string rom;
 	std::string fileName;
@@ -29,6 +35,7 @@ struct SaveState
 	std::string getMetaPath() const;
 	bool getMetaContent(std::map<std::string,std::string>& dst) const;
 	int slot;
+	std::string label;
 
 	void remove() const;
 	bool copyToSlot(int slot, bool move = false) const;

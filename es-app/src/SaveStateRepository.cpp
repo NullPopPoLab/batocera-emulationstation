@@ -75,17 +75,22 @@ void SaveStateRepository::refresh(const std::string& base, const std::string& pa
 		}
 
 		int slot=0;
+		std::string key;
 		std::string stem = Utils::FileSystem::getStem(lowpath);
 
 		if (ext == ".auto")
 			slot = -1;
+		else if (ext=="" && Utils::String::startsWith(stem, "state_")){
+			slot = -99;
+			key = Utils::FileSystem::getStem(file.path).substr(6);
+		}
 		else if (ext=="" && Utils::String::startsWith(stem, "state"))
 			slot = Utils::String::toInteger(stem.substr(5));
 		else continue;
 
 		SaveState* state = new SaveState(this);
 		state->slot = slot;
-
+		state->label = key;
 
 		state->rom = gname;
 		state->fileName = file.path;

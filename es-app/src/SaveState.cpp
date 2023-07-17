@@ -86,7 +86,7 @@ std::string SaveState::setupSaveState(FileData* game, const std::string& command
 	// We start games with new slots : If the users saves the game, we don't loose the previous save
 	int nextSlot = SaveStateRepository::getNextFreeSlot(game);
 
-	if (!isSlotValid())
+	if (!isSlotValid() && !isLabelValid())
 	{
 		if (nextSlot > 0 && !SystemConf::getIncrementalSaveStatesUseCurrentSlot())
 		{
@@ -109,6 +109,11 @@ std::string SaveState::setupSaveState(FileData* game, const std::string& command
 		if (slot == -2) // Run new game without AutoSave
 		{
 			cmd = cmd + " -autosave 0 -state_slot " + std::to_string(nextSlot);
+		}
+		else if (isLabelValid())
+		{
+			// Run game, and activate AutoSave to load it
+			cmd = cmd + " -autosave 1";
 		}
 		else if (incrementalSaveStates)
 		{
@@ -174,8 +179,8 @@ std::string SaveState::setupSaveState(FileData* game, const std::string& command
 
 void SaveState::onGameEnded(FileData* game)
 {
-	if (slot < 0)
-		return;
+	if (slot == -1) return;
+	if (slot == -2) return;
 
 	if (!mNewSlotCheckSum.empty() && Utils::FileSystem::exists(mNewSlotFile))
 	{
