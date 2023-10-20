@@ -41,6 +41,7 @@ void GuiKeyMappingEditor::initMappingNames()
 
 		{ "start",   "START",        ":/help/button_start.svg" },
 		{ "select",  "SELECT",       ":/help/button_select.svg" },
+		{ "menu",    "MENU",         ":/help/button_menu.svg" },
 
 		{ "joystick1up",     "LEFT ANALOG UP",     ":/help/analog_up.svg" },
 		{ "joystick1down",   "LEFT ANALOG DOWN",     ":/help/analog_down.svg" },
@@ -76,6 +77,7 @@ void GuiKeyMappingEditor::initMappingNames()
 
 		{ "hotkey + start",          "HOTKEY + START",      ":/help/button_hotkey.svg", ":/help/button_start.svg" },
 		{ "hotkey + select",         "HOTKEY + SELECT",     ":/help/button_hotkey.svg", ":/help/button_select.svg" },
+		{ "hotkey + menu",           "HOTKEY + MENU",       ":/help/button_hotkey.svg", ":/help/button_menu.svg" },
 
 		{ "hotkey + a",       "HOTKEY + " + InputConfig::buttonDisplayName("a"),    ":/help/button_hotkey.svg", InputConfig::buttonImage("a") },
 		{ "hotkey + b",       "HOTKEY + " + InputConfig::buttonDisplayName("b"),   ":/help/button_hotkey.svg", InputConfig::buttonImage("b") },
