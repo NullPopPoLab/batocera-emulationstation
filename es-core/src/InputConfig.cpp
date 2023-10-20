@@ -305,11 +305,11 @@ std::string InputConfig::buttonDisplayName(const std::string& button)
 #ifdef INVERTEDINPUTCONFIG
 	if (!Settings::getInstance()->getBool("InvertButtons"))
 	{
-		return button == "a" ? "SOUTH" : button == "b" ? "EAST" : button;
+		return button == "a" ? "B" : button == "b" ? "A" : button;
 	}
 #endif
 
-	return button == "a" ? "EAST" : button == "b" ? "SOUTH" : button;
+	return button == "a" ? "A" : button == "b" ? "B" : button;
 }
 
 std::string InputConfig::buttonImage(const std::string& button)
