@@ -59,6 +59,20 @@ void GuiInputConfig::initInputConfigStructure()
 		{ "r2",              true,  "R2",      ":/help/button_rt.svg" },
 		{ "l3",              true,  "L3",       ":/help/analog_thumb.svg" },
 		{ "r3",              true,  "R3",      ":/help/analog_thumb.svg" },
+		{ "l4",              true,  "L4",      ":/help/button_l.svg" },
+		{ "r4",              true,  "R4",     ":/help/button_r.svg" },
+		{ "l2",              true,  "L5",       ":/help/button_lt.svg" },
+		{ "r2",              true,  "R5",      ":/help/button_rt.svg" },
+
+		{ "g1",               true,  "G1",                 ":/help/button_g.svg" },
+		{ "g2",               true,  "G2",                 ":/help/button_g.svg" },
+		{ "g3",               true,  "G3",                 ":/help/button_g.svg" },
+		{ "g4",               true,  "G4",                 ":/help/button_g.svg" },
+		{ "g5",               true,  "G5",                 ":/help/button_g.svg" },
+		{ "g6",               true,  "G6",                 ":/help/button_g.svg" },
+		{ "g7",               true,  "G7",                 ":/help/button_g.svg" },
+		{ "g8",               true,  "G8",                 ":/help/button_g.svg" },
+
  		{ "menu",            true,  "MENU",      ":/help/button_menu.svg" }, // NullPopPo 
 		{ "hotkey",          true,  "HOTKEY",      ":/help/button_hotkey.svg" } // batocera
 	};
