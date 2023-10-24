@@ -1,4 +1,4 @@
-#include "HttpApi.h"
+﻿#include "HttpApi.h"
 
 #ifdef WIN32
 #include <Windows.h>
