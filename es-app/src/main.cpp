@@ -297,7 +297,7 @@ bool loadSystemConfigFile(Window* window, const char** errorString)
 			"CHECK THAT YOUR PATHS ARE CORRECT IN THE SYSTEMS CONFIGURATION FILE, "
 			"AND YOUR GAME DIRECTORY HAS AT LEAST ONE GAME WITH THE CORRECT EXTENSION.\n\n"
 			"VISIT EMULATIONSTATION.ORG FOR MORE INFORMATION.";
-		return false;
+		return true;
 	}
 
 	return true;
