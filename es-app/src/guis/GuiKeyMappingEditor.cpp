@@ -43,13 +43,6 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "y",               "Y",    ":/help/buttons_west.svg" },
 		{ "z",               "Z",   ":/help/button_z.svg" },
 
-		{ "pageup",          "L1",      ":/help/button_l.svg" },
-		{ "pagedown",        "R1",     ":/help/button_r.svg" },
-		{ "l2",              "L2",       ":/help/button_lt.svg" },
-		{ "r2",              "R2",      ":/help/button_rt.svg" },
-		{ "l3",              "L3",       ":/help/analog_thumb.svg" },
-		{ "r3",              "R3",      ":/help/analog_thumb.svg" },
-
 		{ "joystick1up",     "LEFT ANALOG UP",     ":/help/analog_up.svg" },
 		{ "joystick1down",   "LEFT ANALOG DOWN",     ":/help/analog_down.svg" },
 		{ "joystick1left",   "LEFT ANALOG LEFT",   ":/help/analog_left.svg" },
