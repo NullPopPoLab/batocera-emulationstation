@@ -692,6 +692,12 @@ void GuiMenu::openDeveloperSettings()
 		Settings::getInstance()->setBool("ForceDisableFilters", !enable_filter->getState());
 	});
 
+	// complement gamelist 
+	auto comlement_meta = std::make_shared<SwitchComponent>(mWindow);
+	comlement_meta->setState(Settings::getInstance()->getBool("ComplementMetaOnStart"));
+	s->addWithLabel(_("COMPLEMENT METADATA ON START"), comlement_meta);
+	s->addSaveFunc([comlement_meta] { Settings::getInstance()->setBool("ComplementMetaOnStart", comlement_meta->getState()); });
+
 	// gamelist saving
 	auto save_gamelists = std::make_shared<SwitchComponent>(mWindow);
 	save_gamelists->setState(Settings::getInstance()->getBool("SaveGamelistsOnExit"));
