@@ -168,6 +168,17 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
+const std::string FileData::getOfficialMediaDir()
+{
+	return getSystem()->getStartPath();
+}
+
+const std::string FileData::getMediaDir()
+{
+	auto dir=getSystem()->getMediaDir();
+	return dir+"/"+getPathKey();
+}
+
 const std::string FileData::getThumbnailPath()
 {
 	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);

@@ -35,6 +35,11 @@ std::vector<std::pair<std::string, Scraper*>> Scraper::scrapers
 	{ "ArcadeDB", new ArcadeDBScraper() }
 };
 
+std::string Scraper::getMediaDir()
+{
+	return "/userdata/media";
+}
+
 std::string Scraper::getScraperName(Scraper* scraper)
 {
 	for (auto engine : scrapers)
