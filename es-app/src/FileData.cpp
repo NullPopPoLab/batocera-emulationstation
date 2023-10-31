@@ -156,6 +156,10 @@ std::string& FileData::getDisplayName()
 		std::string stem = Utils::FileSystem::getStem(getPath());
 		if (mSystem && (mSystem->hasPlatformId(PlatformIds::ARCADE) || mSystem->hasPlatformId(PlatformIds::NEOGEO)))
 			stem = MameNames::getInstance()->getRealName(stem);
+		else{
+			auto dir=getDirKey();
+			if(!dir.empty())stem = dir+" ("+stem+")";
+		}
 
 		mDisplayName = new std::string(stem);
 	}
@@ -179,9 +183,35 @@ const std::string FileData::getMediaDir()
 	return dir+"/"+getPathKey();
 }
 
+std::string FileData::getMetaPath(MetaDataId key){
+
+	auto name=getMetadata(key);
+	if(name.empty())return name;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return path;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);
+	return Utils::FileSystem::exists(path)?path:std::string();
+}
+
+bool FileData::hasMetaFile(MetaDataId key){
+
+	auto name=getMetadata(key);
+	if(name.empty())return false;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return true;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);
+	return Utils::FileSystem::exists(path);
+}
+
 const std::string FileData::getThumbnailPath()
 {
-	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
+	std::string thumbnail = getMetaPath(MetaDataId::Thumbnail);
+
+	if (thumbnail.empty()) thumbnail = getMetaPath(MetaDataId::TitleShot);
 
 	// no thumbnail, try image
 	if(thumbnail.empty())
@@ -194,7 +224,7 @@ const std::string FileData::getThumbnailPath()
 			{
 				if(thumbnail.empty())
 				{
-					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-thumb" + extList[i];
+					std::string path = getMediaDir() + "/image" + extList[i];
 					if (Utils::FileSystem::exists(path))
 					{
 						setMetadata(MetaDataId::Thumbnail, path);
@@ -206,6 +236,8 @@ const std::string FileData::getThumbnailPath()
 
 		if (thumbnail.empty())
 			thumbnail = getMetadata(MetaDataId::Image);
+		if (thumbnail.empty())
+			thumbnail = getMetadata(MetaDataId::Ingame);
 
 		// no image, try to use local image
 		if (thumbnail.empty() && Settings::getInstance()->getBool("LocalArt"))
@@ -215,35 +247,69 @@ const std::string FileData::getThumbnailPath()
 			{
 				if (thumbnail.empty())
 				{
-					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-image" + extList[i];					
-					if (!Utils::FileSystem::exists(path))
-						path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + extList[i];
+					std::string path = getMediaDir() + "/image" + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 						thumbnail = path;
 				}
 			}
 		}
-
-		if (thumbnail.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
-		{
-			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
-				return ((FolderData*)this)->mChildren[0]->getThumbnailPath();
-			else if (getType() == GAME)
-			{
-				thumbnail = getPath();
-
-				auto ext = Utils::String::toLower(Utils::FileSystem::getExtension(thumbnail));
-				if (ext == ".pdf" && ResourceManager::getInstance()->fileExists(":/pdf.jpg"))
-					return ":/pdf.jpg";
-				else if ((ext == ".mp4" || ext == ".avi" || ext == ".mkv" || ext == ".webm") && ResourceManager::getInstance()->fileExists(":/vid.jpg"))
-					return ":/vid.jpg";
-			}
-		}
-
 	}
 
 	return thumbnail;
+}
+
+const std::string FileData::getTitleShotPath()
+{
+	std::string path = getMetaPath(MetaDataId::TitleShot);
+	if (path.empty()) path = getMetaPath(MetaDataId::Thumbnail);
+	if (path.empty()) path = getMetaPath(MetaDataId::Cartridge);
+	if (path.empty()) path = getMetaPath(MetaDataId::Marquee);
+
+	// no titleshot, try image
+	if(path.empty())
+	{
+		// no image, try to use local image
+		if(path.empty() && Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for(int i = 0; i < 2; i++)
+			{
+				if(path.empty())
+				{
+					std::string path = getMediaDir() + "/image" + extList[i];
+					if (Utils::FileSystem::exists(path))
+					{
+						setMetadata(MetaDataId::Thumbnail, path);
+						path = path;
+					}
+				}
+			}
+		}
+
+		if (path.empty())
+			path = getMetadata(MetaDataId::Image);
+		if (path.empty())
+			path = getMetadata(MetaDataId::Ingame);
+
+		// no image, try to use local image
+		if (path.empty() && Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for (int i = 0; i < 2; i++)
+			{
+				if (path.empty())
+				{
+					std::string path = getMediaDir() + "/image" + extList[i];
+
+					if (Utils::FileSystem::exists(path))
+						path = path;
+				}
+			}
+		}
+	}
+
+	return path;
 }
 
 const bool FileData::getFavorite()
@@ -300,7 +366,7 @@ void FileData::resetSettings()
 	
 }
 
-const std::string& FileData::getName()
+const std::string FileData::getName()
 {
 	if (mSystem != nullptr && mSystem->getShowFilenames())
 		return getDisplayName();
@@ -310,12 +376,12 @@ const std::string& FileData::getName()
 
 const std::string FileData::getVideoPath()
 {
-	std::string video = getMetadata(MetaDataId::Video);
+	std::string video = getMetaPath(MetaDataId::Video);
 	
 	// no video, try to use local video
 	if(video.empty() && Settings::getInstance()->getBool("LocalArt"))
 	{
-		std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-video.mp4";
+		std::string path = getMediaDir() + "/video.mp4";
 		if (Utils::FileSystem::exists(path))
 		{
 			setMetadata(MetaDataId::Video, path);
@@ -340,7 +406,7 @@ const std::string FileData::getVideoPath()
 
 const std::string FileData::getMarqueePath()
 {
-	std::string marquee = getMetadata(MetaDataId::Marquee);
+	std::string marquee = getMetaPath(MetaDataId::Marquee);
 
 	// no marquee, try to use local marquee
 	if (marquee.empty() && Settings::getInstance()->getBool("LocalArt"))
@@ -350,7 +416,7 @@ const std::string FileData::getMarqueePath()
 		{
 			if(marquee.empty())
 			{
-				std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-marquee" + extList[i];
+				std::string path = getMediaDir() + "/marquee" + extList[i];
 				if (Utils::FileSystem::exists(path))
 				{
 					setMetadata(MetaDataId::Marquee, path);
@@ -365,7 +431,9 @@ const std::string FileData::getMarqueePath()
 
 const std::string FileData::getImagePath()
 {
-	std::string image = getMetadata(MetaDataId::Image);
+	std::string image = getMetaPath(MetaDataId::Image);
+	if (image.empty())
+		image = getMetadata(MetaDataId::Ingame);
 
 	// no image, try to use local image
 	if(image.empty())
@@ -380,9 +448,7 @@ const std::string FileData::getImagePath()
 			{
 				if (image.empty())
 				{
-					std::string path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + "-image" + extList[i];
-					if (!Utils::FileSystem::exists(path))
-						path = getSystemEnvData()->mStartPath + "/images/" + getDisplayName() + extList[i];
+					std::string path = getMediaDir() + "/image" + extList[i];
 
 					if (Utils::FileSystem::exists(path))
 					{
