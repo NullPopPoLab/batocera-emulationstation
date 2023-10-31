@@ -123,28 +123,6 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 	// SYSTEM SETTINGS >
 	// QUIT >
 
-	// KODI
-#ifdef _ENABLE_KODI_
-	if (SystemConf::getInstance()->getBool("kodi.enabled", true) && ApiSystem::getInstance()->isScriptingSupported(ApiSystem::KODI))
-		addEntry(_("KODI MEDIA CENTER").c_str(), false, [this] 
-	{ 
-		Window *window = mWindow;
-		delete this;
-		if (!ApiSystem::getInstance()->launchKodi(window))
-			LOG(LogWarning) << "Shutdown terminated with non-zero result!";
-
-	}, "iconKodi");	
-#endif
-
-	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::RETROACHIVEMENTS) &&
-		SystemConf::getInstance()->getBool("global.retroachievements") &&
-		Settings::getInstance()->getBool("RetroachievementsMenuitem") && 
-		SystemConf::getInstance()->get("global.retroachievements.username") != "")
-		addEntry(_("RETROACHIEVEMENTS").c_str(), true, [this] {
-				if (!checkNetwork())
-					return;
-				GuiRetroAchievements::show(mWindow); }, "iconRetroachievements");
-	
 	if (isFullUI)
 	{
 #if BATOCERA
@@ -197,6 +175,32 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 		addEntry(_("INFORMATION").c_str(), true, [this] { openSystemInformations(); }, "iconSystem");
 		addEntry(_("UNLOCK UI MODE").c_str(), true, [this] { exitKidMode(); }, "iconAdvanced");
 	}
+
+	// KODI
+#ifdef _ENABLE_KODI_
+	if (SystemConf::getInstance()->getBool("kodi.enabled", true) && ApiSystem::getInstance()->isScriptingSupported(ApiSystem::KODI))
+		addEntry(_("KODI MEDIA CENTER").c_str(), false, [this] 
+	{ 
+		mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE?"), _("YES"), [&]
+		{
+			Window *window = mWindow;
+			delete this;
+			if (!ApiSystem::getInstance()->launchKodi(window))
+				LOG(LogWarning) << "Shutdown terminated with non-zero result!";
+		}, _("NO"), nullptr));
+
+	}, "iconKodi");	
+#endif
+
+	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::RETROACHIVEMENTS) &&
+		SystemConf::getInstance()->getBool("global.retroachievements") &&
+		Settings::getInstance()->getBool("RetroachievementsMenuitem") && 
+		SystemConf::getInstance()->get("global.retroachievements.username") != "")
+		addEntry(_("RETROACHIEVEMENTS").c_str(), true, [this] {
+				if (!checkNetwork())
+					return;
+				GuiRetroAchievements::show(mWindow); }, "iconRetroachievements");
+	
 
 #ifdef WIN32
 	addEntry(_("QUIT").c_str(), !Settings::getInstance()->getBool("ShowOnlyExit"), [this] {openQuitMenu(); }, "iconQuit");
