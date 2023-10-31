@@ -41,6 +41,8 @@ struct GameInfoAndUserProgress
 	std::string ImageIcon;
 	std::string ImageTitle;
 	std::string ImageIngame;
+	std::string ImageOutgame;
+	std::string ImageVisual;
 	std::string ImageBoxArt;
 	std::string Publisher;
 	std::string Developer;
@@ -86,6 +88,8 @@ struct LastGame
 	std::string ImageIcon;
 	std::string ImageTitle;
 	std::string ImageIngame;
+	std::string ImageOutgame;
+	std::string ImageVisual;
 	std::string ImageBoxArt;
 	std::string Publisher;
 	std::string Developer;
