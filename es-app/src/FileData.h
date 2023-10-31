@@ -168,6 +168,8 @@ public:
 
 	void setSelectedGame();
 
+	void complement();
+
 private:
 	std::string getKeyboardMappingFilePath();
 	std::string getMessageFromExitCode(int exitCode);
