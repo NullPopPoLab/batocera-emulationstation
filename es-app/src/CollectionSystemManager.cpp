@@ -35,21 +35,25 @@ std::vector<CollectionSystemDecl> CollectionSystemManager::getSystemDecls()
 {
 	CollectionSystemDecl systemDecls[] = {
 		//type                name            long name                 default sort					  theme folder               isCustom     displayIfEmpty
-		{ AUTO_ALL_GAMES,       "all",          _("all games"),         FileSorts::FILENAME_ASCENDING,    "auto-allgames",           false,       true },
+		{ AUTO_ALL_GAMES,       "all",          _("all games"),         FileSorts::SORTNAME_ASCENDING,    "auto-allgames",           false,       true },
 		{ AUTO_LAST_PLAYED,     "recent",       _("last played"),       FileSorts::LASTPLAYED_ASCENDING,  "auto-lastplayed",         false,       true },
-		{ AUTO_FAVORITES,       "favorites",    _("favorites"),         FileSorts::FILENAME_ASCENDING,    "auto-favorites",          false,       true },
-		{ AUTO_AT2PLAYERS,      "2players",	    _("2 players"),         FileSorts::FILENAME_ASCENDING,    "auto-at2players",         false,       true }, 
-		{ AUTO_AT4PLAYERS,      "4players",     _("4 players"),         FileSorts::FILENAME_ASCENDING,    "auto-at4players",         false,       true }, 
-		{ AUTO_NEVER_PLAYED,    "neverplayed",  _("never played"),      FileSorts::FILENAME_ASCENDING,    "auto-neverplayed",        false,       true }, 
-		{ AUTO_RETROACHIEVEMENTS,"retroachievements",  _("retroachievements"),  FileSorts::FILENAME_ASCENDING,    "auto-retroachievements",        false,       true }, 
+		{ AUTO_FAVORITES,       "favorites",    _("favorites"),         FileSorts::SORTNAME_ASCENDING,    "auto-favorites",          false,       true },
+		{ AUTO_AT2PLAYERS,      "2players",	    _("2 players"),         FileSorts::SORTNAME_ASCENDING,    "auto-at2players",         false,       true }, 
+		{ AUTO_AT4PLAYERS,      "4players",     _("4 players"),         FileSorts::SORTNAME_ASCENDING,    "auto-at4players",         false,       true }, 
+		{ AUTO_NEVER_PLAYED,    "neverplayed",  _("never played"),      FileSorts::SORTNAME_ASCENDING,    "auto-neverplayed",        false,       true }, 
+		{ AUTO_RETROACHIEVEMENTS,"retroachievements",  _("retroachievements"),  FileSorts::SORTNAME_ASCENDING,    "auto-retroachievements",        false,       true }, 
 
 		// Arcade meta 
-		{ AUTO_ARCADE,           "arcade",       _("arcade"),            FileSorts::FILENAME_ASCENDING,    "arcade",				     false,       true }, 
-		{ AUTO_VERTICALARCADE,   "vertical",     _("vertical arcade"),   FileSorts::FILENAME_ASCENDING,    "auto-verticalarcade",     false,       true }, 
-		{ AUTO_LIGHTGUN,		 "lightgun",     _("lightgun games"),    FileSorts::FILENAME_ASCENDING,    "auto-lightgun",           false,       true }, 
+		{ AUTO_ARCADE,           "arcade",       _("arcade"),            FileSorts::SORTNAME_ASCENDING,    "arcade",				     false,       true }, 
+		{ AUTO_VERTICALARCADE,   "vertical",     _("vertical arcade"),   FileSorts::SORTNAME_ASCENDING,    "auto-verticalarcade",     false,       true }, 
+		{ AUTO_LIGHTGUN,		 "lightgun",     _("lightgun games"),    FileSorts::SORTNAME_ASCENDING,    "auto-lightgun",           false,       true }, 
+
+		// (NullPopPoCustom) For Web Frontend 
+		{ AUTO_JUKEBOX,		 "jukebox",     _("jukebox ready"),    FileSorts::SORTNAME_ASCENDING,    "auto-jukebox",           false,       true }, 
+		{ AUTO_SLIDESHOW,		 "slideshow",     _("slideshow ready"),    FileSorts::SORTNAME_ASCENDING,    "auto-slideshow",           false,       true }, 
 
 		// Custom collection
-		{ CUSTOM_COLLECTION,    myCollectionsName,  _("collections"),   FileSorts::FILENAME_ASCENDING,    "custom-collections",      true,        true }
+		{ CUSTOM_COLLECTION,    myCollectionsName,  _("collections"),   FileSorts::SORTNAME_ASCENDING,    "custom-collections",      true,        true }
 	};
 
 	auto ret = std::vector<CollectionSystemDecl>(systemDecls, systemDecls + sizeof(systemDecls) / sizeof(systemDecls[0]));
@@ -77,7 +81,7 @@ std::vector<CollectionSystemDecl> CollectionSystemManager::getSystemDecls()
 		decl.type = (CollectionSystemType)(10000 + genre->id);
 		decl.name = "_" + shortName;
 		decl.longName = longName;
-		decl.defaultSortId = FileSorts::FILENAME_ASCENDING;
+		decl.defaultSortId = FileSorts::SORTNAME_ASCENDING;
 		decl.themeFolder = "auto-" + shortName;
 		decl.isCustom = false;
 		decl.displayIfEmpty = false;
@@ -91,7 +95,7 @@ std::vector<CollectionSystemDecl> CollectionSystemManager::getSystemDecls()
 		decl.type = (CollectionSystemType) (1000 + arcade.first);
 		decl.name = "z" + arcade.second.first;
 		decl.longName = arcade.second.second;
-		decl.defaultSortId = FileSorts::FILENAME_ASCENDING;
+		decl.defaultSortId = FileSorts::SORTNAME_ASCENDING;
 		decl.themeFolder = arcade.second.first;
 		decl.isCustom = false;
 		decl.displayIfEmpty = false;
@@ -186,7 +190,7 @@ bool systemByManufacurerSort(SystemData* sys1, SystemData* sys2)
 	if (mf1 != mf2)
 		return mf1.compare(mf2) < 0;
 
-	// Then by release date 
+	// Then by release year 
 	if (sys1->getSystemMetadata().releaseYear < sys2->getSystemMetadata().releaseYear)
 		return true;
 	else if (sys1->getSystemMetadata().releaseYear > sys2->getSystemMetadata().releaseYear)
@@ -200,7 +204,7 @@ bool systemByManufacurerSort(SystemData* sys1, SystemData* sys2)
 
 bool systemByReleaseDate(SystemData* sys1, SystemData* sys2)
 {
-	// Order by hardware
+	// Then by release year 
 	int mf1 = sys1->getSystemMetadata().releaseYear;
 	int mf2 = sys2->getSystemMetadata().releaseYear;
 	if (mf1 != mf2)
@@ -227,6 +231,12 @@ bool systemByHardwareSort(SystemData* sys1, SystemData* sys2)
 	std::string mf2 = Utils::String::toUpper(sys2->getSystemMetadata().hardwareType);
 	if (mf1 != mf2)
 		return mf1.compare(mf2) < 0;
+
+	// Then by release year 
+	if (sys1->getSystemMetadata().releaseYear < sys2->getSystemMetadata().releaseYear)
+		return true;
+	else if (sys1->getSystemMetadata().releaseYear > sys2->getSystemMetadata().releaseYear)
+		return false;
 
 	// Then by name
 	std::string name1 = Utils::String::toUpper(sys1->getName());
@@ -947,6 +957,7 @@ void CollectionSystemManager::populateAutoCollection(CollectionSystemData* sysDa
 		{
 			if (system->isGroupSystem() && game->getSystem() != system)
 				continue;
+			if(system->hasPlatformId(PlatformIds::PlatformId::IMAGEVIEWER))continue;
 
 			bool include = includeFileInAutoCollections(game);
 			if (!include)
@@ -968,6 +979,12 @@ void CollectionSystemManager::populateAutoCollection(CollectionSystemData* sysDa
 				break;
 			case AUTO_LIGHTGUN:
 				include = game->isLightGunGame();
+				break;
+			case AUTO_JUKEBOX:
+				include = game->getMetadata().isJukeBoxAvailable();
+				break;
+			case AUTO_SLIDESHOW:
+				include = game->getMetadata().isSlideShowAvailable();
 				break;
 			case AUTO_RETROACHIEVEMENTS:
 				include = game->hasCheevos();
