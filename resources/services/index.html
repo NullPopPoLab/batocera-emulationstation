@@ -1384,8 +1384,8 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		});
 		btn.onclick=()=>{
 			var url=getGameURL(gt);
-			updateJukeBox(url+'/scraper/jukebox',0,(data)=>{
-				var a={base:url+'/scraper/jukebox/',dir:[],file:[]}
+			updateJukeBox(url+'/media/jukebox',0,(data)=>{
+				var a={base:url+'/media/jukebox/',dir:[],file:[]}
 				for(var b of data.dirs){
 					// from ./ 
 					a.dir.push(b.substring(2));
@@ -1410,8 +1410,8 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		});
 		btn.onclick=()=>{
 			var url=getGameURL(gt);
-			updateImageViewer(url+'/scraper/slideshow',0,(data)=>{
-				var a={base:url+'/scraper/slideshow/',dir:[],file:[]}
+			updateImageViewer(url+'/media/slideshow',0,(data)=>{
+				var a={base:url+'/media/slideshow/',dir:[],file:[]}
 				for(var b of data.dirs){
 					// from ./ 
 					a.dir.push(b.substring(2));
@@ -1503,7 +1503,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 
 		var list=createElement({target:panel_gameview,tag:'div',sub:['Now Loading...']});
 
-		var pref='/systems/'+gt.systemName+'/games/'+gt.id+'/scraper/';
+		var pref='/systems/'+gt.systemName+'/games/'+gt.id+'/media/';
 		httpGetJson(pref+'docs.json',(data)=>{
 			list.innerHTML='';
 			for(var it in data){
