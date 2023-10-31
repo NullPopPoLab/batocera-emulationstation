@@ -542,9 +542,14 @@ void cleanupGamelist(SystemData* system)
 				case MetaDataId::Video: suffix = "video"; folder = "/videos/"; ext = ".mp4"; break;
 				case MetaDataId::FanArt: suffix = "fanart"; break;
 				case MetaDataId::BoxBack: suffix = "boxback"; break;
+				case MetaDataId::Flyer: suffix = "flyer"; break;
+				case MetaDataId::PCB: suffix = "pcb"; break;
 				case MetaDataId::BoxArt: suffix = "box"; break;
 				case MetaDataId::Wheel: suffix = "wheel"; break;
 				case MetaDataId::TitleShot: suffix = "titleshot"; break;
+				case MetaDataId::Ingame: suffix = "ingame"; break;
+				case MetaDataId::Outgame: suffix = "outgame"; break;
+				case MetaDataId::Visual: suffix = "visual"; break;
 				case MetaDataId::Manual: suffix = "manual"; folder = "/manuals/"; ext = ".pdf"; break;
 				case MetaDataId::Magazine: suffix = "magazine"; folder = "/magazines/"; ext = ".pdf"; break;
 				case MetaDataId::Map: suffix = "map"; break;
