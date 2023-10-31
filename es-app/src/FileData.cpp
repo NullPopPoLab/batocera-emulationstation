@@ -376,6 +376,12 @@ const std::string FileData::getName()
 	return mMetadata.getName();
 }
 
+const std::string FileData::getSortName()
+{
+	auto s=mMetadata.get(MetaDataId::SortName,false);
+	return s.empty()?getName():s;
+}
+
 const std::string FileData::getVideoPath()
 {
 	std::string video = getMetaPath(MetaDataId::Video);
