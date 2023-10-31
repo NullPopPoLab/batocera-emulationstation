@@ -89,9 +89,7 @@ const std::string FileData::getBreadCrumbPath()
 
 const std::string FileData::getConfigurationName()
 {
-	std::string gameConf = Utils::FileSystem::getFileName(getPath());
-	gameConf = Utils::String::replace(gameConf, "=", "");
-	gameConf = Utils::String::replace(gameConf, "#", "");
+	std::string gameConf = getPathKey();
 	gameConf = getSourceFileData()->getSystem()->getName() + std::string("[\"") + gameConf + std::string("\"]");
 	return gameConf;
 }
