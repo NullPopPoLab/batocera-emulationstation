@@ -150,42 +150,14 @@ LangInfo LangInfo::parse(std::string rom, SystemData* system)
 }
 
 std::string LangInfo::getFlag(const std::string lang, const std::string region)
-{	
-	if (lang.empty() && region.empty())
-		return "us";
-
-	std::string locale = SystemConf::getInstance()->get("system.language");
-	if (locale.empty())
-		locale = "en";
-	else
-	{
-		auto shortNameDivider = locale.find("_");
-		if (shortNameDivider != std::string::npos)
-			locale = Utils::String::toLower(locale.substr(0, shortNameDivider));
+{
+	auto tmp=region;
+	if(tmp.empty()){
+		auto p=lang.find("-");
+		if(p==std::string::npos)p=lang.find("_");
+		if(p!=std::string::npos)tmp=lang.substr(p);
+		else tmp=lang;
 	}
-
-	auto langs = Utils::String::split(lang, ',');
-	if (locale != "en" && std::find(langs.cbegin(), langs.cend(), locale) != langs.cend())
-		return locale;
-
-	if (langs.size() >= 1 && region.empty() && langs[0] == "en")
-		return "us";
-	else if (langs.size() == 1 && lang != "en")
-		return lang;
-		
-	if (region == "eu" && langs.size() == 1 && std::find(langs.cbegin(), langs.cend(), "en") != langs.cend())
-		return "uk";
-	
-	if (region == "jp" && langs.size() == 1 && lang != "jp")
-	{
-		if (lang == "en")
-			return "us";
-
-		return lang;
-	}
-	
-	if (!region.empty())
-		return region;
-
-	return "eu";
+	std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
+	return tmp;
 }
