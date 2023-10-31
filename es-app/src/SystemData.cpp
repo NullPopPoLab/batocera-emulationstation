@@ -2086,3 +2086,10 @@ std::string SystemData::getProperty(const std::string& name)
 
 	return "";
 }
+
+void SystemData::complement()
+{
+	for(auto& it: mRootFolder->getFilesRecursive(GAME, true)){
+		it->complement();
+	}
+}

@@ -212,6 +212,8 @@ public:
 
 	std::string getProperty(const std::string& name);
 
+	void complement();
+
 private:
 	std::string getKeyboardMappingFilePath();
 	static void createGroupedSystems();

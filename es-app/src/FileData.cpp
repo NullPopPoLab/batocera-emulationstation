@@ -1835,3 +1835,8 @@ std::string FileData::getProperty(const std::string& name)
 
 	return getMetadata().get(name);	
 }
+
+void FileData::complement()
+{
+	mMetadata.complement();
+}
