@@ -344,7 +344,7 @@ std::string HttpApi::getSystemGames(SystemData* system)
 
 std::string HttpApi::getScraperFiles(FileData* file, const std::string& path){
 
-	auto dir=file->getScraperDir();
+	auto dir=file->getMediaDir();
 	if(path!="")dir+="/"+path;
 	if(!Utils::FileSystem::isDirectory(dir))return "{}";
 
@@ -430,7 +430,7 @@ std::string HttpApi::getCaps()
 	}
 	writer.EndObject();
 
-	const char* texts[]={"premise","story","rule","operation","credit","tips","notes","bugs"};
+	const char* texts[]={"included","premise","story","rule","operation","credit","tips","notes","bugs"};
 	writer.Key("Texts");
 	writer.StartObject();
 	for(auto* k: texts){

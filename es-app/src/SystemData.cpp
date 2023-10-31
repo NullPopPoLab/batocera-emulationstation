@@ -1200,16 +1200,16 @@ SystemData* SystemData::getPrev() const
 	return *it;
 }
 
-std::string SystemData::getScraperDir() const{
+std::string SystemData::getMediaDir() const{
 
-	return Scraper::getScraperDir()+"/"+mMetadata.name;
+	return Scraper::getMediaDir()+"/"+mMetadata.name;
 }
 
 std::string SystemData::getGamelistPath(bool forWrite) const
 {
 	std::string filePath;
 
-	filePath = getScraperDir() + "/gamelist.xml";
+	filePath = getMediaDir() + "/gamelist.xml";
 	if(Utils::FileSystem::exists(filePath))
 		return filePath;
 

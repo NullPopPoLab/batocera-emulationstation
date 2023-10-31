@@ -277,7 +277,7 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 				if (!filePath.empty())
 					filePath = Utils::FileSystem::resolveRelativePath(filePath, relativePath, true);
 				
-				std::string dir = file->getScraperDir();
+				std::string dir = file->getMediaDir();
 				//if (dir.empty())
 				//	dir = relativePath;
 
@@ -449,7 +449,7 @@ bool GuiMetaDataEd::save()
 				auto destFile = Scraper::getSaveAsPath(mScraperParams.game, mMetaData->getId(key), Utils::FileSystem::getExtension(sourceFile));
 
 				if (Utils::FileSystem::copyFile(sourceFile, destFile))
-					val = Utils::FileSystem::createRelativePath(destFile,mScraperParams.game->getScraperDir(),true);
+					val = Utils::FileSystem::createRelativePath(destFile,mScraperParams.game->getMediaDir(),true);
 			}
 
 			mMetaData->set(key, val);
@@ -478,7 +478,7 @@ bool GuiMetaDataEd::save()
 		auto val = ed->getValue();
 		if (mMetaData->getType(key) == MD_PATH && !val.empty())
 		{
-			auto root = mScraperParams.game->getScraperDir();
+			auto root = mScraperParams.game->getMediaDir();
 			auto abs = Utils::FileSystem::resolveRelativePath(val, root, true);
 
 			auto cur = mMetaData->get(key, true);

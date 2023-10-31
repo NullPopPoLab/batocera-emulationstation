@@ -91,6 +91,7 @@ enum MetaDataId
 	InstCard,
 	Title,
 	Runnable,
+	Included,
 	Premise,
 	Story,
 	Rule,
@@ -200,7 +201,7 @@ public:
 	void importScrappedMetadata(const MetaDataList& source);
 
 	std::string getRelativeRootPath();
-	std::string getScraperDir() const;
+	std::string getMediaDir() const;
 
 	void setScrapeDate(const std::string& scraper);
 	Utils::Time::DateTime* getScrapeDate(const std::string& scraper);

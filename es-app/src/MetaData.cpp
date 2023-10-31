@@ -73,6 +73,7 @@ void MetaDataList::initMetadata()
 		{ Genre,            "genre",       MD_STRING,              "",                 false,      _("Genre"),                _("enter game genre"),		false }, 
 		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genre IDs"),            _("enter game genres"),		false },
 		{ Players,          "players",     MD_STRING,              "",                 false,      _("Players"),              _("this game's number of players"),	false },
+		{ Included,         "included",    MD_MULTILINE_STRING,    "",                 false,      _("Included"),             _("included games"),	false },
 		{ Premise,          "premise",     MD_MULTILINE_STRING,    "",                 false,      _("Premise"),              _("premise for this game"),	false },
 		{ Story,            "story",       MD_MULTILINE_STRING,    "",                 false,      _("Story"),                _("this game's story"),		false },
 		{ Rule,             "rule",        MD_MULTILINE_STRING,    "",                 false,      _("Rule"),                 _("this game's rule"),		false },
@@ -87,7 +88,7 @@ void MetaDataList::initMetadata()
 		{ BoxArt,			"boxart",	   MD_PATH,                "",                 false,      _("Box Face"),		      _("enter path to alt boxart"), true },
 		{ BoxBack,			"boxback",	   MD_PATH,                "",                 false,      _("Box Backside"),		  _("enter path to box background"), true },
 		{ Cartridge,        "cartridge",   MD_PATH,                "",                 false,      _("Cartridge"),            _("enter path to cartridge"),  true },
-		{ Cabinet,			"cabinet",	   MD_PATH,                "",                 false,      _("PCB"),		  		  _("enter path to pcb"), true },
+		{ Cabinet,			"cabinet",	   MD_PATH,                "",                 false,      _("Cabinet"),		  		  _("enter path to pcb"), true },
 		{ PCB,				"pcb",	       MD_PATH,                "",                 false,      _("PCB"),		  		  _("enter path to pcb"), true },
 		{ Flyer,			"flyer",	   MD_PATH,                "",                 false,      _("Flyer"),		  		  _("enter path to flyer"), true },
 		{ InstCard,			"instcard",	   MD_PATH,                "",                 false,      _("Inst Card"),		  	  _("enter path to instruction card"), true },
@@ -246,7 +247,7 @@ void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, Syst
 			value = Utils::String::toLower(value);
 		
 		if (preloadMedias && mdd.type == MD_PATH && (mdd.id == MetaDataId::Image || mdd.id == MetaDataId::Thumbnail || mdd.id == MetaDataId::Marquee || mdd.id == MetaDataId::Video) &&
-			!Utils::FileSystem::exists(Utils::FileSystem::resolveRelativePath(value, getScraperDir(), true)))
+			!Utils::FileSystem::exists(Utils::FileSystem::resolveRelativePath(value, getMediaDir(), true)))
 			continue;
 		
 		// Players -> remove "1-"
@@ -339,7 +340,7 @@ void MetaDataList::complement_document(const std::string& key){
 
 void MetaDataList::complement()
 {
-	auto path = mTargetFile->getSourceFileData()->getScraperDir();
+	auto path = mTargetFile->getSourceFileData()->getMediaDir();
 	if(!Utils::FileSystem::exists(path))return;
 
 	complement_image("image");
@@ -390,7 +391,7 @@ void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, cons
 			if (mddIter->type == MD_PATH)
 			{
 				if (fullPaths && mRelativeTo != nullptr)
-					value = Utils::FileSystem::resolveRelativePath(value, getScraperDir(), true);
+					value = Utils::FileSystem::resolveRelativePath(value, getMediaDir(), true);
 				else
 					value = Utils::FileSystem::createRelativePath(value, relativeTo, true);
 			}
@@ -460,7 +461,7 @@ void MetaDataList::set(MetaDataId id, const std::string& value)
 		return;
 
 	if (mGameTypeMap[id] == MD_PATH && mRelativeTo != nullptr) // if it's a path, resolve relative paths				
-		mMap[id] = Utils::FileSystem::createRelativePath(value, getScraperDir(), true);
+		mMap[id] = Utils::FileSystem::createRelativePath(value, getMediaDir(), true);
 	else
 		mMap[id] = Utils::String::trim(value);
 
@@ -476,7 +477,7 @@ const std::string MetaDataList::get(MetaDataId id, bool resolveRelativePaths) co
 	if (it != mMap.end())
 	{
 		if (resolveRelativePaths && mGameTypeMap[id] == MD_PATH && mRelativeTo != nullptr) // if it's a path, resolve relative paths				
-			return Utils::FileSystem::resolveRelativePath(it->second, getScraperDir(), true);
+			return Utils::FileSystem::resolveRelativePath(it->second, getMediaDir(), true);
 
 		return it->second;
 	}
@@ -628,9 +629,9 @@ std::string MetaDataList::getRelativeRootPath()
 	return "";
 }
 
-std::string MetaDataList::getScraperDir() const{
+std::string MetaDataList::getMediaDir() const{
 
-	return mTargetFile->getScraperDir();
+	return mTargetFile->getMediaDir();
 }
 
 void MetaDataList::setScrapeDate(const std::string& scraper)
@@ -657,16 +658,16 @@ Utils::Time::DateTime* MetaDataList::getScrapeDate(const std::string& scraper)
 }
 
 bool MetaDataList::isSlideShowAvailable(){
-	auto path=Utils::FileSystem::resolveRelativePath("./slideshow", getScraperDir(), true);
+	auto path=Utils::FileSystem::resolveRelativePath("./slideshow", getMediaDir(), true);
 	return Utils::FileSystem::isDirectory(path);
 }
 
 bool MetaDataList::isJukeBoxAvailable(){
-	auto path=Utils::FileSystem::resolveRelativePath("./jukebox", getScraperDir(), true);
+	auto path=Utils::FileSystem::resolveRelativePath("./jukebox", getMediaDir(), true);
 	return Utils::FileSystem::isDirectory(path);
 }
 
 bool MetaDataList::isDocumentationAvailable(){
-	auto path=Utils::FileSystem::resolveRelativePath("./docs.json", getScraperDir(), true);
+	auto path=Utils::FileSystem::resolveRelativePath("./docs.json", getMediaDir(), true);
 	return Utils::FileSystem::isRegularFile(path);
 }

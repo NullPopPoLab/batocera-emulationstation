@@ -35,9 +35,9 @@ std::vector<std::pair<std::string, Scraper*>> Scraper::scrapers
 	{ "ArcadeDB", new ArcadeDBScraper() }
 };
 
-std::string Scraper::getScraperDir()
+std::string Scraper::getMediaDir()
 {
-	return "/userdata/scraper";
+	return "/userdata/media";
 }
 
 std::string Scraper::getScraperName(Scraper* scraper)
@@ -725,10 +725,10 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 
 	std::string subdirectory = system->getName();
 	std::string name = Utils::FileSystem::getStem(game->getPath());
-	auto path = game->getSourceFileData()->getScraperDir();
+	auto path = game->getSourceFileData()->getMediaDir();
 
 	if(!Utils::FileSystem::exists(path))
 		Utils::FileSystem::createDirectory(path);
 
-	return game->getSourceFileData()->getScraperDir()+"/"+suffix + extension;
+	return game->getSourceFileData()->getMediaDir()+"/"+suffix + extension;
 }

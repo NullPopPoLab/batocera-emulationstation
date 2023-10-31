@@ -57,7 +57,7 @@ NullPopPo Custom APIs
 ---------------------
 GET /caps                                                       -> capability info
 GET /screenshots/{fileName}                                     -> download a screenshot image
-GET /systems/{systemName}/games/{gameId}/scraper                -> any file in /userdata/scraper/{systemName}/{gameName}/
+GET /systems/{systemName}/games/{gameId}/media                  -> any file in /userdata/media/{systemName}/{gameName}/
 POST /systems/{systemName}/games/{gameId}/remove_media/{mediaType}	-> remove MetaData media
 
 */
@@ -324,7 +324,7 @@ void HttpServerThread::run()
 		res.status = 404;		
 	});
 
-	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/scraper/(.*))", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/media/(.*))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -337,7 +337,7 @@ void HttpServerThread::run()
 			auto game = HttpApi::findFileData(system, gameId);
 			if (game != nullptr) {
 				std::string name = req.matches[3];
-				std::string path = game->getScraperDir()+"/"+name;
+				std::string path = game->getMediaDir()+"/"+name;
 				if(Utils::FileSystem::isDirectory(path)){
 					res.set_content(HttpApi::getScraperFiles(game,name), "application/json");
 					return;
@@ -361,7 +361,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/scraper)", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/media)", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;

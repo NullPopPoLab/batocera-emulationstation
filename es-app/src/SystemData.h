@@ -82,7 +82,7 @@ public:
 
 	inline const std::shared_ptr<ThemeData>& getTheme() const { return mTheme; }
 
-	std::string getScraperDir() const;
+	std::string getMediaDir() const;
 	std::string getGamelistPath(bool forWrite) const;
 	bool hasGamelist() const;
 	std::string getThemePath() const;
