@@ -114,7 +114,9 @@ std::string GameNameFormatter::getDisplayName(FileData* fd, bool showFolderIcon)
 			showSystemNameByFile = false;
 	}
 
-	if (mSortId != FileSorts::FILENAME_ASCENDING && mSortId != FileSorts::FILENAME_DESCENDING)
+	if (mSortId != FileSorts::DISPNAME_ASCENDING && mSortId != FileSorts::DISPNAME_DESCENDING &&
+		mSortId != FileSorts::SORTNAME_ASCENDING && mSortId != FileSorts::SORTNAME_DESCENDING &&
+		mSortId != FileSorts::FILENAME_ASCENDING && mSortId != FileSorts::FILENAME_DESCENDING)
 	{
 		if (mSortId == FileSorts::GENRE_ASCENDING || mSortId == FileSorts::GENRE_DESCENDING)
 			name = SEPARATOR_BEFORE + valueOrDefault(fd->getSourceFileData()->getMetadata(MetaDataId::Genre)) + SEPARATOR_AFTER + name;
