@@ -1019,7 +1019,7 @@ FileData* CollectionFileData::getSourceFileData()
 	return mSourceFileData;
 }
 
-const std::string CollectionFileData::getName()
+const std::string& CollectionFileData::getName()
 {
 	return mSourceFileData->getName();
 }
