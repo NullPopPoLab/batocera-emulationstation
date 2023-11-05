@@ -271,16 +271,16 @@ GuiMetaDataEd::GuiMetaDataEd(Window* window, MetaDataList* md, const std::vector
 				ed->setValue(val);
 			};
 
-			row.makeAcceptInputHandler([this, type, ed, iter, updateVal, relativePath]
+			row.makeAcceptInputHandler([this, type, ed, iter, updateVal, relativePath, file]
 			{			
-				std::string filePath = ed->getValue();
+				std::string filePath = file->getMetaPath(iter->id);
 				if (!filePath.empty())
 					filePath = Utils::FileSystem::resolveRelativePath(filePath, relativePath, true);
 				
-				std::string dir = Utils::FileSystem::getParent(filePath);
+				std::string dir = file->getMediaDir();
 				//if (dir.empty())
 				//	dir = relativePath;
-					
+
 				std::string title = iter->displayName + " - " + mMetaData->getName();
 				mWindow->pushGui(new GuiFileBrowser(mWindow, dir, filePath, type, updateVal, title));
 			});
@@ -443,13 +443,13 @@ bool GuiMetaDataEd::save()
 
 			if (mMetaData->getType(key) == MD_PATH && !val.empty() && filesToCopy.find(val) != filesToCopy.cend())
 			{				
-				auto rootPath = mMetaData->getRelativeRootPath();
+				auto rootPath = std::string("/userdata/screenshots");
 				auto sourceFile = Utils::FileSystem::resolveRelativePath(val, rootPath, true);
 
 				auto destFile = Scraper::getSaveAsPath(mScraperParams.game, mMetaData->getId(key), Utils::FileSystem::getExtension(sourceFile));
 
 				if (Utils::FileSystem::copyFile(sourceFile, destFile))
-					val = destFile;
+					val = Utils::FileSystem::createRelativePath(destFile,mScraperParams.game->getMediaDir(),true);
 			}
 
 			mMetaData->set(key, val);
@@ -478,7 +478,7 @@ bool GuiMetaDataEd::save()
 		auto val = ed->getValue();
 		if (mMetaData->getType(key) == MD_PATH && !val.empty())
 		{
-			auto root = mMetaData->getRelativeRootPath();
+			auto root = mScraperParams.game->getMediaDir();
 			auto abs = Utils::FileSystem::resolveRelativePath(val, root, true);
 
 			auto cur = mMetaData->get(key, true);

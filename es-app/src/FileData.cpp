@@ -38,6 +38,8 @@ FileData* FileData::mRunningGame = nullptr;
 FileData::FileData(FileType type, const std::string& path, SystemData* system)
 	: mPath(path), mType(type), mSystem(system), mParent(nullptr), mDisplayName(nullptr), mMetadata(type == GAME ? GAME_METADATA : FOLDER_METADATA) // metadata is REALLY set in the constructor!
 {
+	mMetadata.init(system,this);
+
 	// metadata needs at least a name field (since that's what getName() will return)
 	if (mMetadata.get(MetaDataId::Name).empty() && !mPath.empty())
 		mMetadata.set(MetaDataId::Name, getDisplayName());
@@ -372,6 +374,12 @@ const std::string FileData::getName()
 		return getDisplayName();
 
 	return mMetadata.getName();
+}
+
+const std::string FileData::getSortName()
+{
+	auto s=mMetadata.get(MetaDataId::SortName,false);
+	return s.empty()?getName():s;
 }
 
 const std::string FileData::getVideoPath()
