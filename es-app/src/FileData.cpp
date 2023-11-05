@@ -327,12 +327,18 @@ void FileData::resetSettings()
 	
 }
 
-const std::string& FileData::getName()
+const std::string FileData::getName()
 {
 	if (mSystem != nullptr && mSystem->getShowFilenames())
 		return getDisplayName();
 
 	return mMetadata.getName();
+}
+
+const std::string FileData::getSortName()
+{
+	auto s=mMetadata.get(MetaDataId::SortName,false);
+	return s.empty()?getName():s;
 }
 
 const std::string FileData::getVideoPath()
@@ -959,7 +965,7 @@ FileData* CollectionFileData::getSourceFileData()
 	return mSourceFileData;
 }
 
-const std::string& CollectionFileData::getName()
+const std::string CollectionFileData::getName()
 {
 	return mSourceFileData->getName();
 }
