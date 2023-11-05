@@ -10,6 +10,7 @@
 #include "FileData.h"
 #include "ImageIO.h"
 
+MetaDataDecl mInvalidMetaDataDecl(Invalid, "", MD_INVALID, "", true, "", "", false, false);
 std::vector<MetaDataDecl> MetaDataList::mMetaDataDecls;
 
 static std::map<MetaDataId, int> mMetaDataIndexes;
