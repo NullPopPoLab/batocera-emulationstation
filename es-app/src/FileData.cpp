@@ -173,6 +173,41 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
+const std::string FileData::getOfficialMediaDir()
+{
+	return getSystem()->getStartPath();
+}
+
+const std::string FileData::getMediaDir()
+{
+	auto dir=getSystem()->getMediaDir();
+	return dir+"/"+getPathKey();
+}
+
+std::string FileData::getMetaPath(MetaDataId key){
+
+	auto name=getMetadata(key);
+	if(name.empty())return name;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return path;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);
+	return Utils::FileSystem::exists(path)?path:std::string();
+}
+
+bool FileData::hasMetaFile(MetaDataId key){
+
+	auto name=getMetadata(key);
+	if(name.empty())return false;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return true;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);
+	return Utils::FileSystem::exists(path);
+}
+
 std::string FileData::findLocalArt(const std::string& type, std::vector<std::string> exts)
 {
 	if (Settings::getInstance()->getBool("LocalArt"))
