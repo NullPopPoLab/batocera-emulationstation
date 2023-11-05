@@ -29,7 +29,10 @@ enum MetaDataType
 	MD_RATING,
 	MD_DATE,
 	MD_TIME, //used for lastplayed
-    MD_LIST 
+    MD_LIST,
+
+	// NullPopPoCustom 
+	MD_INVALID,
 };
 
 enum MetaDataId
@@ -75,7 +78,9 @@ enum MetaDataId
 	Magazine = 38,
 	GenreIds = 39,
 	Family = 40,
-	Bezel = 41
+	Bezel = 41,
+	Max,
+	Invalid=-1,
 };
 
 namespace MetaDataImportType
@@ -134,7 +139,8 @@ class MetaDataList
 public:
 	static void initMetadata();
 
-	void loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system);
+	void init(SystemData* system, FileData* file);
+	void loadFromXML(MetaDataListType type, pugi::xml_node& node);
 	void appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths = false) const;
 
 	void migrate(FileData* file, pugi::xml_node& node);
@@ -182,6 +188,7 @@ private:
 	std::map<MetaDataId, std::string> mMap;
 	bool mWasChanged;
 	SystemData*		mRelativeTo;
+	FileData*		mTargetFile;
 
 	static std::vector<MetaDataDecl> mMetaDataDecls;
 
