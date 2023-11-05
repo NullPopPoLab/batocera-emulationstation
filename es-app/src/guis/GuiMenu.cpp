@@ -3196,6 +3196,7 @@ void GuiMenu::openUISettings()
 			s->setVariable("reloadAll", true); 
 		});
 	s->addSwitch(_("IGNORE LEADING ARTICLES WHEN SORTING"), "IgnoreLeadingArticles", true, [s] { s->setVariable("reloadAll", true); });
+	s->addSwitch(_("FOLDER ALWAYS FIRST WHEN SORTING"), "FolderAlwaysFirst", true, [s] { s->setVariable("reloadAll", true); });
 	
 	s->onFinalize([s, pthis, window]
 	{
