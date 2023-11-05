@@ -81,6 +81,7 @@ public:
 	DECLARE_STATIC_BOOL_SETTING(PreloadMedias)
 	DECLARE_STATIC_BOOL_SETTING(IgnoreLeadingArticles)
 	DECLARE_STATIC_BOOL_SETTING(ScrollLoadMedias)
+	DECLARE_STATIC_BOOL_SETTING(FolderAlwaysFirst)
 	DECLARE_STATIC_INT_SETTING(ScreenSaverTime);
 
 	// Non-cached settings with only shortcut methods
