@@ -179,6 +179,30 @@ const std::string FileData::getMediaDir()
 	return dir+"/"+getPathKey();
 }
 
+std::string FileData::getMetaPath(MetaDataId key){
+
+	auto name=getMetadata(key);
+	if(name.empty())return name;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return path;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);
+	return Utils::FileSystem::exists(path)?path:std::string();
+}
+
+bool FileData::hasMetaFile(MetaDataId key){
+
+	auto name=getMetadata(key);
+	if(name.empty())return false;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return true;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);
+	return Utils::FileSystem::exists(path);
+}
+
 const std::string FileData::getThumbnailPath()
 {
 	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
@@ -300,7 +324,7 @@ void FileData::resetSettings()
 	
 }
 
-const std::string& FileData::getName()
+const std::string FileData::getName()
 {
 	if (mSystem != nullptr && mSystem->getShowFilenames())
 		return getDisplayName();
