@@ -29,7 +29,10 @@ enum MetaDataType
 	MD_RATING,
 	MD_DATE,
 	MD_TIME, //used for lastplayed
-    MD_LIST 
+    MD_LIST,
+
+	// NullPopPoCustom 
+	MD_INVALID,
 };
 
 enum MetaDataId
@@ -77,6 +80,7 @@ enum MetaDataId
 	Family = 40,
 	Bezel = 41,
 	Max,
+	Invalid=-1,
 };
 
 namespace MetaDataImportType
