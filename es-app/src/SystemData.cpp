@@ -24,6 +24,7 @@
 #include <functional>
 #include "SaveStateRepository.h"
 #include "Paths.h"
+#include "scrapers/Scraper.h"
 
 #if WIN32
 #include "Win32ApiSystem.h"
