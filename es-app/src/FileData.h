@@ -65,6 +65,7 @@ public:
 	static FileData* GetRunningGame() { return mRunningGame; }
 
 	virtual const std::string getName();
+	virtual const std::string getSortName();	
 
 	inline FileType getType() const { return mType; }
 	
