@@ -103,7 +103,7 @@ void MetaDataList::initMetadata()
 	for (int i = 0 ; i < mMetaDataDecls.size() ; i++)
 		mMetaDataIndexes[mMetaDataDecls[i].id] = i;
 
-	int maxID = mMetaDataDecls.size() + 1;
+	int maxID = MetaDataId::Max;
 
 	if (mDefaultGameMap != nullptr) 
 		delete[] mDefaultGameMap;
@@ -145,10 +145,15 @@ MetaDataList::MetaDataList(MetaDataListType type) : mType(type), mWasChanged(fal
 
 }
 
-void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system)
+void MetaDataList::init(SystemData* system, FileData* file)
+{
+	mRelativeTo = system;	
+	mTargetFile = file;
+}
+
+void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node)
 {
 	mType = type;
-	mRelativeTo = system;	
 
 	mUnKnownElements.clear();
 	mScrapeDates.clear();
