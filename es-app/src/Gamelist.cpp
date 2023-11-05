@@ -456,6 +456,7 @@ void updateGamelist(SystemData* system)
 
 void cleanupGamelist(SystemData* system)
 {
+#if 0 // ˆê’U••ˆó Œ»Žd—l‚É‡‚í‚¹‚Ä‘‚«’¼‚µ‚ð—v‚·‚é 
 	if (!system->isGameSystem() || system->isCollection() || (!Settings::HiddenSystemsShowGames() && !system->isVisible())) //  || system->hasPlatformId(PlatformIds::IMAGEVIEWER)
 		return;
 
@@ -671,4 +672,5 @@ void cleanupGamelist(SystemData* system)
 	}
 	else
 		clearTemporaryGamelistRecovery(system);
+#endif
 }
