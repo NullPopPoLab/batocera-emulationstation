@@ -178,7 +178,7 @@ void MetaDataList::init(SystemData* system, FileData* file)
 	mTargetFile = file;
 }
 
-void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node, SystemData* system)
+void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node)
 {
 	mType = type;
 	mRelativeTo = system;	
