@@ -85,6 +85,8 @@ public:
 
 	virtual SystemEnvironmentData* getSystemEnvData() const;
 
+	virtual const std::string getOfficialMediaDir();
+	virtual const std::string getMediaDir();
 	virtual const std::string getThumbnailPath();
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();
@@ -138,8 +140,12 @@ public:
 
 	void setMetadata(MetaDataList value) { getMetadata() = value; } 
 	
+	bool hasMetadata(MetaDataId key) { return !getMetadata().get(key).empty(); }
 	std::string getMetadata(MetaDataId key) { return getMetadata().get(key); }
 	void setMetadata(MetaDataId key, const std::string& value) { return getMetadata().set(key, value); }
+
+	std::string getMetaPath(MetaDataId key);
+	bool hasMetaFile(MetaDataId key);
 
 	void detectLanguageAndRegion(bool overWrite);
 

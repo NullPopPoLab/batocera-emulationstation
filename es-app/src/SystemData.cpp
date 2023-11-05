@@ -1241,6 +1241,11 @@ SystemData* SystemData::getPrev() const
 	return *it;
 }
 
+std::string SystemData::getMediaDir() const{
+
+	return Scraper::getMediaDir()+"/"+mMetadata.name;
+}
+
 std::string SystemData::getGamelistPath(bool forWrite) const
 {
 	std::string filePath;

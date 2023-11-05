@@ -546,6 +546,11 @@ std::string MetaDataList::getRelativeRootPath()
 	return "";
 }
 
+std::string MetaDataList::getMediaDir() const{
+
+	return mTargetFile->getMediaDir();
+}
+
 void MetaDataList::setScrapeDate(const std::string& scraper)
 {
 	auto it = KnowScrapersIds.find(scraper);
