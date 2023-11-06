@@ -1207,7 +1207,7 @@ std::string SystemData::getGamelistPath(bool forWrite) const
 {
 	std::string filePath;
 
-	filePath = mRootFolder->getPath() + "/gamelist.xml";
+	filePath = getMediaDir() + "/gamelist.xml";
 	if(Utils::FileSystem::exists(filePath))
 		return filePath;
 
@@ -1215,9 +1215,11 @@ std::string SystemData::getGamelistPath(bool forWrite) const
 	if (Utils::FileSystem::exists(localPath))
 		return localPath;
 
-	if (forWrite)
-		Utils::FileSystem::createDirectory(Utils::FileSystem::getParent(filePath));
-	
+	if (!forWrite){
+		return mRootFolder->getPath() + "/gamelist.xml";
+	}
+
+	Utils::FileSystem::createDirectory(Utils::FileSystem::getParent(filePath));
 	return filePath;
 }
 
