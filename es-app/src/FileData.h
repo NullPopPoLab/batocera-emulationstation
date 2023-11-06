@@ -79,6 +79,8 @@ public:
 
 	virtual SystemEnvironmentData* getSystemEnvData() const;
 
+	virtual const std::string getOfficialMediaDir();
+	virtual const std::string getMediaDir();
 	virtual const std::string getThumbnailPath();
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();
@@ -112,6 +114,11 @@ public:
 	virtual FileData* getSourceFileData();
 	virtual std::string getSystemName() const;
 
+	virtual std::string getDirKey();
+	virtual std::string getFileKey();
+	virtual std::string getPathKey();
+	virtual std::string getGameKey();
+
 	// Returns our best guess at the "real" name for this file (will attempt to perform MAME name translation)
 	virtual std::string& getDisplayName();
 
@@ -130,8 +137,12 @@ public:
 
 	void setMetadata(MetaDataList value) { getMetadata() = value; } 
 	
+	bool hasMetadata(MetaDataId key) { return !getMetadata().get(key).empty(); }
 	std::string getMetadata(MetaDataId key) { return getMetadata().get(key); }
 	void setMetadata(MetaDataId key, const std::string& value) { return getMetadata().set(key, value); }
+
+	std::string getMetaPath(MetaDataId key);
+	bool hasMetaFile(MetaDataId key);
 
 	void detectLanguageAndRegion(bool overWrite);
 

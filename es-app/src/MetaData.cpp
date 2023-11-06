@@ -9,6 +9,7 @@
 #include "Settings.h"
 #include "FileData.h"
 #include "ImageIO.h"
+#include "scrapers/Scraper.h"
 
 MetaDataDecl mInvalidMetaDataDecl(Invalid, "", MD_INVALID, "", true, "", "", false, false);
 std::vector<MetaDataDecl> MetaDataList::mMetaDataDecls;
@@ -545,6 +546,11 @@ std::string MetaDataList::getRelativeRootPath()
 		return mRelativeTo->getStartPath();
 
 	return "";
+}
+
+std::string MetaDataList::getMediaDir() const{
+
+	return mTargetFile->getMediaDir();
 }
 
 void MetaDataList::setScrapeDate(const std::string& scraper)

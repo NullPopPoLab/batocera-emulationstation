@@ -117,6 +117,40 @@ FileData::~FileData()
 		mSystem->removeFromIndex(this);	
 }
 
+std::string FileData::getDirKey(){
+
+	auto path=getPath();
+	auto dir=getSourceFileData()->getSystem()->getStartPath();
+	if(dir.empty())return "";
+	if(path.size()>dir.size()+1)path=path.substr(dir.size()+1,path.size()-dir.size()-1);
+
+	auto p=path.find('/');
+	if(p==std::string::npos)return std::string();
+	path=path.substr(0,p);
+	return path;
+}
+
+std::string FileData::getFileKey(){
+
+	return Utils::FileSystem::getStem(getPath());
+}
+
+std::string FileData::getPathKey(){
+
+	auto k=getDirKey();
+	if(!k.empty())k+="/";
+	k+=getFileKey();
+	return k;
+}
+
+std::string FileData::getGameKey(){
+
+	auto k=getPathKey();
+	auto p=k.rfind('/');
+	if(p==std::string::npos)return k;
+	return k.substr(0,p);
+}
+
 std::string& FileData::getDisplayName()
 {
 	if (mDisplayName == nullptr)
@@ -134,6 +168,41 @@ std::string& FileData::getDisplayName()
 std::string FileData::getCleanName()
 {
 	return Utils::String::removeParenthesis(getDisplayName());
+}
+
+const std::string FileData::getOfficialMediaDir()
+{
+	return getSystem()->getStartPath();
+}
+
+const std::string FileData::getMediaDir()
+{
+	auto dir=getSystem()->getMediaDir();
+	return dir+"/"+getPathKey();
+}
+
+std::string FileData::getMetaPath(MetaDataId key){
+
+	auto name=getMetadata(key);
+	if(name.empty())return name;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return path;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);
+	return Utils::FileSystem::exists(path)?path:std::string();
+}
+
+bool FileData::hasMetaFile(MetaDataId key){
+
+	auto name=getMetadata(key);
+	if(name.empty())return false;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return true;
+
+	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);
+	return Utils::FileSystem::exists(path);
 }
 
 const std::string FileData::getThumbnailPath()
