@@ -79,6 +79,25 @@ enum MetaDataId
 	GenreIds = 39,
 	Family = 40,
 	Bezel = 41,
+	// NullPopPoCustom 
+	Ingame,
+	Outgame,
+	Visual,
+	Cabinet,
+	PCB,
+	Flyer,
+	InstCard,
+	Title,
+	Runnable,
+	Included,
+	Premise,
+	Story,
+	Rule,
+	Operation,
+	Credit,
+	Tips,
+	Notes,
+	Bugs,
 	Max,
 	Invalid=-1,
 };
@@ -172,7 +191,10 @@ public:
 	inline MetaDataListType getType() const { return mType; }
 	static const std::vector<MetaDataDecl>& getMDD() { return mMetaDataDecls; }
 	inline const std::string& getName() const { return mName; }
-	
+
+	static const MetaDataDecl& getDecl(MetaDataId id);
+	static const MetaDataDecl& getDecl(const std::string& key);
+
 	void importScrappedMetadata(const MetaDataList& source);
 
 	std::string getRelativeRootPath();
