@@ -119,20 +119,20 @@ const std::string GridGameListView::getImagePath(FileData* file)
 	if (src == ImageSource::IMAGE)
 		return file->getImagePath();
 
-	if (src == TITLESHOT && !file->getMetadata(MetaDataId::TitleShot).empty())
-		return file->getMetadata(MetaDataId::TitleShot);
-	else if (src == BOXART && !file->getMetadata(MetaDataId::BoxArt).empty())
-		return file->getMetadata(MetaDataId::BoxArt);
+	if (src == TITLESHOT && !file->getMetaPath(MetaDataId::TitleShot).empty())
+		return file->getMetaPath(MetaDataId::TitleShot);
+	else if (src == BOXART && !file->getMetaPath(MetaDataId::BoxArt).empty())
+		return file->getMetaPath(MetaDataId::BoxArt);
 	else if ((src == MARQUEE || src == ImageSource::MARQUEEORTEXT) && !file->getMarqueePath().empty())
 		return file->getMarqueePath();
 	else if ((src == IMAGE || src == TITLESHOT) && !file->getImagePath().empty())
 		return file->getImagePath();
-	else if (src == FANART && !file->getMetadata(MetaDataId::FanArt).empty())
-		return file->getMetadata(MetaDataId::FanArt);
-	else if (src == CARTRIDGE && !file->getMetadata(MetaDataId::Cartridge).empty())
-		return file->getMetadata(MetaDataId::Cartridge);
-	else if (src == MIX && !file->getMetadata(MetaDataId::Mix).empty())
-		return file->getMetadata(MetaDataId::Mix);
+	else if (src == FANART && !file->getMetaPath(MetaDataId::FanArt).empty())
+		return file->getMetaPath(MetaDataId::FanArt);
+	else if (src == CARTRIDGE && !file->getMetaPath(MetaDataId::Cartridge).empty())
+		return file->getMetaPath(MetaDataId::Cartridge);
+	else if (src == MIX && !file->getMetaPath(MetaDataId::Mix).empty())
+		return file->getMetaPath(MetaDataId::Mix);
 
 	return file->getThumbnailPath();
 }
