@@ -236,7 +236,7 @@ std::string FileData::findLocalArt(const std::string& type, std::vector<std::str
 
 const std::string FileData::getThumbnailPath()
 {
-	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
+	std::string thumbnail = getMetaPath(MetaDataId::Thumbnail);
 
 	// no thumbnail, try image
 	if (thumbnail.empty())
@@ -246,12 +246,37 @@ const std::string FileData::getThumbnailPath()
 			setMetadata(MetaDataId::Thumbnail, thumbnail);
 
 		// no image, try to use local image
+		if(thumbnail.empty() && Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for(int i = 0; i < 2; i++)
+			{
+				if(thumbnail.empty())
+				{
+					std::string path = getMediaDir() + "/image" + extList[i];
+					if (Utils::FileSystem::exists(path))
+					{
+						setMetadata(MetaDataId::Thumbnail, path);
+						thumbnail = path;
+					}
+				}
+			}
+		}
 
 		if (thumbnail.empty())
-			thumbnail = getMetadata(MetaDataId::Image);
+			thumbnail = getMetaPath(MetaDataId::Image);
 
 		if (thumbnail.empty())
 			thumbnail = findLocalArt("image");
+		// no image, try to use local image
+		if (thumbnail.empty() && Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for (int i = 0; i < 2; i++)
+			{
+				if (thumbnail.empty())
+				{
+					std::string path = getMediaDir() + "/image" + extList[i];
 
 		if (thumbnail.empty())
 			thumbnail = findLocalArt();
@@ -372,7 +397,7 @@ const std::string& FileData::getName()
 
 const std::string FileData::getVideoPath()
 {
-	std::string video = getMetadata(MetaDataId::Video);
+	std::string video = getMetaPath(MetaDataId::Video);
 	
 	// no video, try to use local video
 	if (video.empty())
@@ -380,6 +405,12 @@ const std::string FileData::getVideoPath()
 		video = findLocalArt("video", { ".mp4" });
 		if (!video.empty())
 			setMetadata(MetaDataId::Video, video);
+		std::string path = getMediaDir() + "/video.mp4";
+		if (Utils::FileSystem::exists(path))
+		{
+			setMetadata(MetaDataId::Video, path);
+			video = path;
+		}
 	}
 	
 	if (video.empty() && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
@@ -401,7 +432,7 @@ const std::string FileData::getVideoPath()
 
 const std::string FileData::getMarqueePath()
 {
-	std::string marquee = getMetadata(MetaDataId::Marquee);
+	std::string marquee = getMetaPath(MetaDataId::Marquee);
 
 	// no marquee, try to use local marquee
 	if (marquee.empty())
@@ -409,6 +440,19 @@ const std::string FileData::getMarqueePath()
 		marquee = findLocalArt("marquee");
 		if (!marquee.empty())
 			setMetadata(MetaDataId::Marquee, marquee);
+		const char* extList[2] = { ".png", ".jpg" };
+		for(int i = 0; i < 2; i++)
+		{
+			if(marquee.empty())
+			{
+				std::string path = getMediaDir() + "/marquee" + extList[i];
+				if (Utils::FileSystem::exists(path))
+				{
+					setMetadata(MetaDataId::Marquee, path);
+					marquee = path;
+				}
+			}
+		}
 	}
 	
 	return marquee;
@@ -416,7 +460,7 @@ const std::string FileData::getMarqueePath()
 
 const std::string FileData::getImagePath()
 {
-	std::string image = getMetadata(MetaDataId::Image);
+	std::string image = getMetaPath(MetaDataId::Image);
 
 	// no image, try to use local image
 	if (image.empty())
@@ -427,6 +471,14 @@ const std::string FileData::getImagePath()
 
 		if (image.empty())
 			image = findLocalArt("image");
+		if (Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for (int i = 0; i < 2; i++)
+			{
+				if (image.empty())
+				{
+					std::string path = getMediaDir() + "/image" + extList[i];
 
 		if (image.empty())
 			image = findLocalArt();
