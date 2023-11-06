@@ -245,38 +245,11 @@ const std::string FileData::getThumbnailPath()
 		if (!thumbnail.empty())
 			setMetadata(MetaDataId::Thumbnail, thumbnail);
 
-		// no image, try to use local image
-		if(thumbnail.empty() && Settings::getInstance()->getBool("LocalArt"))
-		{
-			const char* extList[2] = { ".png", ".jpg" };
-			for(int i = 0; i < 2; i++)
-			{
-				if(thumbnail.empty())
-				{
-					std::string path = getMediaDir() + "/image" + extList[i];
-					if (Utils::FileSystem::exists(path))
-					{
-						setMetadata(MetaDataId::Thumbnail, path);
-						thumbnail = path;
-					}
-				}
-			}
-		}
-
 		if (thumbnail.empty())
 			thumbnail = getMetaPath(MetaDataId::Image);
 
 		if (thumbnail.empty())
 			thumbnail = findLocalArt("image");
-		// no image, try to use local image
-		if (thumbnail.empty() && Settings::getInstance()->getBool("LocalArt"))
-		{
-			const char* extList[2] = { ".png", ".jpg" };
-			for (int i = 0; i < 2; i++)
-			{
-				if (thumbnail.empty())
-				{
-					std::string path = getMediaDir() + "/image" + extList[i];
 
 		if (thumbnail.empty())
 			thumbnail = findLocalArt();
@@ -405,12 +378,6 @@ const std::string FileData::getVideoPath()
 		video = findLocalArt("video", { ".mp4" });
 		if (!video.empty())
 			setMetadata(MetaDataId::Video, video);
-		std::string path = getMediaDir() + "/video.mp4";
-		if (Utils::FileSystem::exists(path))
-		{
-			setMetadata(MetaDataId::Video, path);
-			video = path;
-		}
 	}
 	
 	if (video.empty() && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
@@ -440,19 +407,6 @@ const std::string FileData::getMarqueePath()
 		marquee = findLocalArt("marquee");
 		if (!marquee.empty())
 			setMetadata(MetaDataId::Marquee, marquee);
-		const char* extList[2] = { ".png", ".jpg" };
-		for(int i = 0; i < 2; i++)
-		{
-			if(marquee.empty())
-			{
-				std::string path = getMediaDir() + "/marquee" + extList[i];
-				if (Utils::FileSystem::exists(path))
-				{
-					setMetadata(MetaDataId::Marquee, path);
-					marquee = path;
-				}
-			}
-		}
 	}
 	
 	return marquee;
@@ -471,14 +425,6 @@ const std::string FileData::getImagePath()
 
 		if (image.empty())
 			image = findLocalArt("image");
-		if (Settings::getInstance()->getBool("LocalArt"))
-		{
-			const char* extList[2] = { ".png", ".jpg" };
-			for (int i = 0; i < 2; i++)
-			{
-				if (image.empty())
-				{
-					std::string path = getMediaDir() + "/image" + extList[i];
 
 		if (image.empty())
 			image = findLocalArt();
