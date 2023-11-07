@@ -49,6 +49,10 @@ std::vector<CollectionSystemDecl> CollectionSystemManager::getSystemDecls()
 		{ AUTO_LIGHTGUN,		 "lightgun",     _("lightgun games"),    FileSorts::FILENAME_ASCENDING,    "auto-lightgun",           false,       true },
 		{ AUTO_WHEEL,		 "wheel",     _("wheel games"),    FileSorts::FILENAME_ASCENDING,    "auto-wheel",           false,       true }, 
 
+		// (NullPopPoCustom) For Web Frontend 
+		{ AUTO_JUKEBOX,		 "jukebox",     _("jukebox ready"),    FileSorts::SORTNAME_ASCENDING,    "auto-jukebox",           false,       true }, 
+		{ AUTO_SLIDESHOW,		 "slideshow",     _("slideshow ready"),    FileSorts::SORTNAME_ASCENDING,    "auto-slideshow",           false,       true }, 
+
 		// Custom collection
 		{ CUSTOM_COLLECTION,    myCollectionsName,  _("collections"),   FileSorts::FILENAME_ASCENDING,    "custom-collections",      true,        true }
 	};
@@ -1023,6 +1027,12 @@ void CollectionSystemManager::populateAutoCollection(CollectionSystemData* sysDa
 				break;
 			case AUTO_WHEEL:
 				include = game->isWheelGame();
+				break;
+			case AUTO_JUKEBOX:
+				include = game->getMetadata().isJukeBoxAvailable();
+				break;
+			case AUTO_SLIDESHOW:
+				include = game->getMetadata().isSlideShowAvailable();
 				break;
 			case AUTO_RETROACHIEVEMENTS:
 				include = game->hasCheevos();
