@@ -203,6 +203,10 @@ public:
 	void setScrapeDate(const std::string& scraper);
 	Utils::Time::DateTime* getScrapeDate(const std::string& scraper);
 
+	bool isSlideShowAvailable();
+	bool isJukeBoxAvailable();
+	bool isDocumentationAvailable();
+
 private:
 	std::map<int, Utils::Time::DateTime> mScrapeDates;
 
