@@ -254,6 +254,24 @@ const std::string FileData::getThumbnailPath()
 				}
 			}
 		}
+
+#if 0
+		if (thumbnail.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
+		{
+			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
+				return ((FolderData*)this)->mChildren[0]->getThumbnailPath();
+			else if (getType() == GAME)
+			{
+				thumbnail = getPath();
+
+				auto ext = Utils::String::toLower(Utils::FileSystem::getExtension(thumbnail));
+				if (ext == ".pdf" && ResourceManager::getInstance()->fileExists(":/pdf.jpg"))
+					return ":/pdf.jpg";
+				else if ((ext == ".mp4" || ext == ".avi" || ext == ".mkv" || ext == ".webm") && ResourceManager::getInstance()->fileExists(":/vid.jpg"))
+					return ":/vid.jpg";
+			}
+		}
+#endif
 	}
 
 	return thumbnail;
@@ -307,6 +325,24 @@ const std::string FileData::getTitleShotPath()
 				}
 			}
 		}
+
+#if 0
+		if (path.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
+		{
+			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
+				return ((FolderData*)this)->mChildren[0]->getThumbnailPath();
+			else if (getType() == GAME)
+			{
+				path = getPath();
+
+				auto ext = Utils::String::toLower(Utils::FileSystem::getExtension(path));
+				if (ext == ".pdf" && ResourceManager::getInstance()->fileExists(":/pdf.jpg"))
+					return ":/pdf.jpg";
+				else if ((ext == ".mp4" || ext == ".avi" || ext == ".mkv" || ext == ".webm") && ResourceManager::getInstance()->fileExists(":/vid.jpg"))
+					return ":/vid.jpg";
+			}
+		}
+#endif
 	}
 
 	return path;

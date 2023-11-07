@@ -560,7 +560,6 @@ void GuiMenu::openDeveloperSettings()
 	});
 #endif
 
-
 	s->addEntry(_("COMPLEMENT METADATA"), true, [this, s]
 	{
 		mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE?"), _("YES"), [&]
