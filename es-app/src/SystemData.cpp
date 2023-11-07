@@ -953,6 +953,8 @@ SystemData* SystemData::loadSystem(pugi::xml_node system, bool fullMode)
 	md.hardwareType = system.child("hardware").text().get();
 	md.themeFolder = system.child("theme").text().as_string(md.name.c_str());
 
+	SystemConf::getInstance()->setSeparate(md.name,true);
+
 	// convert extensions list from a string into a vector of strings
 	std::set<std::string> extensions;
 	for (auto ext : readList(system.child("extension").text().get()))
@@ -1879,4 +1881,11 @@ int SystemData::getShowFlags()
 		return show;
 	
 	return Utils::String::toInteger(spf);
+}
+
+void SystemData::complement()
+{
+	for(auto& it: mRootFolder->getFilesRecursive(GAME, true)){
+		it->complement();
+	}
 }

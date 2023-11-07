@@ -189,12 +189,17 @@ std::vector<FileData*> loadGamelistFile(const std::string xmlpath, SystemData* s
 			if (!trustGamelist && !file->getHidden() && Utils::FileSystem::isHidden(path))
 				mdl.set(MetaDataId::Hidden, "true");
 
-			Genres::convertGenreToGenreIds(&mdl);
+			if (mdl.get(MetaDataId::GenreIds).empty())
+				Genres::convertGenreToGenreIds(&mdl);
 
 			if (checkSize != SIZE_MAX)
 				mdl.setDirty();
 			else
 				mdl.resetChangedFlag();
+
+			if (Settings::getInstance()->getBool("ComplementMetaOnStart")){
+				mdl.complement();
+			}
 
 			ret.push_back(file);
 		}
@@ -456,6 +461,7 @@ void updateGamelist(SystemData* system)
 
 void cleanupGamelist(SystemData* system)
 {
+#if 0 // ˆê’U••ˆó Œ»Žd—l‚É‡‚í‚¹‚Ä‘‚«’¼‚µ‚ð—v‚·‚é 
 	if (!system->isGameSystem() || system->isCollection() || (!Settings::HiddenSystemsShowGames() && !system->isVisible())) //  || system->hasPlatformId(PlatformIds::IMAGEVIEWER)
 		return;
 
@@ -542,9 +548,14 @@ void cleanupGamelist(SystemData* system)
 				case MetaDataId::Video: suffix = "video"; folder = "/videos/"; ext = ".mp4"; break;
 				case MetaDataId::FanArt: suffix = "fanart"; break;
 				case MetaDataId::BoxBack: suffix = "boxback"; break;
+				case MetaDataId::Flyer: suffix = "flyer"; break;
+				case MetaDataId::PCB: suffix = "pcb"; break;
 				case MetaDataId::BoxArt: suffix = "box"; break;
 				case MetaDataId::Wheel: suffix = "wheel"; break;
 				case MetaDataId::TitleShot: suffix = "titleshot"; break;
+				case MetaDataId::Ingame: suffix = "ingame"; break;
+				case MetaDataId::Outgame: suffix = "outgame"; break;
+				case MetaDataId::Visual: suffix = "visual"; break;
 				case MetaDataId::Manual: suffix = "manual"; folder = "/manuals/"; ext = ".pdf"; break;
 				case MetaDataId::Magazine: suffix = "magazine"; folder = "/magazines/"; ext = ".pdf"; break;
 				case MetaDataId::Map: suffix = "map"; break;
@@ -671,4 +682,5 @@ void cleanupGamelist(SystemData* system)
 	}
 	else
 		clearTemporaryGamelistRecovery(system);
+#endif
 }

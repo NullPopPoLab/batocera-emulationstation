@@ -123,28 +123,6 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 	// SYSTEM SETTINGS >
 	// QUIT >
 
-	// KODI
-#ifdef _ENABLE_KODI_
-	if (SystemConf::getInstance()->getBool("kodi.enabled", true) && ApiSystem::getInstance()->isScriptingSupported(ApiSystem::KODI))
-		addEntry(_("KODI MEDIA CENTER").c_str(), false, [this] 
-	{ 
-		Window *window = mWindow;
-		delete this;
-		if (!ApiSystem::getInstance()->launchKodi(window))
-			LOG(LogWarning) << "Shutdown terminated with non-zero result!";
-
-	}, "iconKodi");	
-#endif
-
-	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::RETROACHIVEMENTS) &&
-		SystemConf::getInstance()->getBool("global.retroachievements") &&
-		Settings::getInstance()->getBool("RetroachievementsMenuitem") && 
-		SystemConf::getInstance()->get("global.retroachievements.username") != "")
-		addEntry(_("RETROACHIEVEMENTS").c_str(), true, [this] {
-				if (!checkNetwork())
-					return;
-				GuiRetroAchievements::show(mWindow); }, "iconRetroachievements");
-	
 	if (isFullUI)
 	{
 #if BATOCERA
@@ -197,6 +175,32 @@ GuiMenu::GuiMenu(Window *window, bool animate) : GuiComponent(window), mMenu(win
 		addEntry(_("INFORMATION").c_str(), true, [this] { openSystemInformations(); }, "iconSystem");
 		addEntry(_("UNLOCK UI MODE").c_str(), true, [this] { exitKidMode(); }, "iconAdvanced");
 	}
+
+	// KODI
+#ifdef _ENABLE_KODI_
+	if (SystemConf::getInstance()->getBool("kodi.enabled", true) && ApiSystem::getInstance()->isScriptingSupported(ApiSystem::KODI))
+		addEntry(_("KODI MEDIA CENTER").c_str(), false, [this] 
+	{ 
+		mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE?"), _("YES"), [&]
+		{
+			Window *window = mWindow;
+			delete this;
+			if (!ApiSystem::getInstance()->launchKodi(window))
+				LOG(LogWarning) << "Shutdown terminated with non-zero result!";
+		}, _("NO"), nullptr));
+
+	}, "iconKodi");	
+#endif
+
+	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::RETROACHIVEMENTS) &&
+		SystemConf::getInstance()->getBool("global.retroachievements") &&
+		Settings::getInstance()->getBool("RetroachievementsMenuitem") && 
+		SystemConf::getInstance()->get("global.retroachievements.username") != "")
+		addEntry(_("RETROACHIEVEMENTS").c_str(), true, [this] {
+				if (!checkNetwork())
+					return;
+				GuiRetroAchievements::show(mWindow); }, "iconRetroachievements");
+	
 
 #ifdef WIN32
 	addEntry(_("QUIT").c_str(), !Settings::getInstance()->getBool("ShowOnlyExit"), [this] {openQuitMenu(); }, "iconQuit");
@@ -538,6 +542,7 @@ void GuiMenu::openDeveloperSettings()
 	if (ApiSystem::getInstance()->isScriptingSupported(ApiSystem::DISKFORMAT))
 		s->addEntry(_("FORMAT A DISK"), true, [this] { openFormatDriveSettings(); });
 	
+#if 0 // 一旦封印 現仕様に合わせて書き直しを要する 
 	s->addEntry(_("CLEAN GAMELISTS & REMOVE UNUSED MEDIA"), true, [this, s]
 	{
 		mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE?"), _("YES"), [&]
@@ -551,6 +556,28 @@ void GuiMenu::openDeveloperSettings()
 			}
 
 			mWindow->closeSplashScreen();
+		}, _("NO"), nullptr));
+	});
+#endif
+
+
+	s->addEntry(_("COMPLEMENT METADATA"), true, [this, s]
+	{
+		mWindow->pushGui(new GuiMsgBox(mWindow, _("ARE YOU SURE?"), _("YES"), [&]
+		{
+			LOG(LogInfo) << "* bgn of complementation";
+
+			int idx = 0;
+			for (auto& system : SystemData::sSystemVector)
+			{
+				mWindow->renderSplashScreen(_("Complementing") + ": " + system->getFullName(), (float)idx / (float)SystemData::sSystemVector.size());
+				system->complement();
+				idx++;
+			}
+
+			LOG(LogInfo) << "* end of complementation";
+			mWindow->closeSplashScreen();
+
 		}, _("NO"), nullptr));
 	});
 
@@ -651,6 +678,12 @@ void GuiMenu::openDeveloperSettings()
 	{
 		Settings::getInstance()->setBool("ForceDisableFilters", !enable_filter->getState());
 	});
+
+	// complement gamelist 
+	auto comlement_meta = std::make_shared<SwitchComponent>(mWindow);
+	comlement_meta->setState(Settings::getInstance()->getBool("ComplementMetaOnStart"));
+	s->addWithLabel(_("COMPLEMENT METADATA ON START"), comlement_meta);
+	s->addSaveFunc([comlement_meta] { Settings::getInstance()->setBool("ComplementMetaOnStart", comlement_meta->getState()); });
 
 	// gamelist saving
 	auto save_gamelists = std::make_shared<SwitchComponent>(mWindow);
@@ -3196,6 +3229,7 @@ void GuiMenu::openUISettings()
 			s->setVariable("reloadAll", true); 
 		});
 	s->addSwitch(_("IGNORE LEADING ARTICLES WHEN SORTING"), "IgnoreLeadingArticles", true, [s] { s->setVariable("reloadAll", true); });
+	s->addSwitch(_("FOLDER ALWAYS FIRST WHEN SORTING"), "FolderAlwaysFirst", true, [s] { s->setVariable("reloadAll", true); });
 	
 	s->onFinalize([s, pthis, window]
 	{

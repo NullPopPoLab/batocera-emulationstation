@@ -48,10 +48,10 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 	addChild(&mMenu);
 
 	bool isImageViewer = game->getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER);
-	bool hasManual = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && Utils::FileSystem::exists(game->getMetadata(MetaDataId::Manual));
-	bool hasMagazine = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && Utils::FileSystem::exists(game->getMetadata(MetaDataId::Magazine));
-	bool hasMap = Utils::FileSystem::exists(game->getMetaPath(MetaDataId::Map));
-	bool hasVideo = Utils::FileSystem::exists(game->getMetaPath(MetaDataId::Video));
+	bool hasManual = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && game->hasMetaFile(MetaDataId::Manual);
+	bool hasMagazine = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && game->hasMetaFile(MetaDataId::Magazine);
+	bool hasMap = game->hasMetaFile(MetaDataId::Map);
+	bool hasVideo = Utils::FileSystem::exists(game->getVideoPath());
 	bool hasAlternateMedias = game->getSourceFileData()->getFileMedias().size() > 0;
 	bool hasCheevos = game->hasCheevos();
 
@@ -91,7 +91,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		{
 			mMenu.addEntry(_("VIEW FULLSCREEN VIDEO"), false, [window, game, this]
 			{
-				auto imagePath = game->getMetaPath(MetaDataId::Video);
+				auto imagePath = game->getVideoPath();
 				GuiVideoViewer::playVideo(mWindow, imagePath);
 				close();
 			});

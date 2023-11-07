@@ -43,10 +43,15 @@ DetailedContainer::DetailedContainer(ISimpleGameListView* parent, GuiComponent* 
 		{ "md_marquee", { MetaDataId::Marquee, MetaDataId::Wheel } },
 		{ "md_fanart", { MetaDataId::FanArt, MetaDataId::TitleShot, MetaDataId::Image } },
 		{ "md_titleshot", { MetaDataId::TitleShot, MetaDataId::Image } },
+		{ "md_ingame", { MetaDataId::Ingame, MetaDataId::Image } },
+		{ "md_outgame", { MetaDataId::Outgame, MetaDataId::Image } },
+		{ "md_visual", { MetaDataId::Visual, MetaDataId::Image } },
 		{ "md_boxart", { MetaDataId::BoxArt, MetaDataId::Thumbnail } },		
 		{ "md_wheel",{ MetaDataId::Wheel, MetaDataId::Marquee } },
 		{ "md_cartridge",{ MetaDataId::Cartridge } },
 		{ "md_boxback",{ MetaDataId::BoxBack } },		
+		{ "md_flyer",{ MetaDataId::Flyer } },		
+		{ "md_pcb",{ MetaDataId::PCB } },		
 		{ "md_mix",{ MetaDataId::Mix, MetaDataId::Image, MetaDataId::Thumbnail } },
 
 		// Medias  that can't be substituted even if not found
@@ -56,10 +61,14 @@ DetailedContainer::DetailedContainer(ISimpleGameListView* parent, GuiComponent* 
 		{ "md_wheel_only", { MetaDataId::Wheel } },
 		{ "md_fanart_only", { MetaDataId::FanArt } },
 		{ "md_titleshot_only", { MetaDataId::TitleShot } },
+		{ "md_ingame_only", { MetaDataId::Ingame} },
+		{ "md_outgame_only", { MetaDataId::Outgame} },
+		{ "md_visual_only", { MetaDataId::Visual} },
 		{ "md_boxart_only", { MetaDataId::BoxArt } },
 		{ "md_boxback_only", { MetaDataId::BoxBack } },		
 		{ "md_cartridge_only",{ MetaDataId::Cartridge } },
-		{ "md_boxback_only",{ MetaDataId::BoxBack } },
+		{ "md_flyer_only",{ MetaDataId::Flyer } },
+		{ "md_pcb_only",{ MetaDataId::PCB } },
 		{ "md_mix_only", { MetaDataId::Mix } }
 	};
 
@@ -590,23 +599,16 @@ void DetailedContainer::updateDetailsForFolder(FolderData* folder)
 
 				auto src = mVideo->getSnapshotSource();
 
-
-				if (src == TITLESHOT && Utils::FileSystem::exists(firstGameWithImage->getMetaPath(MetaDataId::TitleShot)))
-					snapShot = firstGameWithImage->getMetaPath(MetaDataId::TitleShot);
-				else if (src == BOXART && Utils::FileSystem::exists(firstGameWithImage->getMetaPath(MetaDataId::BoxArt)))
-					snapShot = firstGameWithImage->getMetaPath(MetaDataId::BoxArt);
-				else if (src == MARQUEE && !firstGameWithImage->getMarqueePath().empty())
-					snapShot = firstGameWithImage->getMarqueePath();
-				else if ((src == THUMBNAIL || src == BOXART) && !firstGameWithImage->getThumbnailPath().empty())
-					snapShot = firstGameWithImage->getThumbnailPath();
-				else if ((src == IMAGE || src == TITLESHOT) && !firstGameWithImage->getImagePath().empty())
-					snapShot = firstGameWithImage->getImagePath();
-				else if (src == FANART && Utils::FileSystem::exists(firstGameWithImage->getMetaPath(MetaDataId::FanArt)))
-					snapShot = firstGameWithImage->getMetaPath(MetaDataId::FanArt);
-				else if (src == CARTRIDGE && Utils::FileSystem::exists(firstGameWithImage->getMetaPath(MetaDataId::Cartridge)))
-					snapShot = firstGameWithImage->getMetaPath(MetaDataId::Cartridge);
-				else if (src == MIX && Utils::FileSystem::exists(firstGameWithImage->getMetaPath(MetaDataId::Mix)))
-					snapShot = firstGameWithImage->getMetaPath(MetaDataId::Mix);
+				switch(src){
+					case TITLESHOT: snapShot = firstGameWithImage->getTitleShotPath(); break;
+					case BOXART: snapShot = firstGameWithImage->getMetaPath(MetaDataId::BoxArt); break;
+					case MARQUEE: snapShot = firstGameWithImage->getMarqueePath(); break;
+					case THUMBNAIL: snapShot = firstGameWithImage->getThumbnailPath(); break;
+					case IMAGE: snapShot = firstGameWithImage->getImagePath(); break;
+					case FANART: snapShot = firstGameWithImage->getMetaPath(MetaDataId::FanArt); break;
+					case CARTRIDGE: snapShot = firstGameWithImage->getMetaPath(MetaDataId::Cartridge); break;
+					case MIX: snapShot = firstGameWithImage->getMetaPath(MetaDataId::Mix); break;
+				}
 
 				mVideo->setImage(snapShot);
 			}
@@ -723,22 +725,16 @@ void DetailedContainer::updateControls(FileData* file, bool isClearing, int move
 
 			auto src = mVideo->getSnapshotSource();
 
-			if (src == TITLESHOT && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::TitleShot)))
-				snapShot = file->getMetaPath(MetaDataId::TitleShot);
-			else if (src == BOXART && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::BoxArt)))
-				snapShot = file->getMetaPath(MetaDataId::BoxArt);
-			else if (src == MARQUEE && !file->getMarqueePath().empty())
-				snapShot = file->getMarqueePath();
-			else if ((src == THUMBNAIL || src == BOXART) && !file->getThumbnailPath().empty())
-				snapShot = file->getThumbnailPath();			
-			else if ((src == IMAGE || src == TITLESHOT) && !file->getImagePath().empty())
-				snapShot = file->getImagePath();
-			else if (src == FANART && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::FanArt)))
-				snapShot = file->getMetaPath(MetaDataId::FanArt);
-			else if (src == CARTRIDGE && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::Cartridge)))
-				snapShot = file->getMetaPath(MetaDataId::Cartridge);
-			else if (src == MIX && Utils::FileSystem::exists(file->getMetaPath(MetaDataId::Mix)))
-				snapShot = file->getMetaPath(MetaDataId::Mix);
+			switch(src){
+				case TITLESHOT: snapShot = file->getTitleShotPath(); break;
+				case BOXART: snapShot = file->getMetaPath(MetaDataId::BoxArt); break;
+				case MARQUEE: snapShot = file->getMarqueePath(); break;
+				case THUMBNAIL: snapShot = file->getThumbnailPath(); break;
+				case IMAGE: snapShot = file->getImagePath(); break;
+				case FANART: snapShot = file->getMetaPath(MetaDataId::FanArt); break;
+				case CARTRIDGE: snapShot = file->getMetaPath(MetaDataId::Cartridge); break;
+				case MIX: snapShot = file->getMetaPath(MetaDataId::Mix); break;
+			}
 			
 			mVideo->setImage(snapShot, false, mVideo->getMaxSizeInfo());
 		}
@@ -805,7 +801,7 @@ void DetailedContainer::updateControls(FileData* file, bool isClearing, int move
 				mFlag->setImage(":/folder.svg");
 		}
 
-		bool hasManualOrMagazine = Utils::FileSystem::exists(file->getMetaPath(MetaDataId::Manual)) || Utils::FileSystem::exists(file->getMetaPath(MetaDataId::Magazine));
+		bool hasManualOrMagazine = Utils::FileSystem::exists(file->getMetadata(MetaDataId::Manual)) || Utils::FileSystem::exists(file->getMetadata(MetaDataId::Magazine));
 
 		if (mManual != nullptr)
 			mManual->setVisible(hasManualOrMagazine);
@@ -814,10 +810,10 @@ void DetailedContainer::updateControls(FileData* file, bool isClearing, int move
 			mNoManual->setVisible(!hasManualOrMagazine);
 
 		if (mMap != nullptr)
-			mMap->setVisible(Utils::FileSystem::exists(file->getMetaPath(MetaDataId::Map)));
+			mMap->setVisible(Utils::FileSystem::exists(file->getMetadata(MetaDataId::Map)));
 
 		if (mNoMap != nullptr)
-			mNoMap->setVisible(!Utils::FileSystem::exists(file->getMetaPath(MetaDataId::Map)));
+			mNoMap->setVisible(!Utils::FileSystem::exists(file->getMetadata(MetaDataId::Map)));
 
 		// Save states
 		bool hasSaveState = false;

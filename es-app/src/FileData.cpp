@@ -88,9 +88,7 @@ const std::string FileData::getBreadCrumbPath()
 
 const std::string FileData::getConfigurationName()
 {
-	std::string gameConf = Utils::FileSystem::getFileName(getPath());
-	gameConf = Utils::String::replace(gameConf, "=", "");
-	gameConf = Utils::String::replace(gameConf, "#", "");
+	std::string gameConf = getPathKey();
 	gameConf = getSourceFileData()->getSystem()->getName() + std::string("[\"") + gameConf + std::string("\"]");
 	return gameConf;
 }
@@ -158,6 +156,10 @@ std::string& FileData::getDisplayName()
 		std::string stem = Utils::FileSystem::getStem(getPath());
 		if (mSystem && (mSystem->hasPlatformId(PlatformIds::ARCADE) || mSystem->hasPlatformId(PlatformIds::NEOGEO)))
 			stem = MameNames::getInstance()->getRealName(stem);
+		else{
+			auto dir=getDirKey();
+			if(!dir.empty())stem = dir+" ("+stem+")";
+		}
 
 		mDisplayName = new std::string(stem);
 	}
@@ -209,6 +211,8 @@ const std::string FileData::getThumbnailPath()
 {
 	std::string thumbnail = getMetaPath(MetaDataId::Thumbnail);
 
+	if (thumbnail.empty()) thumbnail = getMetaPath(MetaDataId::TitleShot);
+
 	// no thumbnail, try image
 	if(thumbnail.empty())
 	{
@@ -231,7 +235,9 @@ const std::string FileData::getThumbnailPath()
 		}
 
 		if (thumbnail.empty())
-			thumbnail = getMetaPath(MetaDataId::Image);
+			thumbnail = getMetadata(MetaDataId::Image);
+		if (thumbnail.empty())
+			thumbnail = getMetadata(MetaDataId::Ingame);
 
 		// no image, try to use local image
 		if (thumbnail.empty() && Settings::getInstance()->getBool("LocalArt"))
@@ -248,26 +254,62 @@ const std::string FileData::getThumbnailPath()
 				}
 			}
 		}
-
-		if (thumbnail.empty() && getType() == GAME && getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER))
-		{
-			if (getType() == FOLDER && ((FolderData*)this)->mChildren.size())
-				return ((FolderData*)this)->mChildren[0]->getThumbnailPath();
-			else if (getType() == GAME)
-			{
-				thumbnail = getPath();
-
-				auto ext = Utils::String::toLower(Utils::FileSystem::getExtension(thumbnail));
-				if (ext == ".pdf" && ResourceManager::getInstance()->fileExists(":/pdf.jpg"))
-					return ":/pdf.jpg";
-				else if ((ext == ".mp4" || ext == ".avi" || ext == ".mkv" || ext == ".webm") && ResourceManager::getInstance()->fileExists(":/vid.jpg"))
-					return ":/vid.jpg";
-			}
-		}
-
 	}
 
 	return thumbnail;
+}
+
+const std::string FileData::getTitleShotPath()
+{
+	std::string path = getMetaPath(MetaDataId::TitleShot);
+	if (path.empty()) path = getMetaPath(MetaDataId::Thumbnail);
+	if (path.empty()) path = getMetaPath(MetaDataId::Cartridge);
+	if (path.empty()) path = getMetaPath(MetaDataId::Marquee);
+
+	// no titleshot, try image
+	if(path.empty())
+	{
+		// no image, try to use local image
+		if(path.empty() && Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for(int i = 0; i < 2; i++)
+			{
+				if(path.empty())
+				{
+					std::string path = getMediaDir() + "/image" + extList[i];
+					if (Utils::FileSystem::exists(path))
+					{
+						setMetadata(MetaDataId::Thumbnail, path);
+						path = path;
+					}
+				}
+			}
+		}
+
+		if (path.empty())
+			path = getMetadata(MetaDataId::Image);
+		if (path.empty())
+			path = getMetadata(MetaDataId::Ingame);
+
+		// no image, try to use local image
+		if (path.empty() && Settings::getInstance()->getBool("LocalArt"))
+		{
+			const char* extList[2] = { ".png", ".jpg" };
+			for (int i = 0; i < 2; i++)
+			{
+				if (path.empty())
+				{
+					std::string path = getMediaDir() + "/image" + extList[i];
+
+					if (Utils::FileSystem::exists(path))
+						path = path;
+				}
+			}
+		}
+	}
+
+	return path;
 }
 
 const bool FileData::getFavorite()
@@ -396,6 +438,8 @@ const std::string FileData::getMarqueePath()
 const std::string FileData::getImagePath()
 {
 	std::string image = getMetaPath(MetaDataId::Image);
+	if (image.empty())
+		image = getMetadata(MetaDataId::Ingame);
 
 	// no image, try to use local image
 	if(image.empty())
@@ -878,6 +922,13 @@ std::set<std::string> FileData::getContentFiles()
 					if (trim[0] == '#' || trim[0] == '\\' || trim[0] == '/')
 						continue;
 
+					if(trim[0]=='*'){
+						// skip Advanced M3U attribute 
+						auto ep=trim.find(';');
+						if(ep==std::string::npos)continue;
+						if(trim.size()<=ep+1)continue;
+						trim=trim.substr(ep+1);
+					}
 					files.insert(path + "/" + trim);
 				}
 
@@ -1738,4 +1789,9 @@ void FileData::setSelectedGame()
 		TextToSpeech::getInstance()->say(desc, true);
 
 	
+}
+
+void FileData::complement()
+{
+	mMetadata.complement();
 }

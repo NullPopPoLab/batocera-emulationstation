@@ -32,66 +32,77 @@ void MetaDataList::initMetadata()
 	MetaDataDecl gameDecls[] = 
 	{
 		// key,             type,                   default,            statistic,  name in GuiMetaDataEd,  prompt in GuiMetaDataEd
-		{ Name,             "name",        MD_STRING,              "",                 false,      _("Name"),                 _("this game's name"),			true },
-		{ SortName,         "sortname",    MD_STRING,              "",                 false,      _("sortname"),             _("enter game sort name"),	true },
+		{ Name,             "name",        MD_STRING,              "",                 false,      _("Name"),                 _("displaying game title"),	true },
+		{ Title,      		"title",       MD_STRING,              "",                 false,      _("Strict Title"),		  _("strict game title"),		false },
+		{ SortName,         "sortname",    MD_STRING,              "",                 false,      _("Sortable Title"),       _("sortable game title"),		true },
+		{ Family,           "family",      MD_STRING,              "",                 false,      _("Game Family"),		  _("this game's game family"),		false },
 		{ Desc,             "desc",        MD_MULTILINE_STRING,    "",                 false,      _("Description"),          _("this game's description"),		true },
 
+		{ Rating,           "rating",      MD_RATING,              "0",                false,      _("Rating"),               _("grading score"),            false },
+		{ Runnable,         "runnable",    MD_BOOL,                "false",            false,      _("Runnable"),             _("can start this game"),     false },
+		{ Favorite,         "favorite",    MD_BOOL,                "false",            false,      _("Favorite"),             _("collection in favorite"),  false },
+		{ Hidden,           "hidden",      MD_BOOL,                "false",            false,      _("Hidden"),               _("hidden from game list"),   true },
+		{ KidGame,          "kidgame",     MD_BOOL,                "false",            false,      _("Kid's Game"),           _("enabled in kid mode"),     false },
+
 #if WIN32 && !_DEBUG
-		{ Emulator,         "emulator",    MD_LIST,				 "",                 false,       _("Emulator"),			 _("emulator"),					false },
-		{ Core,             "core",	      MD_LIST,				 "",                 false,       _("Core"),				 _("core"),						false },
+		{ Emulator,         "emulator",    MD_LIST,                "",                 false,      _("Emulator"),             _("emulator"),					false },
+		{ Core,             "core",	       MD_LIST,                "",                 false,      _("Core"),                 _("core"),						false },
 #else
 		// Windows & recalbox gamelist.xml compatiblity -> Set as statistic to hide it from metadata editor
-		{ Emulator,         "emulator",    MD_LIST,				 "",                 true,        _("Emulator"),			 _("emulator"),					false },
-		{ Core,             "core",	     MD_LIST,				 "",                 true,        _("Core"),				 _("core"),						false },
+		{ Emulator,         "emulator",    MD_LIST,	               "",                 true,       _("Emulator"),             _("emulator"),					false },
+		{ Core,             "core",	       MD_LIST,	               "",                 true,       _("Core"),                 _("core"),						false },
 #endif
+		{ Crc32,            "crc32",       MD_STRING,              "",                 true,       _("CRC32"),                _("CRC32 checksum"),			false },
+		{ Md5,              "md5",		   MD_STRING,              "",                 true,       _("MD5"),                  _("MD5 checksum"),			false },
 
+		{ Thumbnail,        "thumbnail",   MD_PATH,                "",                 false,      _("Thumbnail"),            _("enter path to thumbnail"),		 false },
 		{ Image,            "image",       MD_PATH,                "",                 false,      _("Image"),                _("enter path to image"),		 true },
+		{ TitleShot,        "titleshot",   MD_PATH,                "",                 false,      _("Title Shot"),           _("enter path to title shot"), true },
+		{ Ingame,			"ingame",	   MD_PATH,                "",                 false,      _("Ingame Shot"),		  _("enter path to ingame shot"), true },
+		{ Outgame,			"outgame",	   MD_PATH,                "",                 false,      _("Outgame Shot"),         _("enter path to outgame shot"), true },
+		{ Visual,			"visual",	   MD_PATH,                "",                 false,      _("Visual Shot"),          _("enter path to visual shot"), true },
 		{ Video,            "video",       MD_PATH,                "",                 false,      _("Video"),                _("enter path to video"),		 false },
-		{ Marquee,          "marquee",     MD_PATH,                "",                 false,      _("Logo"),                 _("enter path to logo"),	     true },
-		{ Thumbnail,        "thumbnail",   MD_PATH,                "",                 false,      _("Box"),				  _("enter path to box"),		 false },
 
-		{ FanArt,           "fanart",      MD_PATH,                "",                 false,      _("Fan art"),              _("enter path to fanart"),	 true },
-		{ TitleShot,        "titleshot",   MD_PATH,                "",                 false,      _("Title shot"),           _("enter path to title shot"), true },
-		{ Manual,			"manual",	   MD_PATH,                "",                 false,      _("Manual"),               _("enter path to manual"),     true },
-		{ Magazine,			"magazine",	   MD_PATH,                "",                 false,      _("Magazine"),             _("enter path to magazine"),     true },
-		{ Map,			    "map",	       MD_PATH,                "",                 false,      _("Map"),                  _("enter path to map"),		 true },
-		{ Bezel,            "bezel",       MD_PATH,                "",                 false,      _("Bezel (16:9)"),         _("enter path to bezel (16:9)"),	 true },
-
-		// Non scrappable /editable medias
-		{ Cartridge,        "cartridge",   MD_PATH,                "",                 true,       _("Cartridge"),            _("enter path to cartridge"),  true },
-		{ BoxArt,			"boxart",	   MD_PATH,                "",                 true,       _("Alt BoxArt"),		      _("enter path to alt boxart"), true },
-		{ BoxBack,			"boxback",	   MD_PATH,                "",                 false,      _("Box backside"),		  _("enter path to box background"), true },
-		{ Wheel,			"wheel",	   MD_PATH,                "",                 true,       _("Wheel"),		          _("enter path to wheel"),      true },
-		{ Mix,			    "mix",	       MD_PATH,                "",                 true,       _("Mix"),                  _("enter path to mix"),		 true },
-		
-		{ Rating,           "rating",      MD_RATING,              "0.000000",         false,      _("Rating"),               _("enter rating"),			false },
-		{ ReleaseDate,      "releasedate", MD_DATE,                "not-a-date-time",  false,      _("Release date"),         _("enter release date"),		false },
+		{ Region,           "region",      MD_STRING,              "",                 false,      _("Region"),               _("this game's region"),					false },
+		{ Language,         "lang",        MD_STRING,              "",                 false,      _("Languages"),            _("this game's languages"),				false },
+		{ ReleaseDate,      "releasedate", MD_DATE,                "not-a-date-time",  false,      _("Release Date"),         _("enter release date"),		false },
 		{ Developer,        "developer",   MD_STRING,              "",                 false,      _("Developer"),            _("this game's developer"),	false },
 		{ Publisher,        "publisher",   MD_STRING,              "",                 false,      _("Publisher"),            _("this game's publisher"),	false },
 
-
+		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Powered by"),           _("arcade system, attachment, etc."), false },
 		{ Genre,            "genre",       MD_STRING,              "",                 false,      _("Genre"),                _("enter game genre"),		false }, 
-		{ Family,           "family",      MD_STRING,              "",                 false,      _("Game family"),		  _("this game's game family"),		false },
+		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genre IDs"),            _("enter game genres"),		false },
+		{ Players,          "players",     MD_STRING,              "",                 false,      _("Players"),              _("this game's number of players"),	false },
+		{ Included,         "included",    MD_MULTILINE_STRING,    "",                 false,      _("Included"),             _("included games"),	false },
+		{ Premise,          "premise",     MD_MULTILINE_STRING,    "",                 false,      _("Premise"),              _("premise for this game"),	false },
+		{ Story,            "story",       MD_MULTILINE_STRING,    "",                 false,      _("Story"),                _("this game's story"),		false },
+		{ Rule,             "rule",        MD_MULTILINE_STRING,    "",                 false,      _("Rule"),                 _("this game's rule"),		false },
+		{ Operation,        "operation",   MD_MULTILINE_STRING,    "",                 false,      _("Operation"),            _("how to play"),             false },
+		{ Credit,           "credit",      MD_MULTILINE_STRING,    "",                 false,      _("Credit"),               _("this game's staff"),       false },
+		{ Tips,             "tips",        MD_MULTILINE_STRING,    "",                 false,      _("Tips"),                 _("useful something"),        false },
+		{ Notes,            "notes",       MD_MULTILINE_STRING,    "",                 false,      _("Notes"),                _("miscellaneous something"),        false },
+		{ Bugs,             "bugs",        MD_MULTILINE_STRING,    "",                 false,      _("Bugs"),                 _("problem info"),            false },
 
-		// GenreIds is not serialized
-		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genres"),				  _("enter game genres"),		false },
+		{ Bezel,            "bezel",       MD_PATH,                "",                 false,      _("Bezel (16:9)"),         _("enter path to bezel (16:9)"),	 true },
+		{ Marquee,          "marquee",     MD_PATH,                "",                 false,      _("Logo"),                 _("enter path to logo"),	     true },
+		{ BoxArt,			"boxart",	   MD_PATH,                "",                 false,      _("Box Face"),		      _("enter path to alt boxart"), true },
+		{ BoxBack,			"boxback",	   MD_PATH,                "",                 false,      _("Box Backside"),		  _("enter path to box background"), true },
+		{ Cartridge,        "cartridge",   MD_PATH,                "",                 false,      _("Cartridge"),            _("enter path to cartridge"),  true },
+		{ Cabinet,			"cabinet",	   MD_PATH,                "",                 false,      _("Cabinet"),		  		  _("enter path to pcb"), true },
+		{ PCB,				"pcb",	       MD_PATH,                "",                 false,      _("PCB"),		  		  _("enter path to pcb"), true },
+		{ Flyer,			"flyer",	   MD_PATH,                "",                 false,      _("Flyer"),		  		  _("enter path to flyer"), true },
+		{ InstCard,			"instcard",	   MD_PATH,                "",                 false,      _("Inst Card"),		  	  _("enter path to instruction card"), true },
+		{ Wheel,			"wheel",	   MD_PATH,                "",                 false,      _("Wheel"),		          _("enter path to wheel"),      true },
+		{ FanArt,           "fanart",      MD_PATH,                "",                 false,      _("Fan Art"),              _("enter path to fanart"),	 true },
+		{ Mix,			    "mix",	       MD_PATH,                "",                 false,      _("Mix"),                  _("enter path to mix"),		 true },
 
-		{ ArcadeSystemName, "arcadesystemname",  MD_STRING,        "",                 false,      _("Arcade system"),        _("this game's arcade system"), false },
+		{ Map,			    "map",	       MD_PATH,                "",                 false,      _("Map"),                  _("enter path to map"),		 true },
+		{ Manual,			"manual",	   MD_PATH,                "",                 false,      _("Manual"),               _("enter path to manual"),     true },
+		{ Magazine,			"magazine",	   MD_PATH,                "",                 false,      _("Magazine"),             _("enter path to magazine"),     true },
 
-		{ Players,          "players",     MD_INT,                 "",                false,       _("Players"),              _("this game's number of players"),	false },
-		{ Favorite,         "favorite",    MD_BOOL,                "false",            false,      _("Favorite"),             _("enter favorite"),			false },
-		{ Hidden,           "hidden",      MD_BOOL,                "false",            false,      _("Hidden"),               _("enter hidden"),			true },
-		{ KidGame,          "kidgame",     MD_BOOL,                "false",            false,      _("Kidgame"),              _("enter kidgame"),			false },
-		{ PlayCount,        "playcount",   MD_INT,                 "0",                true,       _("Play count"),           _("enter number of times played"), false },
-		{ LastPlayed,       "lastplayed",  MD_TIME,                "0",                true,       _("Last played"),          _("enter last played date"), false },
-
-		{ Crc32,            "crc32",       MD_STRING,              "",                 true,       _("Crc32"),                _("Crc32 checksum"),			false },
-		{ Md5,              "md5",		   MD_STRING,              "",                 true,       _("Md5"),                  _("Md5 checksum"),			false },
-
-		{ GameTime,         "gametime",    MD_INT,                 "0",                true,       _("Game time"),            _("how long the game has been played in total (seconds)"), false },
-
-		{ Language,         "lang",        MD_STRING,              "",                 false,      _("Languages"),            _("this game's languages"),				false },
-		{ Region,           "region",      MD_STRING,              "",                 false,      _("Region"),               _("this game's region"),					false },
+		{ PlayCount,        "playcount",   MD_INT,                 "0",                true,       _("Play Count"),           _("enter number of times played"), false },
+		{ LastPlayed,       "lastplayed",  MD_TIME,                "0",                true,       _("Last Played"),          _("enter last played date"), false },
+		{ GameTime,         "gametime",    MD_INT,                 "0",                true,       _("Game Time"),            _("how long the game has been played in total (seconds)"), false },
 
 		{ CheevosHash,      "cheevosHash", MD_STRING,              "",                 true,       _("Cheevos Hash"),          _("Cheevos checksum"),	    false },
 		{ CheevosId,        "cheevosId",   MD_INT,                 "",				   true,       _("Cheevos Game ID"),       _("Cheevos Game ID"),		false },
@@ -127,6 +138,20 @@ void MetaDataList::initMetadata()
 	}
 }
 
+const MetaDataDecl& MetaDataList::getDecl(MetaDataId id)
+{
+	auto it = mMetaDataIndexes.find(id);
+	if (it == mMetaDataIndexes.cend()) return mInvalidMetaDataDecl;
+	return mMetaDataDecls[it->second];
+}
+
+const MetaDataDecl& MetaDataList::getDecl(const std::string& key)
+{
+	auto it = mGameIdMap.find(key);
+	if (it == mGameIdMap.cend()) return mInvalidMetaDataDecl;
+	return getDecl(it->second);
+}
+
 MetaDataType MetaDataList::getType(MetaDataId id) const
 {
 	return mGameTypeMap[id];
@@ -156,6 +181,7 @@ void MetaDataList::init(SystemData* system, FileData* file)
 void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node)
 {
 	mType = type;
+	mRelativeTo = system;	
 
 	mUnKnownElements.clear();
 	mScrapeDates.clear();
@@ -213,9 +239,6 @@ void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node)
 			mName = value;
 			continue;
 		}
-
-		if (mdd.id == MetaDataId::GenreIds)
-			continue;
 
 		if (value == mdd.defaultValue)
 			continue;
@@ -281,6 +304,68 @@ void MetaDataList::migrate(FileData* file, pugi::xml_node& node)
 	}
 }
 
+void MetaDataList::complement(const std::string& key, const std::vector<std::string>& extlist){
+
+	auto path = get(key);
+	if (path != ""){
+		if(Utils::FileSystem::exists(path))return;
+		mMap.erase(getId(key));
+		mWasChanged = true;
+	}
+
+	bool f=false;
+	for(auto& it: extlist){
+		path = Scraper::getSaveAsPath(mTargetFile,getId(key),*&it);
+
+		if(!Utils::FileSystem::exists(path))continue;
+		set(key,path);
+		f=true;
+	}
+}
+
+void MetaDataList::complement_image(const std::string& key){
+	std::vector<std::string> extlist={ ".png", ".jpg", ".jpeg", ".gif" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement_video(const std::string& key){
+	std::vector<std::string> extlist={ ".mp4", ".avi", ".mkv", ".webm" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement_document(const std::string& key){
+	std::vector<std::string> extlist={ ".pdf", ".cbz" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement()
+{
+	auto path = mTargetFile->getSourceFileData()->getMediaDir();
+	if(!Utils::FileSystem::exists(path))return;
+
+	complement_image("image");
+	complement_video("video");
+	complement_image("marquee");
+	complement_image("thumbnail");
+	complement_image("fanart");
+	complement_image("titleshot");
+	complement_document("manual");
+	complement_document("magazine");
+	complement_image("map");
+	complement_image("bezel");
+	complement_image("cartridge");
+	complement_image("boxart");
+	complement_image("boxback");
+	complement_image("wheel");
+	complement_image("cabinet");
+	complement_image("pcb");
+	complement_image("flyer");
+	complement_image("instcard");
+	complement_image("ingame");
+	complement_image("outgame");
+	complement_image("visual");
+}
+
 void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths) const
 {
 	const std::vector<MetaDataDecl>& mdd = getMDD();
@@ -292,10 +377,6 @@ void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, cons
 			parent.append_child("name").text().set(mName.c_str());
 			continue;
 		}
-
-		// Don't save GenreIds
-		if (mddIter->id == MetaDataId::GenreIds)
-			continue;
 
 		auto mapIter = mMap.find(mddIter->id);
 		if(mapIter != mMap.cend())
@@ -574,4 +655,19 @@ Utils::Time::DateTime* MetaDataList::getScrapeDate(const std::string& scraper)
 	}
 
 	return nullptr;
+}
+
+bool MetaDataList::isSlideShowAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./slideshow", getMediaDir(), true);
+	return Utils::FileSystem::isDirectory(path);
+}
+
+bool MetaDataList::isJukeBoxAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./jukebox", getMediaDir(), true);
+	return Utils::FileSystem::isDirectory(path);
+}
+
+bool MetaDataList::isDocumentationAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./docs.json", getMediaDir(), true);
+	return Utils::FileSystem::isRegularFile(path);
 }

@@ -34,22 +34,37 @@ std::string SaveStateRepository::getSavesPath()
 {
 	return Utils::FileSystem::combine(Paths::getSavesPath(), mSystem->getName());
 }
-	
-void SaveStateRepository::refresh()
-{
-	clear();
 
-	auto path = getSavesPath();
+std::string SaveStateRepository::getSaveName(const std::string& path)
+{
+	auto s=getSavesPath();
+	s=Utils::FileSystem::createRelativePath(path,s,false);
+	s=Utils::FileSystem::getParent(s);
+	s=Utils::FileSystem::createRelativePath_undot(s,s,false);
+//	s=Utils::FileSystem::changeExtension(s,"");
+//	if (Utils::String::endsWith(s, ".state")) s = Utils::FileSystem::getStem(s);
+	return s;
+}
+	
+void SaveStateRepository::refresh(const std::string& base, const std::string& path)
+{
 	if (!Utils::FileSystem::exists(path))
 		return;
 	
+	auto l0=base.size();
+	auto l1=path.size();
+	auto gname=path.substr(l0+1);
+
 	auto files = Utils::FileSystem::getDirectoryFiles(path);
 	for (auto file : files)
 	{
-		if (file.hidden || file.directory)
+		if (file.hidden)
+			continue;
+		if (file.directory)
 			continue;
 
-		std::string ext = Utils::String::toLower(Utils::FileSystem::getExtension(file.path));
+		std::string lowpath=Utils::String::toLower(file.path);
+		std::string ext = Utils::FileSystem::getExtension(lowpath);
 
 		if (ext == ".bak")
 		{
@@ -59,21 +74,25 @@ void SaveStateRepository::refresh()
 			// TODO RESTORE BAK FILE !? If board was turned off during a game ?
 		}
 
-		if (ext != ".auto" && !Utils::String::startsWith(ext, ".state"))
-			continue;
-
-		SaveState* state = new SaveState();
+		int slot=0;
+		std::string key;
+		std::string stem = Utils::FileSystem::getStem(lowpath);
 
 		if (ext == ".auto")
-			state->slot = -1;
-		else if (Utils::String::startsWith(ext, ".state"))
-			state->slot = Utils::String::toInteger(ext.substr(6));
+			slot = -1;
+		else if (ext=="" && Utils::String::startsWith(stem, "state_")){
+			slot = -99;
+			key = Utils::FileSystem::getStem(file.path).substr(6);
+		}
+		else if (ext=="" && Utils::String::startsWith(stem, "state"))
+			slot = Utils::String::toInteger(stem.substr(5));
+		else continue;
 
-		auto stem = Utils::FileSystem::getStem(file.path);
-		if (Utils::String::endsWith(stem, ".state"))
-			stem = Utils::FileSystem::getStem(stem);
-				
-		state->rom = stem;
+		SaveState* state = new SaveState(this);
+		state->slot = slot;
+		state->label = key;
+
+		state->rom = gname;
 		state->fileName = file.path;
 
 #if WIN32
@@ -82,31 +101,65 @@ void SaveStateRepository::refresh()
 		state->creationDate = Utils::FileSystem::getFileModificationDate(state->fileName);
 #endif
 
-		mStates[stem].push_back(state);
+		mStates[gname].push_back(state);
+	}
+}
+
+void SaveStateRepository::refresh()
+{
+	clear();
+
+	auto path=getSavesPath();
+	auto files = Utils::FileSystem::getDirectoryFiles(path);
+	for (auto file : files)
+	{
+		if (!file.directory)
+			continue;
+		if (file.hidden)
+			continue;
+
+		refresh(path,file.path);
 	}
 }
 
 bool SaveStateRepository::hasSaveStates(FileData* game)
 {
-	if (mStates.size())
-	{
-		if (game->getSourceFileData()->getSystem() != mSystem)
-			return false;
+	SystemData* gsys=game->getSourceFileData()->getSystem();
+	if (gsys != mSystem){
+		return false;
+	}
 
-		auto it = mStates.find(Utils::FileSystem::getStem(game->getPath()));
-		if (it != mStates.cend())
+	auto name=game->getGameKey();
+	if (!mStates.size()){
+		return false;
+	}
+
+	{
+		auto it = mStates.find(name);
+		if (it != mStates.cend()){
 			return true;
+		}
 	}
 
 	return false;
 }
 std::vector<SaveState*> SaveStateRepository::getSaveStates(FileData* game)
 {
-	if (isEnabled(game) && game->getSourceFileData()->getSystem() == mSystem)
+	SystemData* gsys=game->getSourceFileData()->getSystem();
+	if (gsys != mSystem){
+		return std::vector<SaveState*>();
+	}
+
+	auto name=game->getGameKey();
+	if(!isEnabled(game)){
+		return std::vector<SaveState*>();
+	}
+
 	{
-		auto it = mStates.find(Utils::FileSystem::getStem(game->getPath()));
-		if (it != mStates.cend())
+		auto it = mStates.find(name);
+		if (it != mStates.cend()){
 			return it->second;
+		}
 	}
 
 	return std::vector<SaveState*>();

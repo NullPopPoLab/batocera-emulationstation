@@ -82,6 +82,7 @@ public:
 	virtual const std::string getOfficialMediaDir();
 	virtual const std::string getMediaDir();
 	virtual const std::string getThumbnailPath();
+	virtual const std::string getTitleShotPath();
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();
 	virtual const std::string getImagePath();
@@ -167,6 +168,8 @@ public:
 	std::set<std::string> getContentFiles();
 
 	void setSelectedGame();
+
+	void complement();
 
 private:
 	std::string getKeyboardMappingFilePath();
