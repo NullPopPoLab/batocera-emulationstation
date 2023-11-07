@@ -36,6 +36,9 @@ struct SaveState
   	bool hasAutosave;
   	bool racommands;
 	std::string getScreenShot() const;
+	bool hasMeta() const;
+	std::string getMetaPath() const;
+	bool getMetaContent(std::map<std::string,std::string>& dst) const;
 	int slot;
 	std::string label;
 
@@ -54,6 +57,7 @@ private:
 	SaveStateRepository* mRepository;
 	std::string mAutoFileBackup;
 	std::string mAutoImageBackup;
+	std::string mAutoMetaBackup;
 
 
 	std::string mNewSlotFile;	

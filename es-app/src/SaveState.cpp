@@ -34,6 +34,50 @@ std::string SaveState::getScreenShot() const
 	return "";
 }
 
+bool SaveState::hasMeta() const
+{
+	if (fileName.empty()) return false;
+	if (!Utils::FileSystem::exists(fileName + ".json")) return false;
+	return true;
+}
+
+std::string SaveState::getMetaPath() const
+{
+	if (!hasMeta()) return "";
+	return fileName + ".json";
+}
+
+bool SaveState::getMetaContent(std::map<std::string,std::string>& dst) const
+{
+	dst.clear();
+	if (!hasMeta()) return false;
+
+	auto path=getMetaPath();
+	std::ifstream file(path);
+	if (!file.is_open()) {
+		LOG(LogError) << "cannot open: " << path;
+	}
+	else{
+		std::string json;
+		json=std::string(std::istreambuf_iterator<char>(file),std::istreambuf_iterator<char>());
+		file.close();
+
+		rapidjson::Document doc;
+		doc.Parse(json.c_str());
+		if (doc.HasParseError()){
+			LOG(LogError) << "invalid JSON: " << path;
+		}
+		else for (auto it = doc.MemberBegin(); it != doc.MemberEnd(); ++it){
+			auto k=it->name.GetString();
+			auto v=it->value.GetString();
+			if(!k || !v)continue;
+			dst[k]=v;
+		}
+	}
+
+	return true;
+}
+
 std::string SaveState::setupSaveState(FileData* game, const std::string& command)
 {
 	if (game == nullptr)
@@ -104,6 +148,14 @@ std::string SaveState::setupSaveState(FileData* game, const std::string& command
 			Utils::FileSystem::renameFile(autoImage, autoImage + ".bak");				
 		}
 
+		auto autoMeta = autoFilename + ".json";
+		if (Utils::FileSystem::exists(autoMeta))
+		{
+			Utils::FileSystem::removeFile(autoMeta + ".bak");
+			Utils::FileSystem::renameFile(autoMeta, autoMeta + ".bak");				
+		}
+
+		mAutoMetaBackup = autoMeta;
 		mAutoImageBackup = autoImage;
 		mAutoFileBackup = autoFilename;
 
@@ -150,6 +202,12 @@ void SaveState::onGameEnded(FileData* game)
 		Utils::FileSystem::renameFile(mAutoImageBackup + ".bak", mAutoImageBackup);
 	}
 
+	if (!mAutoMetaBackup.empty())
+	{
+		Utils::FileSystem::removeFile(mAutoMetaBackup);
+		Utils::FileSystem::renameFile(mAutoMetaBackup + ".bak", mAutoMetaBackup);
+	}
+
 	if (SystemConf::getIncrementalSaveStates())
 		SaveStateRepository::renumberSlots(game);
 }
@@ -181,12 +239,16 @@ bool SaveState::copyToSlot(int slot, bool move) const
 		Utils::FileSystem::renameFile(fileName, destState);
 		if (!getScreenShot().empty())
 			Utils::FileSystem::renameFile(getScreenShot(), destState + ".png");
+		if (hasMeta())
+			Utils::FileSystem::renameFile(getMetaPath(), destState + ".json");
 	}
 	else
 	{
 		Utils::FileSystem::copyFile(fileName, destState);
 		if (!getScreenShot().empty())
 			Utils::FileSystem::copyFile(getScreenShot(), destState + ".png");
+		if (hasMeta())
+			Utils::FileSystem::copyFile(getMetaPath(), destState + ".json");
 	}
 
 	return true;
