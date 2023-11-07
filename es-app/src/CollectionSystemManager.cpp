@@ -50,8 +50,8 @@ std::vector<CollectionSystemDecl> CollectionSystemManager::getSystemDecls()
 		{ AUTO_WHEEL,		 "wheel",     _("wheel games"),    FileSorts::FILENAME_ASCENDING,    "auto-wheel",           false,       true }, 
 
 		// (NullPopPoCustom) For Web Frontend 
-		{ AUTO_JUKEBOX,		 "jukebox",     _("jukebox ready"),    FileSorts::SORTNAME_ASCENDING,    "auto-jukebox",           false,       true }, 
-		{ AUTO_SLIDESHOW,		 "slideshow",     _("slideshow ready"),    FileSorts::SORTNAME_ASCENDING,    "auto-slideshow",           false,       true }, 
+		{ AUTO_JUKEBOX,		 "jukebox",     _("jukebox ready"),    FileSorts::FILENAME_ASCENDING,    "auto-jukebox",           false,       true }, 
+		{ AUTO_SLIDESHOW,		 "slideshow",     _("slideshow ready"),    FileSorts::FILENAME_ASCENDING,    "auto-slideshow",           false,       true }, 
 
 		// Custom collection
 		{ CUSTOM_COLLECTION,    myCollectionsName,  _("collections"),   FileSorts::FILENAME_ASCENDING,    "custom-collections",      true,        true }
