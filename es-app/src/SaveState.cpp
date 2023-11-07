@@ -6,49 +6,43 @@
 #include "FileData.h"
 #include "SaveStateRepository.h"
 #include "SystemConf.h"
+#include "Log.h"
+
+#include <iostream>
+#include <fstream>
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
 
 std::string SaveState::makeStateFilename(int slot, bool fullPath) const
 {
-	std::string ret;
+	std::string ret = this->rom + "/state" + (slot < 0 ? ".auto" : std::to_string(slot));
+	if (!fullPath) return ret;
 
-	if (slot < 0) 
-	{
-		// only for the default behavior !?
-		ret = fileGenerator;
-		ret = Utils::String::replace(ret, "{{slot}}", ".auto");
-		ret = Utils::String::replace(ret, "{{slot0}}", ".auto");
-		ret = Utils::String::replace(ret, "{{slot00}}", ".auto");
-		ret = Utils::String::replace(ret, "{{slot2d}}", ".auto");
-	}
-	else 
-	{
-		ret = fileGenerator;
-		ret = Utils::String::replace(ret, "{{slot}}", slot == 0 ? "" : std::to_string(slot));
-		ret = Utils::String::replace(ret, "{{slot0}}", std::to_string(slot));
-		ret = Utils::String::replace(ret, "{{slot00}}", Utils::String::padLeft(std::to_string(slot), 2, '0'));
-		ret = Utils::String::replace(ret, "{{slot2d}}", Utils::String::padLeft(std::to_string(slot), 2, '0'));	
-	}
-
-	if (fullPath)
-		return Utils::FileSystem::combine(Utils::FileSystem::getParent(fileName), ret);
-
-	return ret;
+	return Utils::FileSystem::combine(
+		mRepository?mRepository->getSavesPath():
+			Utils::FileSystem::getParent(fileName),
+		ret);
 }
 
 std::string SaveState::getScreenShot() const
 {
-  return screenshot;
+	if (!fileName.empty() && Utils::FileSystem::exists(fileName + ".png"))
+		return fileName + ".png";
+
+	return "";
 }
 
 std::string SaveState::setupSaveState(FileData* game, const std::string& command)
 {
 	if (game == nullptr)
 		return command;
-
+	
 	// We start games with new slots : If the users saves the game, we don't loose the previous save
 	int nextSlot = SaveStateRepository::getNextFreeSlot(game);
 
-	if (!isSlotValid())
+	if (!isSlotValid() && !isLabelValid())
 	{
 		if (nextSlot > 0 && !SystemConf::getIncrementalSaveStatesUseCurrentSlot())
 		{
@@ -59,97 +53,82 @@ std::string SaveState::setupSaveState(FileData* game, const std::string& command
 		return command;
 	}
 
-	bool incrementalSaveStates = SystemConf::getIncrementalSaveStates() && hasAutosave;
-
+	bool incrementalSaveStates = SystemConf::getIncrementalSaveStates();
+	
 	std::string path = Utils::FileSystem::getParent(fileName);
 
 	std::string cmd = command;
 	if (slot == -1) // Run current AutoSave
-	{
-		if (racommands)
-			cmd = cmd + " -autosave 1 -state_slot " + std::to_string(nextSlot);
-		else
-			cmd = cmd + " -state_slot autosave";
-	}
+		cmd = cmd + " -autosave 1 -state_slot " + std::to_string(nextSlot);
 	else
 	{
 		if (slot == -2) // Run new game without AutoSave
 		{
 			cmd = cmd + " -autosave 0 -state_slot " + std::to_string(nextSlot);
 		}
+		else if (isLabelValid())
+		{
+			// Run game, and activate AutoSave to load it
+			cmd = cmd + " -autosave 1";
+		}
 		else if (incrementalSaveStates)
 		{
-			if (racommands)
-			{
-				cmd = cmd + " -state_slot " + std::to_string(nextSlot); // slot
+			cmd = cmd + " -state_slot " + std::to_string(nextSlot); // slot
 
-				// Run game, and activate AutoSave to load it
-				if (!fileName.empty())
-					cmd = cmd + " -autosave 1";
-			}
-			else
-				cmd = cmd + " -state_slot " + std::to_string(nextSlot) + " -state_file \"" + fileName + "\"";
+			// Run game, and activate AutoSave to load it
+			if (!fileName.empty())
+				cmd = cmd + " -autosave 1";
 		}
 		else
 		{
-			if (racommands)
-			{
-				cmd = cmd + " -state_slot " + std::to_string(slot);
+			cmd = cmd + " -state_slot " + std::to_string(slot);
 
-				// Run game, and activate AutoSave to load it
-				if (!fileName.empty())
-					cmd = cmd + " -autosave 1";
-			}
-			else
-				cmd = cmd + " -state_slot " + std::to_string(slot) + " -state_file \"" + fileName + "\"";
+			// Run game, and activate AutoSave to load it
+			if (!fileName.empty())
+				cmd = cmd + " -autosave 1";
 		}
 
-		if (racommands) 
+		// Copy to state.auto file
+		auto autoFilename = makeStateFilename(-1);
+		if (Utils::FileSystem::exists(autoFilename))
 		{
-			// Copy to state.auto file
-			auto autoFilename = makeStateFilename(-1);
-			if (Utils::FileSystem::exists(autoFilename))
+			Utils::FileSystem::removeFile(autoFilename + ".bak");
+			Utils::FileSystem::renameFile(autoFilename, autoFilename + ".bak");				
+		}
+
+		// Copy to state.auto.png file
+		auto autoImage = autoFilename + ".png";
+		if (Utils::FileSystem::exists(autoImage))
+		{
+			Utils::FileSystem::removeFile(autoImage + ".bak");
+			Utils::FileSystem::renameFile(autoImage, autoImage + ".bak");				
+		}
+
+		mAutoImageBackup = autoImage;
+		mAutoFileBackup = autoFilename;
+
+		if (!fileName.empty())
+		{
+			Utils::FileSystem::copyFile(fileName, autoFilename);
+
+			if (incrementalSaveStates && nextSlot >= 0 && slot + 1 != nextSlot)
 			{
-				Utils::FileSystem::removeFile(autoFilename + ".bak");
-				Utils::FileSystem::renameFile(autoFilename, autoFilename + ".bak");
-			}
-
-			// Copy to state.auto.png file
-			auto autoImage = autoFilename + ".png";
-			if (Utils::FileSystem::exists(autoImage))
-			{
-				Utils::FileSystem::removeFile(autoImage + ".bak");
-				Utils::FileSystem::renameFile(autoImage, autoImage + ".bak");
-			}
-
-			mAutoImageBackup = autoImage;
-			mAutoFileBackup = autoFilename;
-
-			if (!fileName.empty())
-			{
-				Utils::FileSystem::copyFile(fileName, autoFilename);
-
-				if (incrementalSaveStates && nextSlot >= 0 && slot + 1 != nextSlot)
-				{
-					// Copy file to new slot, if the users want to reload the saved game in the slot directly from retroach
-					mNewSlotFile = makeStateFilename(nextSlot);
-					Utils::FileSystem::removeFile(mNewSlotFile);
-					if (Utils::FileSystem::copyFile(fileName, mNewSlotFile))
-						mNewSlotCheckSum = ApiSystem::getInstance()->getMD5(fileName, false);
-				}
+				// Copy file to new slot, if the users want to reload the saved game in the slot directly from retroach
+				mNewSlotFile = makeStateFilename(nextSlot);
+				Utils::FileSystem::removeFile(mNewSlotFile);
+				if (Utils::FileSystem::copyFile(fileName, mNewSlotFile))
+					mNewSlotCheckSum = ApiSystem::getInstance()->getMD5(fileName, false);
 			}
 		}
 	}
-
+	
 	return cmd;
 }
 
 void SaveState::onGameEnded(FileData* game)
 {
-	if(racommands == false) return;
-  
-	if (slot < 0)
-		return;
+	if (slot == -1) return;
+	if (slot == -2) return;
 
 	if (!mNewSlotCheckSum.empty() && Utils::FileSystem::exists(mNewSlotFile))
 	{
@@ -196,26 +175,18 @@ bool SaveState::copyToSlot(int slot, bool move) const
 		return false;
 
 	std::string destState = makeStateFilename(slot);
-
-	std::string destStateImage = imageGenerator;
-	destStateImage = Utils::String::replace(destStateImage, "{{slot}}", slot == 0 ? "" : std::to_string(slot));
-	destStateImage = Utils::String::replace(destStateImage, "{{slot0}}", std::to_string(slot));
-	destStateImage = Utils::String::replace(destStateImage, "{{slot00}}", Utils::String::padLeft(std::to_string(slot), 2, '0'));
-	destStateImage = Utils::String::replace(destStateImage, "{{slot2d}}", Utils::String::padLeft(std::to_string(slot), 2, '0'));
-	destStateImage = Utils::FileSystem::combine(Utils::FileSystem::getParent(fileName), destStateImage);
 	
 	if (move)
 	{
 		Utils::FileSystem::renameFile(fileName, destState);
 		if (!getScreenShot().empty())
-			Utils::FileSystem::renameFile(getScreenShot(), destStateImage);
-
+			Utils::FileSystem::renameFile(getScreenShot(), destState + ".png");
 	}
 	else
 	{
 		Utils::FileSystem::copyFile(fileName, destState);
 		if (!getScreenShot().empty())
-			Utils::FileSystem::copyFile(getScreenShot(), destStateImage);
+			Utils::FileSystem::copyFile(getScreenShot(), destState + ".png");
 	}
 
 	return true;

@@ -1,14 +1,17 @@
 #pragma once
 
 #include <string>
+#include <map>
 #include "utils/TimeUtil.h"
 
 class FileData;
+class SaveStateRepository;
 
 struct SaveState
 {
-	SaveState()
+	SaveState(SaveStateRepository* repo=nullptr)
 	{
+		mRepository=repo;
 		slot = -99;
 	}
 
@@ -16,8 +19,14 @@ struct SaveState
 	{
 		slot = slotId;
 	}
+
+	SaveState(const std::string& lab)
+	{
+		label = lab;
+	}
 	
 	bool isSlotValid() const { return slot != -99; }
+	bool isLabelValid() const { return !label.empty(); }
 	
 	std::string rom;
 	std::string fileName;
@@ -28,6 +37,7 @@ struct SaveState
   	bool racommands;
 	std::string getScreenShot() const;
 	int slot;
+	std::string label;
 
 	void remove() const;
 	bool copyToSlot(int slot, bool move = false) const;
@@ -41,6 +51,7 @@ public:
 	void onGameEnded(FileData* game);
 
 private:
+	SaveStateRepository* mRepository;
 	std::string mAutoFileBackup;
 	std::string mAutoImageBackup;
 

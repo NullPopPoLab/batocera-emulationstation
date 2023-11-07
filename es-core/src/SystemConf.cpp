@@ -13,6 +13,13 @@
 #include <iostream>
 #include <SDL_timer.h>
 
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+
+static std::string sEmpty="";
+
 static std::string mapSettingsName(const std::string& name)
 {
 	if (name == "system.language")
@@ -48,6 +55,23 @@ static std::map<std::string, std::string> defaults =
 
 SystemConf::SystemConf() 
 {
+	mpRoot = new SystemConfSub(Paths::getSavesPath());
+	for(auto& s: dontRemoveValue){
+		setDontRemove(s,true);
+
+		if(!isDontRemove(s)){
+			LOG(LogError) << "ought to set dontRemove " << s;
+		}
+	}
+	for(auto& u: defaults){
+		setCfg(u.first,u.second);
+
+		auto& s=getCfg(u.first);
+		if(s!=u.second){
+			LOG(LogError) << "ought to set u.first="<<u.second<<" but be " << s;
+		}
+	}
+
 	mSystemConfFile = Paths::getSystemConfFilePath();
 	if (mSystemConfFile.empty())
 		return;
@@ -84,9 +108,10 @@ bool SystemConf::loadSystemConf()
 
 			std::string key = line.substr(0, idx);
 			std::string value = line.substr(idx + 1);
-			if (!key.empty() && !value.empty())
-				confMap[key] = value;
-
+			if (!key.empty()){
+				if(value.empty())removeCfg(key);
+				else setCfg(key,value);
+			}
 		}
 		systemConf.close();
 	}
@@ -129,56 +154,10 @@ bool SystemConf::saveSystemConf()
 		filein.close();
 	}
 
-	static std::string removeID = "$^é(p$^mpv$êrpver$^vper$vper$^vper$vper$vper$^vperv^pervncvizn";
+	static std::string removeID = "$^Ep$^mpv$êrpver$^vper$vper$^vper$vper$vper$^vperv^pervncvizn";
 
 	int lastTime = SDL_GetTicks();
-
-	/* Save new value if exists */
-	for (auto& it : confMap)
-	{
-		std::string key = it.first + "=";		
-		char key0 = key[0];
-
-		bool lineFound = false;
-
-		for (auto& currentLine : fileLines)
-		{
-			if (currentLine.size() < 3)
-				continue;
-
-			char fc = currentLine[0];
-			if (fc != key0 && currentLine[1] != key0)
-				continue;
-
-			int idx = currentLine.find(key);
-			if (idx == std::string::npos)
-				continue;
-
-			if (idx == 0 || (idx == 1 && (fc == ';' || fc == '#')))
-			{
-				std::string val = it.second;
-				if ((!val.empty() && val != "auto") || dontRemoveValue.find(it.first) != dontRemoveValue.cend())
-				{
-					auto defaultValue = defaults.find(key);
-					if (defaultValue != defaults.cend() && defaultValue->second == val)
-						currentLine = removeID;
-					else
-						currentLine = key + val;
-				}
-				else 
-					currentLine = removeID;
-
-				lineFound = true;
-			}
-		}
-
-		if (!lineFound)
-		{
-			std::string val = it.second;
-			if (!val.empty() && val != "auto")
-				fileLines.push_back(key + val);
-		}
-	}
+	mpRoot->save(fileLines,"",removeID);
 
 	lastTime = SDL_GetTicks() - lastTime;
 
@@ -213,15 +192,9 @@ std::string SystemConf::get(const std::string &name)
 	if (mSystemConfFile.empty())
 		return Settings::getInstance()->getString(mapSettingsName(name));
 	
-	auto it = confMap.find(name);
-	if (it != confMap.cend())
-		return it->second;
+	if(!mpRoot)return "";
+	return getCfg(name);
 
-	auto dit = defaults.find(name);
-	if (dit != defaults.cend())
-		return dit->second;
-
-    return "";
 }
 
 bool SystemConf::set(const std::string &name, const std::string &value) 
@@ -229,12 +202,8 @@ bool SystemConf::set(const std::string &name, const std::string &value)
 	if (mSystemConfFile.empty())
 		return Settings::getInstance()->setString(mapSettingsName(name), value == "auto" ? "" : value);
 
-	if (confMap.count(name) == 0 || confMap[name] != value)
-	{
-		confMap[name] = value;
-		mWasChanged = true;
-		return true;
-	}
+	if(!mpRoot)return false;
+	if(setCfg(name,value))mWasChanged = true;
 
 	return false;
 }
@@ -267,4 +236,350 @@ bool SystemConf::getIncrementalSaveStates()
 bool SystemConf::getIncrementalSaveStatesUseCurrentSlot()
 {
 	return SystemConf::getInstance()->get("global.incrementalsavestates") == "2";
+}
+
+SystemConf::~SystemConf()
+{
+	if(mpRoot){
+		delete mpRoot;
+		mpRoot=nullptr;
+	}
+}
+
+SystemConfSub::~SystemConfSub()
+{
+	clear();
+}
+
+SystemConfSub::SystemConfSub(const std::string& dir)
+{
+	mIsRoot=true;
+	mSeparated=false;
+	mSaveDir=dir;
+	init();
+}
+
+SystemConfSub::SystemConfSub(const SystemConfSub* parent,const std::string& name)
+{
+	mIsRoot=false;
+	mSeparated=parent->mSeparated;
+	mSaveDir=parent->mSaveDir+'/'+name;
+	init();
+}
+
+void SystemConfSub::init(){
+
+	mWasLoaded=false;
+	mWasChanged=false;
+}
+
+void SystemConfSub::clear(){
+
+	for(auto& u: mSub){
+		delete u.second;
+	}
+	mSub.clear();
+}
+
+SystemConfPeriod::SystemConfPeriod(const std::string &name)
+{
+	done=false;
+	prefix="";
+	suffix=name;
+
+	if(suffix[0]=='['){
+		if(suffix[1]=='"'){
+			suffix=suffix.substr(2);
+
+			auto qp=suffix.find('"');
+			if(qp==std::string::npos){
+				prefix=suffix;
+				suffix="";
+				return;
+			}
+
+			prefix=suffix.substr(0,qp);
+			suffix=suffix.substr(qp+1);
+		}
+		else{
+			suffix=suffix.substr(1);
+		}
+
+		auto ep=suffix.find(']');
+		if(ep==std::string::npos){
+			prefix+=suffix;
+			suffix="";
+			return;
+		}
+
+		prefix+=suffix.substr(0,ep);
+		suffix=suffix.substr(ep+1);
+	}
+
+	auto dp=suffix.find('.');
+	auto bp=suffix.find('[');
+	if(dp==std::string::npos && bp==std::string::npos){
+		prefix+=suffix;
+		suffix="";
+		return;
+	}
+
+	if(dp<bp){
+		prefix+=suffix.substr(0,dp);
+		suffix=suffix.substr(dp+1);
+	}
+	else{
+		prefix+=suffix.substr(0,bp);
+		suffix=suffix.substr(bp);
+	}
+	done=true;
+}
+
+SystemConfAddress SystemConf::peekSub(const SystemConfSub* target, const std::string &name) const
+{
+	SystemConfPeriod sp(name);
+	if(!sp.done || !target){
+		return SystemConfAddress(const_cast<SystemConfSub*>(target),sp.prefix);
+	}
+
+	auto it = target->mSub.find(sp.prefix);
+	if (it == target->mSub.cend()) {
+		return SystemConfAddress(nullptr,sp.suffix);
+	}
+	return peekSub(it->second,sp.suffix);
+}
+
+SystemConfAddress SystemConf::diggSub(SystemConfSub* target, const std::string &name)
+{
+	SystemConfPeriod sp(name);
+	if(!sp.done || !target){
+		return SystemConfAddress(target,sp.prefix);
+	}
+
+	auto it = target->mSub.find(sp.prefix);
+	if (it == target->mSub.cend()) {
+		auto* p=new SystemConfSub(target,sp.prefix);
+		target->mSub[sp.prefix]=p;
+		return diggSub(p,sp.suffix);
+	}
+	return diggSub(it->second,sp.suffix);
+}
+
+bool SystemConfAddress::wasChanged()
+{
+	if(!target)return false;
+	return target->mWasChanged;
+}
+
+bool SystemConfAddress::isDontRemove()
+{
+	if(!target)return false;
+	auto it = target->mDontRemove.find(key);
+	return it != target->mDontRemove.cend();
+}
+
+bool SystemConfAddress::exists()
+{
+	if(!target)return false;
+	if(!target->mWasLoaded)target->load();
+
+	auto it=target->mCfg.find(key);
+	return it!=target->mCfg.cend();
+}
+
+const std::string& SystemConfAddress::getCfg()
+{
+	if(!target){
+		return sEmpty;
+	}
+
+	if(!target->mWasLoaded)target->load();
+
+	auto it = target->mCfg.find(key);
+	if(it==target->mCfg.cend()){
+		return sEmpty;
+	}
+	return it->second;
+}
+
+void SystemConfAddress::setDontRemove(bool side)
+{
+	if(!target){
+		LOG(LogError) << "SystemConfSub.setDontRemove: (null): " << key;
+		return;
+	}
+
+	auto it = target->mDontRemove.find(key);
+	if(it==target->mDontRemove.cend()){
+		if(side)target->mDontRemove.insert(key);
+	}
+	else{
+		if(!side)target->mDontRemove.erase(it);
+	}
+}
+
+void SystemConfAddress::setSeparate(bool side)
+{
+	if(!target){
+		LOG(LogError) << "SystemConfSub.setSeparate: (null): " << key;
+		return;
+	}
+
+	target->mSeparated=side;
+}
+
+bool SystemConfAddress::removeCfg()
+{
+	if(!target){
+		LOG(LogError) << "SystemConfSub.removeCfg: (null): " << key;
+		return false;
+	}
+
+	if(!target->mWasLoaded)target->load();
+
+	auto r=false;
+	auto it = target->mSub.find(key);
+	if (it == target->mSub.cend()){
+	}
+	else{
+		target->mSub.erase(it);
+		target->mWasChanged=true;
+		r=true;
+	}
+	return r;
+}
+
+bool SystemConfAddress::setCfg(const std::string &val)
+{
+	if(!target){
+		LOG(LogError) << "SystemConfSub.setCfg: (null): " << key << "=" << val;
+		return false;
+	}
+
+	if(!target->mWasLoaded)target->load();
+
+	target->mCfg[key]=val;
+	target->mWasChanged=true;
+	return true;
+}
+
+void SystemConfSub::updateConf(std::vector<std::string>& fileLines, const std::string& level, const std::string& removeID)
+{
+	for(auto it: mCfg){
+		std::string key = level+'.'+it.first + "=";		
+		char key0 = key[0];
+		bool lineFound = false;
+
+		for (auto& currentLine : fileLines)
+		{
+			if (currentLine.size() < 3)
+				continue;
+
+			char fc = currentLine[0];
+			if (fc != key0 && currentLine[1] != key0)
+				continue;
+
+			int idx = currentLine.find(key);
+			if (idx == std::string::npos)
+				continue;
+
+			if (idx == 0 || (idx == 1 && (fc == ';' || fc == '#')))
+			{
+				std::string val = it.second;
+				if ((!val.empty() && val != "auto") || SystemConfAddress(this,it.first).isDontRemove())
+				{
+					auto defaultValue = defaults.find(key);
+					if (defaultValue != defaults.cend() && defaultValue->second == val)
+						currentLine = removeID;
+					else
+						currentLine = key + val;
+				}
+				else 
+					currentLine = removeID;
+
+				lineFound = true;
+			}
+		}
+
+		if (!lineFound)
+		{
+			std::string val = it.second;
+			if (!val.empty() && val != "auto")
+				fileLines.push_back(key + val);
+		}
+	}
+}
+
+void SystemConfSub::load(){
+
+	if(!mSeparated)return;
+
+	LOG(LogDebug) << "SystemConfSub.load: " << mSaveDir;
+
+	auto path=mSaveDir+"/conf.json";
+	if(Utils::FileSystem::exists(path)){
+		std::ifstream file(path);
+		if (!file.is_open()) {
+			LOG(LogError) << "cannot open: " << path;
+		}
+		else{
+			std::string json;
+			json=std::string(std::istreambuf_iterator<char>(file),std::istreambuf_iterator<char>());
+			file.close();
+
+			rapidjson::Document doc;
+			doc.Parse(json.c_str());
+			if (doc.HasParseError()){
+				LOG(LogError) << "invalid JSON: " << path;
+			}
+			else for (auto it = doc.MemberBegin(); it != doc.MemberEnd(); ++it){
+				auto k=it->name.GetString();
+				auto v=it->value.GetString();
+				if(!k || !v)continue;
+				mCfg[k]=v;
+			}
+		}
+	}
+
+	mWasLoaded=true;
+}
+
+void SystemConfSub::save(std::vector<std::string>& fileLines, const std::string& level, const std::string& removeID)
+{
+	LOG(LogDebug) << "SystemConfSub.save: " << mSaveDir;
+
+	if(!mWasChanged){}
+	else if(mSeparated){
+		rapidjson::StringBuffer sb;
+		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+		writer.StartObject();
+		for(auto it: mCfg){
+			writer.Key(it.first.c_str()); writer.String(it.second.c_str());
+		}
+		writer.Key("[End]"); writer.Null();
+		writer.EndObject();
+
+		if (!Utils::FileSystem::exists(mSaveDir))
+			Utils::FileSystem::createDirectory(mSaveDir);
+
+		auto path=mSaveDir+"/conf.json";
+		std::ofstream file(path.c_str());
+		if (!file.is_open()) {
+			LOG(LogError) << "cannot open: " << path;
+		}
+		else{
+			file<<sb.GetString();
+			file.close();
+		}
+		mWasChanged=false;
+	}
+	else{
+		updateConf(fileLines,level,removeID);
+		mWasChanged=false;
+	}
+
+	auto next=(level=="")?"":(level+'.');
+	for(auto it: mSub){
+		it.second->save(fileLines,next+it.first,removeID);
+	}
 }
