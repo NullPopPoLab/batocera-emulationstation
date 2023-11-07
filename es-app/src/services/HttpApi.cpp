@@ -1,10 +1,11 @@
-#include "HttpApi.h"
+﻿#include "HttpApi.h"
 
 #ifdef WIN32
 #include <Windows.h>
 #endif
 
 #include "platform.h"
+#include "ApiSystem.h"
 #include "Gamelist.h"
 #include "SystemData.h"
 #include "FileData.h"
@@ -159,6 +160,10 @@ void HttpApi::getFileDataJson(rapidjson::PrettyWriter<rapidjson::StringBuffer>& 
 		}
 	}
 
+	writer.Key("docsAvailable"); writer.String(meta.isDocumentationAvailable()?"true":"false");
+	writer.Key("slideshowAvailable"); writer.String(meta.isSlideShowAvailable()?"true":"false");
+	writer.Key("jukeboxAvailable"); writer.String(meta.isJukeBoxAvailable()?"true":"false");
+
 	writer.EndObject();
 }
 
@@ -189,10 +194,21 @@ bool HttpApi::ImportFromJson(FileData* file, const std::string& json)
 
 		std::string newValue = value.GetString();
 		std::string currentValue = meta.get(mdd.id);
-		if (newValue != currentValue)
-		{
+		if (newValue == currentValue){
+			continue;
+		}
+
+		switch(mdd.type){
+			case MD_STRING:
+			case MD_INT:
+			case MD_FLOAT:
+			case MD_BOOL:
+			case MD_MULTILINE_STRING:
+			case MD_RATING:
+			case MD_DATE:
 			meta.set(mdd.id, newValue);
 			changed = true;
+			break;
 		}
 	}
 
@@ -227,7 +243,7 @@ bool HttpApi::ImportMedia(FileData* file, const std::string& mediaType, const st
 
 	for (auto mdd : MetaDataList::getMDD())
 	{
-		if (mdd.key != mediaType && mdd.type != MD_PATH)
+		if (mdd.key != mediaType || mdd.type != MD_PATH)
 			continue;
 
 		if (mdd.id == MetaDataId::Video)
@@ -253,6 +269,23 @@ bool HttpApi::ImportMedia(FileData* file, const std::string& mediaType, const st
 		Utils::FileSystem::writeAllText(path, mediaBytes);
 		file->setMetadata(mdd.id, path);
 		saveToGamelistRecovery(file);
+		return true;
+	}
+
+	return false;
+}
+
+bool HttpApi::RemoveMedia(FileData* file, const std::string& mediaType){
+
+	for (auto mdd : MetaDataList::getMDD())
+	{
+		if (mdd.key != mediaType || mdd.type != MD_PATH)
+			continue;
+		if (!file->hasMetadata(mdd.id)) return false;
+
+		auto path=file->getMetaPath(mdd.id);
+		Utils::FileSystem::removeFile(path);
+		file->setMetadata(mdd.id, "");
 		return true;
 	}
 
@@ -300,11 +333,53 @@ std::string HttpApi::getSystemGames(SystemData* system)
 		}
 	}
 
-	for (auto game : files)
+	for (auto game : files){
 		getFileDataJson(writer, game);
+	}
 
 	writer.EndArray();
 
+	return s.GetString();
+}
+
+std::string HttpApi::getScraperFiles(FileData* file, const std::string& path){
+
+	auto dir=file->getMediaDir();
+	if(path!="")dir+="/"+path;
+	if(!Utils::FileSystem::isDirectory(dir))return "{}";
+
+	auto contents = Utils::FileSystem::getDirectoryFiles(dir);
+	std::vector<std::string> dirs;
+	std::vector<std::string> files;
+	for (auto& ent : contents){
+		if(Utils::FileSystem::isDirectory(ent.path)){
+			dirs.push_back(Utils::FileSystem::createRelativePath(ent.path, dir, false));
+		}
+		else if(Utils::FileSystem::isRegularFile(ent.path)){
+			files.push_back(Utils::FileSystem::createRelativePath(ent.path, dir, false));
+		}
+	}
+
+	rapidjson::StringBuffer s;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+	writer.StartObject();
+	writer.Key("base"); writer.String(path.c_str());
+
+	writer.Key("dirs");
+	writer.StartArray();
+	for (auto& ent : dirs){
+		writer.String(ent.c_str());
+	}
+	writer.EndArray();
+
+	writer.Key("files");
+	writer.StartArray();
+	for (auto& ent : files){
+		writer.String(ent.c_str());
+	}
+	writer.EndArray();
+
+	writer.EndObject();
 	return s.GetString();
 }
 
@@ -317,3 +392,92 @@ std::string HttpApi::getRunnningGameInfo()
 	return ToJson(file);
 }
 
+std::string HttpApi::getCaps()
+{
+	rapidjson::StringBuffer s;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+
+	writer.StartObject();
+
+	writer.Key("Version"); writer.String(ApiSystem::getInstance()->getVersion().c_str());
+	writer.Key("SortName"); writer.Bool(true);
+	writer.Key("StrictTitle"); writer.Bool(true);
+	writer.Key("Documentation"); writer.Bool(true);
+	writer.Key("GetScraperMedia"); writer.Bool(true);
+	writer.Key("GetScreenshot"); writer.Bool(true);
+	writer.Key("JukeBox"); writer.Bool(true);
+	writer.Key("RemoveMedia"); writer.Bool(true);
+	writer.Key("SaveGenreByIDs"); writer.Bool(true);
+	writer.Key("SlideShow"); writer.Bool(true);
+
+	writer.Key("GenreLanguages");
+	writer.StartObject();
+	writer.Key("de"); writer.String("Deutsch");
+	writer.Key("en"); writer.String("English");
+	writer.Key("es"); writer.String("español");
+	writer.Key("fr"); writer.String("français");
+	writer.Key("ja"); writer.String("日本語");
+	writer.Key("pt"); writer.String("português");
+	writer.EndObject();
+
+	const char* flags[]={"runnable","kidgame","favorite","hidden"};
+	writer.Key("Flags");
+	writer.StartObject();
+	for(auto* k: flags){
+		auto& d=MetaDataList::getDecl(k);
+		writer.Key(k);
+		writer.String(d.displayName.c_str());
+	}
+	writer.EndObject();
+
+	const char* texts[]={"included","premise","story","rule","operation","credit","tips","notes","bugs"};
+	writer.Key("Texts");
+	writer.StartObject();
+	for(auto* k: texts){
+		auto& d=MetaDataList::getDecl(k);
+		writer.Key(k);
+		writer.String(d.displayName.c_str());
+	}
+	writer.EndObject();
+
+	const char* books[]={"manual","magazine"};
+	writer.Key("Books");
+	writer.StartObject();
+	for(auto* k: books){
+		auto& d=MetaDataList::getDecl(k);
+		writer.Key(k);
+		writer.String(d.displayName.c_str());
+	}
+	writer.EndObject();
+
+	const char* videos[]={"video"};
+	writer.Key("Videos");
+	writer.StartObject();
+	for(auto* k: videos){
+		auto& d=MetaDataList::getDecl(k);
+		writer.Key(k);
+		writer.String(d.displayName.c_str());
+	}
+	writer.EndObject();
+
+	writer.Key("Images");
+	writer.StartObject();
+	for (auto mdd : MetaDataList::getMDD()){
+		if(mdd.type!=MD_PATH)continue;
+		switch(mdd.id){
+			case MetaDataId::Video:
+			case MetaDataId::Manual:
+			case MetaDataId::Magazine:
+			break;
+
+			default:
+			writer.Key(mdd.key.c_str());
+			writer.String(mdd.displayName.c_str());
+		}
+	}
+	writer.EndObject();
+
+	writer.EndObject();
+
+	return s.GetString();
+}

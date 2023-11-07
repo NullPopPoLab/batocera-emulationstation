@@ -12,8 +12,10 @@ class FileData;
 class HttpApi
 {
 public:
+	static std::string getCaps();
 	static std::string getSystemList();
 	static std::string getSystemGames(SystemData* system);
+	static std::string getScraperFiles(FileData* file, const std::string& path);
 
 	static std::string getRunnningGameInfo();
 
@@ -25,7 +27,7 @@ public:
 	static bool ImportFromJson(FileData* file, const std::string& json);
 
 	static bool ImportMedia(FileData* file, const std::string& mediaType, const std::string& contentType, const std::string& mediaBytes);
-	
+	static bool RemoveMedia(FileData* file, const std::string& mediaType);
 
 private:
 	static std::string getFileDataId(FileData* game);
