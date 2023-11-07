@@ -9,6 +9,7 @@
 #include "Settings.h"
 #include "FileData.h"
 #include "ImageIO.h"
+#include "scrapers/Scraper.h"
 
 std::vector<MetaDataDecl> MetaDataList::mMetaDataDecls;
 
