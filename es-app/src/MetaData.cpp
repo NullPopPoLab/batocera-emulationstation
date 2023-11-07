@@ -662,3 +662,18 @@ Utils::Time::DateTime* MetaDataList::getScrapeDate(const std::string& scraper)
 
 	return nullptr;
 }
+
+bool MetaDataList::isSlideShowAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./slideshow", getMediaDir(), true);
+	return Utils::FileSystem::isDirectory(path);
+}
+
+bool MetaDataList::isJukeBoxAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./jukebox", getMediaDir(), true);
+	return Utils::FileSystem::isDirectory(path);
+}
+
+bool MetaDataList::isDocumentationAvailable(){
+	auto path=Utils::FileSystem::resolveRelativePath("./docs.json", getMediaDir(), true);
+	return Utils::FileSystem::isRegularFile(path);
+}
