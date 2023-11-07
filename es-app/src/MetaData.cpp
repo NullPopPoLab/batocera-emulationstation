@@ -280,6 +280,68 @@ void MetaDataList::migrate(FileData* file, pugi::xml_node& node)
 	}
 }
 
+void MetaDataList::complement(const std::string& key, const std::vector<std::string>& extlist){
+
+	auto path = get(key);
+	if (path != ""){
+		if(Utils::FileSystem::exists(path))return;
+		mMap.erase(getId(key));
+		mWasChanged = true;
+	}
+
+	bool f=false;
+	for(auto& it: extlist){
+		path = Scraper::getSaveAsPath(mTargetFile,getId(key),*&it);
+
+		if(!Utils::FileSystem::exists(path))continue;
+		set(key,path);
+		f=true;
+	}
+}
+
+void MetaDataList::complement_image(const std::string& key){
+	std::vector<std::string> extlist={ ".png", ".jpg", ".jpeg", ".gif" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement_video(const std::string& key){
+	std::vector<std::string> extlist={ ".mp4", ".avi", ".mkv", ".webm" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement_document(const std::string& key){
+	std::vector<std::string> extlist={ ".pdf", ".cbz" };
+	complement(key,extlist);
+}
+
+void MetaDataList::complement()
+{
+	auto path = mTargetFile->getSourceFileData()->getMediaDir();
+	if(!Utils::FileSystem::exists(path))return;
+
+	complement_image("image");
+	complement_video("video");
+	complement_image("marquee");
+	complement_image("thumbnail");
+	complement_image("fanart");
+	complement_image("titleshot");
+	complement_document("manual");
+	complement_document("magazine");
+	complement_image("map");
+	complement_image("bezel");
+	complement_image("cartridge");
+	complement_image("boxart");
+	complement_image("boxback");
+	complement_image("wheel");
+	complement_image("cabinet");
+	complement_image("pcb");
+	complement_image("flyer");
+	complement_image("instcard");
+	complement_image("ingame");
+	complement_image("outgame");
+	complement_image("visual");
+}
+
 void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths) const
 {
 	const std::vector<MetaDataDecl>& mdd = getMDD();
