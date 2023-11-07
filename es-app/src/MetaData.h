@@ -81,6 +81,25 @@ enum MetaDataId
 	Bezel = 41,
 	// Revived 
 	Sortname,
+	// NullPopPoCustom 
+	Ingame,
+	Outgame,
+	Visual,
+	Cabinet,
+	PCB,
+	Flyer,
+	InstCard,
+	Title,
+	Runnable,
+	Included,
+	Premise,
+	Story,
+	Rule,
+	Operation,
+	Credit,
+	Tips,
+	Notes,
+	Bugs,
 	Max,
 	Invalid=-1,
 };
@@ -146,6 +165,7 @@ public:
 	void appendToXML(pugi::xml_node& parent, bool ignoreDefaults, const std::string& relativeTo, bool fullPaths = false) const;
 
 	void migrate(FileData* file, pugi::xml_node& node);
+	void complement();
 
 	MetaDataList(MetaDataListType type);
 	
@@ -174,7 +194,10 @@ public:
 	inline MetaDataListType getType() const { return mType; }
 	static const std::vector<MetaDataDecl>& getMDD() { return mMetaDataDecls; }
 	inline const std::string& getName() const { return mName; }
-	
+
+	static const MetaDataDecl& getDecl(MetaDataId id);
+	static const MetaDataDecl& getDecl(const std::string& key);
+
 	void importScrappedMetadata(const MetaDataList& source);
 
 	std::string getRelativeRootPath();
@@ -184,6 +207,11 @@ public:
 	Utils::Time::DateTime* getScrapeDate(const std::string& scraper);
 
 private:
+	void complement(const std::string& key, const std::vector<std::string>& extlist);
+	void complement_image(const std::string& key);
+	void complement_video(const std::string& key);
+	void complement_document(const std::string& key);
+
 	std::map<int, Utils::Time::DateTime> mScrapeDates;
 
 	std::string		mName;

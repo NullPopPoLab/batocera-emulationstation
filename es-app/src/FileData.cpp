@@ -236,7 +236,7 @@ std::string FileData::findLocalArt(const std::string& type, std::vector<std::str
 
 const std::string FileData::getThumbnailPath()
 {
-	std::string thumbnail = getMetadata(MetaDataId::Thumbnail);
+	std::string thumbnail = getMetaPath(MetaDataId::Thumbnail);
 
 	// no thumbnail, try image
 	if (thumbnail.empty())
@@ -245,10 +245,8 @@ const std::string FileData::getThumbnailPath()
 		if (!thumbnail.empty())
 			setMetadata(MetaDataId::Thumbnail, thumbnail);
 
-		// no image, try to use local image
-
 		if (thumbnail.empty())
-			thumbnail = getMetadata(MetaDataId::Image);
+			thumbnail = getMetaPath(MetaDataId::Image);
 
 		if (thumbnail.empty())
 			thumbnail = findLocalArt("image");
@@ -378,7 +376,7 @@ const std::string FileData::getSortName()
 
 const std::string FileData::getVideoPath()
 {
-	std::string video = getMetadata(MetaDataId::Video);
+	std::string video = getMetaPath(MetaDataId::Video);
 	
 	// no video, try to use local video
 	if (video.empty())
@@ -407,7 +405,7 @@ const std::string FileData::getVideoPath()
 
 const std::string FileData::getMarqueePath()
 {
-	std::string marquee = getMetadata(MetaDataId::Marquee);
+	std::string marquee = getMetaPath(MetaDataId::Marquee);
 
 	// no marquee, try to use local marquee
 	if (marquee.empty())
@@ -422,7 +420,7 @@ const std::string FileData::getMarqueePath()
 
 const std::string FileData::getImagePath()
 {
-	std::string image = getMetadata(MetaDataId::Image);
+	std::string image = getMetaPath(MetaDataId::Image);
 
 	// no image, try to use local image
 	if (image.empty())
@@ -1849,4 +1847,9 @@ std::string FileData::getProperty(const std::string& name)
 	}
 
 	return getMetadata().get(name);	
+}
+
+void FileData::complement()
+{
+	mMetadata.complement();
 }

@@ -201,6 +201,10 @@ std::vector<FileData*> loadGamelistFile(const std::string xmlpath, SystemData* s
 			else
 				mdl.resetChangedFlag();
 
+			if (Settings::getInstance()->getBool("ComplementMetaOnStart")){
+				mdl.complement();
+			}
+
 			ret.push_back(file);
 		}
 	}

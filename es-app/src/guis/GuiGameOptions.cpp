@@ -50,8 +50,8 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 	bool isImageViewer = game->getSourceFileData()->getSystem()->hasPlatformId(PlatformIds::IMAGEVIEWER);
 	bool hasManual = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && Utils::FileSystem::exists(game->getMetadata(MetaDataId::Manual));
 	bool hasMagazine = ApiSystem::getInstance()->isScriptingSupported(ApiSystem::ScriptId::PDFEXTRACTION) && Utils::FileSystem::exists(game->getMetadata(MetaDataId::Magazine));
-	bool hasMap = Utils::FileSystem::exists(game->getMetadata(MetaDataId::Map));
-	bool hasVideo = Utils::FileSystem::exists(game->getMetadata(MetaDataId::Video));
+	bool hasMap = Utils::FileSystem::exists(game->getMetaPath(MetaDataId::Map));
+	bool hasVideo = Utils::FileSystem::exists(game->getMetaPath(MetaDataId::Video));
 	bool hasAlternateMedias = game->getSourceFileData()->getFileMedias().size() > 0;
 	bool hasCheevos = game->hasCheevos();
 
@@ -63,7 +63,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		{
 			mMenu.addEntry(_("VIEW GAME MANUAL"), false, [window, game, this]
 			{
-				GuiImageViewer::showPdf(window, game->getMetadata(MetaDataId::Manual));
+				GuiImageViewer::showPdf(window, game->getMetaPath(MetaDataId::Manual));
 				close();
 			});
 		}
@@ -72,7 +72,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		{
 			mMenu.addEntry(_("VIEW GAME MAGAZINE"), false, [window, game, this]
 			{
-				GuiImageViewer::showPdf(window, game->getMetadata(MetaDataId::Magazine));
+				GuiImageViewer::showPdf(window, game->getMetaPath(MetaDataId::Magazine));
 				close();
 			});
 		}		
@@ -81,7 +81,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		{
 			mMenu.addEntry(_("VIEW GAME MAP"), false, [window, game, this]
 			{
-				auto imagePath = game->getMetadata(MetaDataId::Map);
+				auto imagePath = game->getMetaPath(MetaDataId::Map);
 				GuiImageViewer::showImage(window, imagePath, Utils::String::toLower(Utils::FileSystem::getExtension(imagePath)) != ".pdf");
 				close();
 			});
@@ -91,7 +91,7 @@ GuiGameOptions::GuiGameOptions(Window* window, FileData* game) : GuiComponent(wi
 		{
 			mMenu.addEntry(_("VIEW FULLSCREEN VIDEO"), false, [window, game, this]
 			{
-				auto imagePath = game->getMetadata(MetaDataId::Video);
+				auto imagePath = game->getMetaPath(MetaDataId::Video);
 				GuiVideoViewer::playVideo(mWindow, imagePath);
 				close();
 			});
