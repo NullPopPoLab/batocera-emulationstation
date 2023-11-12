@@ -159,6 +159,10 @@ std::string& FileData::getDisplayName()
 		std::string stem = Utils::FileSystem::getStem(getPath());
 		if (mSystem && (mSystem->hasPlatformId(PlatformIds::ARCADE) || mSystem->hasPlatformId(PlatformIds::NEOGEO)))
 			stem = MameNames::getInstance()->getRealName(stem);
+		else{
+			auto dir=getDirKey();
+			if(!dir.empty())stem = dir+" ("+stem+")";
+		}
 
 		mDisplayName = new std::string(stem);
 	}
