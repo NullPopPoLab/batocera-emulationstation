@@ -235,6 +235,8 @@ public:
 	};
 
 	static std::vector<std::pair<std::string, Scraper*>> scrapers;
+
+	static std::string getMediaDir();
 	
 	static Scraper* getScraper(const std::string name = "");
 	static std::string getScraperName(Scraper* scraper);
