@@ -237,6 +237,7 @@ std::string FileData::findLocalArt(const std::string& type, std::vector<std::str
 const std::string FileData::getThumbnailPath()
 {
 	std::string thumbnail = getMetaPath(MetaDataId::Thumbnail);
+	if (thumbnail.empty()) thumbnail = getMetaPath(MetaDataId::TitleShot);
 
 	// no thumbnail, try image
 	if (thumbnail.empty())
@@ -415,6 +416,9 @@ const std::string FileData::getMarqueePath()
 const std::string FileData::getImagePath()
 {
 	std::string image = getMetaPath(MetaDataId::Image);
+	if (image.empty()) image = getMetaPath(MetaDataId::Ingame);
+	if (image.empty()) image = getMetaPath(MetaDataId::Visual);
+	if (image.empty()) image = getMetaPath(MetaDataId::Outgame);
 
 	// no image, try to use local image
 	if (image.empty())
