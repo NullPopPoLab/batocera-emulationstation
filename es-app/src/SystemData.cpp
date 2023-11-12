@@ -24,6 +24,7 @@
 #include <functional>
 #include "SaveStateRepository.h"
 #include "Paths.h"
+#include "scrapers/Scraper.h"
 
 #if WIN32
 #include "Win32ApiSystem.h"
@@ -1239,6 +1240,11 @@ SystemData* SystemData::getPrev() const
 	// as we are starting in a valid gamelistview, this will always succeed, even if we have to come full circle.
 
 	return *it;
+}
+
+std::string SystemData::getMediaDir() const{
+
+	return Scraper::getMediaDir()+"/"+mMetadata.name;
 }
 
 std::string SystemData::getGamelistPath(bool forWrite) const
