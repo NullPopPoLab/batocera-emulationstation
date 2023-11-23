@@ -867,7 +867,7 @@ bool SystemData::loadConfig(Window* window)
 		CollectionSystemManager::get()->loadCollectionSystems();
 	}
 
-	if (SystemData::sSystemVector.size() > 0)
+//	if (SystemData::sSystemVector.size() > 0)
 	{
 		createGroupedSystems();
 
