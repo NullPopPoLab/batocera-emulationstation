@@ -1012,6 +1012,7 @@ void CollectionSystemManager::populateAutoCollection(CollectionSystemData* sysDa
 		{
 			if (system->isGroupSystem() && game->getSystem() != system)
 				continue;
+			if(system->hasPlatformId(PlatformIds::PlatformId::IMAGEVIEWER))continue;
 
 			bool include = includeFileInAutoCollections(game);
 			if (!include)
