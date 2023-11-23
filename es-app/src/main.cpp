@@ -594,7 +594,7 @@ int main(int argc, char* argv[])
 	// tts
 	TextToSpeech::getInstance()->enable(Settings::getInstance()->getBool("TTS"), false);
 
-	if (errorMsg == NULL)
+//	if (errorMsg == NULL)
 		ViewController::get()->goToStart(true);
 
 	window.closeSplashScreen();
