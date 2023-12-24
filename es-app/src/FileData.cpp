@@ -181,7 +181,7 @@ const std::string FileData::getOfficialMediaDir()
 const std::string FileData::getMediaDir()
 {
 	auto dir=getSystem()->getMediaDir();
-	return dir+"/"+getPathKey();
+	return dir+"/"+getGameKey();
 }
 
 std::string FileData::getMetaPath(MetaDataId key){
@@ -189,7 +189,12 @@ std::string FileData::getMetaPath(MetaDataId key){
 	auto name=getMetadata(key);
 	if(name.empty())return name;
 
-	auto path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
+	auto name2=name;
+	if(!getDirKey().empty())name2=getFileKey()+" - "+name2;
+
+	auto path=Utils::FileSystem::resolveRelativePath(name2, getMediaDir(), true);
+	if(Utils::FileSystem::exists(path))return path;
+	path=Utils::FileSystem::resolveRelativePath(name, getMediaDir(), true);
 	if(Utils::FileSystem::exists(path))return path;
 
 	path=Utils::FileSystem::resolveRelativePath(name, getOfficialMediaDir(), true);

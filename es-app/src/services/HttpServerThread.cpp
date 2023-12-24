@@ -45,6 +45,7 @@ System/Games APIS
 GET  /systems
 GET  /systems/{systemName}
 GET  /systems/{systemName}/logo
+GET  /systems/{systemName}/games
 GET  /systems/{systemName}/games/{gameId}		
 POST /systems/{systemName}/games/{gameId}						-> body must contain the game metadatas to save as application/json
 GET  /systems/{systemName}/games/{gameId}/media/{mediaType}
@@ -64,8 +65,9 @@ NullPopPo Custom APIs
 ---------------------
 GET /caps                                                       -> capability info
 GET /screenshots/{fileName}                                     -> download a screenshot image
-GET /systems/{systemName}/games/{gameId}/media                  -> any file in /userdata/media/{systemName}/{gameName}/
-POST /systems/{systemName}/games/{gameId}/remove_media/{mediaType}	-> remove MetaData media
+GET /systems/{systemName}/games_partial/{from}/{limit}          -> partial games list
+GET /systems/{systemName}/games/{gameId}/res                    -> any file in /userdata/media/{systemName}/{gameName}/
+DELETE /systems/{systemName}/games/{gameId}/media/{mediaType}	-> remove MetaData media
 
 */
 HttpServerThread::HttpServerThread(Window* window) : mWindow(window)
@@ -274,20 +276,19 @@ void HttpServerThread::run()
 		res.set_content(HttpApi::getSystemList(), "application/json");
 	});
 
-	mHttpServer->Get("/runningGame", [this](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get("/runningGame", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
 
-		auto game = FileData::GetRunningGame();
-		if (game != nullptr)
+		std::string ret = HttpApi::getRunnningGameInfo();
+		if (ret.empty())
 		{
 			res.set_content("{\"msg\":\"NO GAME RUNNING\"}", "application/json");
 			res.status = 201;
 		}
-
-		res.set_content("{}", "application/json");
-		res.status = 201;
+		else
+			res.set_content(ret, "application/json");
 	});
 
 	mHttpServer->Get("/isIdle", [](const httplib::Request& req, httplib::Response& res)
@@ -361,7 +362,27 @@ void HttpServerThread::run()
 		res.status = 404;		
 	});
 
-	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/media/(.*))", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games_partial/(.+)/(.+)(/?))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		size_t from=0,limit=0;
+		try{from=std::stoull(req.matches[2]);}catch(...){}
+		try{limit=std::stoull(req.matches[3]);}catch(...){}
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			res.set_content(HttpApi::getSystemGames(system,from,limit), "application/json");
+			return;
+		}
+		
+		res.set_content("404 system not found", "text/html");
+		res.status = 404;		
+	});
+
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/res/(.*))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -398,7 +419,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/media)", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/res)", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -510,7 +531,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Post(R"(/systems/(.+)/games/(.+)/remove_media/(.+))", [this](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Delete(R"(/systems/(.+)/games/(.+)/media/(.+))", [this](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
