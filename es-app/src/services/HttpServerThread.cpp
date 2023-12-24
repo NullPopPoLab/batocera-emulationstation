@@ -45,6 +45,7 @@ System/Games APIS
 GET  /systems
 GET  /systems/{systemName}
 GET  /systems/{systemName}/logo
+GET  /systems/{systemName}/games
 GET  /systems/{systemName}/games/{gameId}		
 POST /systems/{systemName}/games/{gameId}						-> body must contain the game metadatas to save as application/json
 GET  /systems/{systemName}/games/{gameId}/media/{mediaType}
@@ -64,6 +65,7 @@ NullPopPo Custom APIs
 ---------------------
 GET /caps                                                       -> capability info
 GET /screenshots/{fileName}                                     -> download a screenshot image
+GET /systems/{systemName}/games_partial/{from}/{limit}          -> partial games list
 GET /systems/{systemName}/games/{gameId}/res                    -> any file in /userdata/media/{systemName}/{gameName}/
 DELETE /systems/{systemName}/games/{gameId}/media/{mediaType}	-> remove MetaData media
 
@@ -353,6 +355,26 @@ void HttpServerThread::run()
 		if (system != nullptr)
 		{
 			res.set_content(HttpApi::getSystemGames(system), "application/json");
+			return;
+		}
+		
+		res.set_content("404 system not found", "text/html");
+		res.status = 404;		
+	});
+
+	mHttpServer->Get(R"(/systems/(.+)/games_partial/(.+)/(.+)(/?))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		size_t from=0,limit=0;
+		try{from=std::stoull(req.matches[2]);}catch(...){}
+		try{limit=std::stoull(req.matches[3]);}catch(...){}
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			res.set_content(HttpApi::getSystemGames(system,from,limit), "application/json");
 			return;
 		}
 		
