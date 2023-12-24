@@ -64,7 +64,7 @@ NullPopPo Custom APIs
 ---------------------
 GET /caps                                                       -> capability info
 GET /screenshots/{fileName}                                     -> download a screenshot image
-GET /systems/{systemName}/games/{gameId}/media                  -> any file in /userdata/media/{systemName}/{gameName}/
+GET /systems/{systemName}/games/{gameId}/res                    -> any file in /userdata/media/{systemName}/{gameName}/
 POST /systems/{systemName}/games/{gameId}/remove_media/{mediaType}	-> remove MetaData media
 
 */
@@ -361,7 +361,7 @@ void HttpServerThread::run()
 		res.status = 404;		
 	});
 
-	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/media/(.*))", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/res/(.*))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
@@ -398,7 +398,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/media)", [](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/res)", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
