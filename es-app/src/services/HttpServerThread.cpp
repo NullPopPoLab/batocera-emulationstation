@@ -65,7 +65,7 @@ NullPopPo Custom APIs
 GET /caps                                                       -> capability info
 GET /screenshots/{fileName}                                     -> download a screenshot image
 GET /systems/{systemName}/games/{gameId}/res                    -> any file in /userdata/media/{systemName}/{gameName}/
-POST /systems/{systemName}/games/{gameId}/remove_media/{mediaType}	-> remove MetaData media
+DELETE /systems/{systemName}/games/{gameId}/media/{mediaType}	-> remove MetaData media
 
 */
 HttpServerThread::HttpServerThread(Window* window) : mWindow(window)
@@ -509,7 +509,7 @@ void HttpServerThread::run()
 		res.status = 404;
 	});
 
-	mHttpServer->Post(R"(/systems/(.+)/games/(.+)/remove_media/(.+))", [this](const httplib::Request& req, httplib::Response& res)
+	mHttpServer->Delete(R"(/systems/(.+)/games/(.+)/media/(.+))", [this](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
