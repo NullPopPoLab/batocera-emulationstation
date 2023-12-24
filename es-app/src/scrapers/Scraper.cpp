@@ -728,6 +728,13 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 	case MetaDataId::Map: suffix = "map"; break;
 	case MetaDataId::Cartridge: suffix = "cartridge"; break;
 	case MetaDataId::Bezel: suffix = "bezel"; break;
+	case MetaDataId::Ingame: suffix = "ingame"; break;
+	case MetaDataId::Outgame: suffix = "outgame"; break;
+	case MetaDataId::Visual: suffix = "visual"; break;
+	case MetaDataId::Cabinet: suffix = "cabinet"; break;
+	case MetaDataId::PCB: suffix = "pcb"; break;
+	case MetaDataId::Flyer: suffix = "flyer"; break;
+	case MetaDataId::InstCard: suffix = "instcard"; break;
 	}
 
 	auto system = game->getSourceFileData()->getSystem();
