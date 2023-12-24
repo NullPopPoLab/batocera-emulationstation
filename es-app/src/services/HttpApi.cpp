@@ -313,7 +313,7 @@ std::string HttpApi::ToJson(SystemData* system, bool localpaths)
 	return s.GetString();
 }
 
-std::string HttpApi::getSystemGames(SystemData* system)
+std::string HttpApi::getSystemGames(SystemData* system, size_t from, size_t limit)
 {
 	rapidjson::StringBuffer s;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
@@ -332,7 +332,13 @@ std::string HttpApi::getSystemGames(SystemData* system)
 
 		for (auto it : current->getChildren())
 		{
-			files.push_back(it);
+			if(from>0)--from;
+			else{
+				if(limit>0){
+					if(files.size()>=limit)break;
+				}
+				files.push_back(it);
+			}
 			if (it->getType() == FOLDER)
 				stack.push((FolderData*)it);
 		}
@@ -414,6 +420,7 @@ std::string HttpApi::getCaps()
 	writer.Key("RemoveMedia"); writer.Bool(true);
 	writer.Key("SaveGenreByIDs"); writer.Bool(true);
 	writer.Key("SlideShow"); writer.Bool(true);
+	writer.Key("PartialGameList"); writer.Bool(true);
 
 	writer.Key("GenreLanguages");
 	writer.StartObject();
