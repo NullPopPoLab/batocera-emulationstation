@@ -715,6 +715,7 @@ bool resizeImage(const std::string& path, int maxWidth, int maxHeight)
 
 std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, const std::string& extension)
 {
+	std::string prefix = "";
 	std::string suffix = "image";
 	std::string folder = "images";
 
@@ -733,16 +734,23 @@ std::string Scraper::getSaveAsPath(FileData* game, const MetaDataId metadataId, 
 	case MetaDataId::Map: suffix = "map"; break;
 	case MetaDataId::Cartridge: suffix = "cartridge"; break;
 	case MetaDataId::Bezel: suffix = "bezel"; break;
+	case MetaDataId::Ingame: suffix = "ingame"; break;
+	case MetaDataId::Outgame: suffix = "outgame"; break;
+	case MetaDataId::Visual: suffix = "visual"; break;
+	case MetaDataId::Cabinet: suffix = "cabinet"; break;
+	case MetaDataId::PCB: suffix = "pcb"; break;
+	case MetaDataId::Flyer: suffix = "flyer"; break;
+	case MetaDataId::InstCard: suffix = "instcard"; break;
 	}
 
-	auto system = game->getSourceFileData()->getSystem();
+    auto* sfd=game->getSourceFileData();
+	if(!sfd->getDirKey().empty())prefix=sfd->getFileKey()+" - ";
 
-	std::string subdirectory = system->getName();
-	std::string name = Utils::FileSystem::getStem(game->getPath());
-	auto path = game->getSourceFileData()->getMediaDir();
+	auto dir = sfd->getMediaDir();
+	if(!Utils::FileSystem::exists(dir))
+		Utils::FileSystem::createDirectory(dir);
 
-	if(!Utils::FileSystem::exists(path))
-		Utils::FileSystem::createDirectory(path);
-
-	return game->getSourceFileData()->getMediaDir()+"/"+suffix + extension;
+	auto path=dir+"/"+prefix+suffix+extension;
+LOG(LogInfo) << "Media path: " << path;
+	return path;
 }
