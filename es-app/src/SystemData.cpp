@@ -1260,7 +1260,9 @@ std::string SystemData::getGamelistPath(bool forWrite) const
 		return localPath;
 
 	if (!forWrite){
-		return mRootFolder->getPath() + "/gamelist.xml";
+		auto legacyPath = mRootFolder->getPath() + "/gamelist.xml";
+		if (Utils::FileSystem::exists(legacyPath))
+			return legacyPath;
 	}
 
 	Utils::FileSystem::createDirectory(Utils::FileSystem::getParent(filePath));
