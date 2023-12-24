@@ -223,6 +223,17 @@ function httpPostJson(url,data,cbok=null,cbng=null){
 	},cbok,cbng);
 }
 
+function httpDeleteJson(url,data,cbok=null,cbng=null){
+
+	return httpRequest(url,{
+		method:'DELETE',
+		headers:{'Content-Type':'application/json'},
+		body:JSON.stringify(data)
+	},(res)=>{
+		return (res.status>=200 && res.status<300)?res:null;
+	},cbok,cbng);
+}
+
 function httpPostFile(url,type,data,cbok=null,cbng=null){
 
 	return httpRequest(url,{
@@ -1242,8 +1253,8 @@ function showReplacerPanel(gt,it,btnloc,pnlloc,filter,cbchg){
 		rmbtn.onclick=()=>{
 			pnlloc.innerHTML='';
 			showConfirmPanel(pnlloc,'Remove this',()=>{
-				var url=getGameURL(gt)+'/remove_media/'+it;
-				httpPostJson(url,'{}',()=>{
+				var url=getGameURL(gt)+'/media/'+it;
+				httpDeleteJson(url,'{}',()=>{
 					if(gt[it])delete gt[it];
 					if(cbchg)cbchg(null);
 					updateReplacer(gt,it,btnloc,pnlloc,filter,cbchg);
@@ -1384,8 +1395,8 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		});
 		btn.onclick=()=>{
 			var url=getGameURL(gt);
-			updateJukeBox(url+'/media/jukebox',0,(data)=>{
-				var a={base:url+'/media/jukebox/',dir:[],file:[]}
+			updateJukeBox(url+'/res/jukebox',0,(data)=>{
+				var a={base:url+'/res/jukebox/',dir:[],file:[]}
 				for(var b of data.dirs){
 					// from ./ 
 					a.dir.push(b.substring(2));
@@ -1410,8 +1421,8 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 		});
 		btn.onclick=()=>{
 			var url=getGameURL(gt);
-			updateImageViewer(url+'/media/slideshow',0,(data)=>{
-				var a={base:url+'/media/slideshow/',dir:[],file:[]}
+			updateImageViewer(url+'/res/slideshow',0,(data)=>{
+				var a={base:url+'/res/slideshow/',dir:[],file:[]}
 				for(var b of data.dirs){
 					// from ./ 
 					a.dir.push(b.substring(2));
@@ -1503,7 +1514,7 @@ function updateGameView(gt,cbquit,cbchg,cberr){
 
 		var list=createElement({target:panel_gameview,tag:'div',sub:['Now Loading...']});
 
-		var pref='/systems/'+gt.systemName+'/games/'+gt.id+'/media/';
+		var pref='/systems/'+gt.systemName+'/games/'+gt.id+'/res/';
 		httpGetJson(pref+'docs.json',(data)=>{
 			list.innerHTML='';
 			for(var it in data){
