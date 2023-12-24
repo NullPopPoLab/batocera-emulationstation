@@ -428,7 +428,7 @@ std::string HttpApi::getCaps()
 	writer.Key("en"); writer.String("English");
 	writer.Key("es"); writer.String("espanol");
 	writer.Key("fr"); writer.String("francais");
-	writer.Key("ja"); writer.String("“ú–{Œê");
+	writer.Key("ja"); writer.String("æ—¥æœ¬èªž");
 	writer.Key("pt"); writer.String("portugues");
 	writer.EndObject();
 
