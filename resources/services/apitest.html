@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+	<meta charset="utf-8">
+	<title>EmulationStation API test</title>
+	<link rel="shortcut icon" href="favicon.png">
+	<link href="main.css" rel="stylesheet">
+</head>
+<body onload="ipldone()"><div class=screen>
+<header><img height="24" style="vertical-align: middle;" src="favicon.png"><span>EmulationStation API test</span></header>
+<main id=mainboard>
+
+</main><footer><a target="_blank" href="https://batocera.org/">Batocera.linux</a>: <A target="_blank" href="https://github.com/NullPopPoLab/batocera.linux/wiki">NullPopPo custom</a></footer>
+<div id=styles></div>
+<div id=modules></div>
+<script type="text/javascript" src="1stkit.js"></script>
+<script><!--
+var main=document.getElementById('mainboard');
+main.innerHTML='IPL loading...';
+
+function ipldone(){
+
+	ipl_styles.load('apitest.css');
+	ipl_modules.load('http_client.js');
+	ipl_modules.load('es_client.js');
+	ipl_modules.load('mediatype.js');
+	ipl_modules.load('metaedit.js');
+	ipl_modules.load('objview.js');
+	ipl_modules.load('apitest.js');
+	ipl_wait4ready(main,()=>{
+		runAPITest(main);
+	});
+}
+
+//--></script>
+</div></body></html>
