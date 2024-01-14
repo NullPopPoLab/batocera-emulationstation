@@ -1,0 +1,39 @@
+.leftpane {
+	color:white;
+	background-color:#202020; 
+	flex-shrink:0;
+	overflow-y: auto;
+	max-height: calc(100vh - 5em);
+}
+.rightpane {
+	flex-grow:1;
+	overflow-y: auto;
+	max-height: calc(100vh - 3em);
+}
+
+.objview_field{
+	margin-top: 0.3em;
+}
+.objview_legend{
+	padding: 0.2em
+}
+.objview_key{
+	display:inline-block;
+	border-style:outset;
+	margin: 0.2em;
+	padding-left: 0.2em;
+}
+.objview_value{
+	display:inline-block;
+	border-style:inset;
+	margin-left: 0.2em;
+	padding: 0.2em;
+}
+
+input[type="text"]{
+	width:40em;
+}
+textarea{
+	width:40em;
+	height:6em;
+}
