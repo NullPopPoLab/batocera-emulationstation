@@ -414,13 +414,15 @@ std::string HttpApi::getCaps()
 	writer.Key("SortName"); writer.Bool(true);
 	writer.Key("StrictTitle"); writer.Bool(true);
 	writer.Key("Documentation"); writer.Bool(true);
-	writer.Key("GetScraperMedia"); writer.Bool(true);
+	writer.Key("GetScraperMedia"); writer.Bool(false);
+	writer.Key("GetMediaResource"); writer.Bool(true);
 	writer.Key("GetScreenshot"); writer.Bool(true);
 	writer.Key("JukeBox"); writer.Bool(true);
 	writer.Key("RemoveMedia"); writer.Bool(true);
 	writer.Key("SaveGenreByIDs"); writer.Bool(true);
 	writer.Key("SlideShow"); writer.Bool(true);
 	writer.Key("PartialGameList"); writer.Bool(true);
+	writer.Key("DeleteMethod"); writer.Bool(true);
 
 	writer.Key("GenreLanguages");
 	writer.StartObject();
