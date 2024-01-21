@@ -536,20 +536,6 @@ void HttpServerThread::run()
 		if (!isAllowed(req, res))
 			return;
 
-		if (req.body.empty())
-		{
-			res.set_content("400 bad request - body is missing", "text/html");
-			res.status = 400;
-			return;
-		}
-
-		if (!req.has_header("Content-Type"))
-		{
-			res.set_content("400 missing content-type", "text/html");
-			res.status = 400;
-			return;
-		}
-
 		std::string systemName = req.matches[1];
 		SystemData* system = SystemData::getSystem(systemName);
 		if (system != nullptr)
