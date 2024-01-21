@@ -58,3 +58,6 @@ function getMajorMediaType(path){
 	if(content_type.text[ext])return 'text';
 	return '';
 }
+
+const mediatype_ready=true;
+

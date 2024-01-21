@@ -55,3 +55,6 @@ function objview(data,opt={},name=null){
 
 	return fs;
 }
+
+const objview_ready=true;
+
