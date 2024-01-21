@@ -196,6 +196,15 @@ function http_post_file(url,type,data,cbok=null,cbng=null){
 	},cbok,cbng);
 }
 
+function http_delete(url,cbok=null,cbng=null){
+
+	return http_request(url,{
+		method:'DELETE',
+	},(res)=>{
+		return (res.status==200)?res.text():null;
+	},cbok,cbng);
+}
+
 function quickhtml(prm){
 
 	if(!prm.tag){
@@ -319,24 +328,23 @@ function ipl_manage(cate,ctor,dtor){
 		unit.inst=null;
 		delete mng.target[handle.path];
 	}
-	mng.load=(path,cbok,cbng)=>{
+	mng.load_special=(path,loader)=>{
 		var handle={
+			unit:null,
 			path:path,
 			open:true,
-			cbok:cbok,
-			cbng:cbng,
+			loader:loader,
 		}
 		handle.abend=(err)=>{
 			handle.open=false;
-			if(cbng)cbng(err);
 		}
 
-		var unit=mng.target[path];
+		var unit=handle.unit=mng.target[path];
 		if(unit){
 			++unit.cnt;
 		}
 		else{
-			unit={
+			unit=handle.unit={
 				path:path,
 				ready:false,
 				cnt:1,
@@ -345,6 +353,17 @@ function ipl_manage(cate,ctor,dtor){
 			}
 			mng.target[path]=unit;
 
+			loader(handle);
+		}
+		mng.loading.push(handle);
+
+		return handle;
+	}
+
+	mng.load=(path)=>{
+
+		return mng.load_special(path,(handle)=>{
+			var unit=handle.unit;
 			http_get_text(path,(text)=>{
 				if(mng.ctor){
 					try{
@@ -363,17 +382,15 @@ function ipl_manage(cate,ctor,dtor){
 				unit.err=err;
 				handle.abend(err);
 			});
-		}
-		mng.loading.push(handle);
+		});
 
-		return handle;
 	}
+
 	mng.poll=()=>{
 		if(mng.loading.length<1)return true;
 		var handle=mng.loading.shift();
 		var unit=mng.target[handle.path];
 		if(unit.ready){
-			if(handle.cbok)handle.cbok();
 			return true;
 		}
 		mng.loading.push(handle);
@@ -404,6 +421,26 @@ var ipl_modules=ipl_manage('module',(text)=>{
 },(el)=>{
 	el.remove();
 });
+ipl_modules.load_debug=(path,cbchk)=>{
+	return ipl_modules.load_special(path,(handle)=>{
+		var unit=handle.unit;
+		unit.ready=false;
+
+		unit.inst=quickhtml({
+			tag:'script',
+			attr:{src:handle.path},
+		});
+		module_holder.append(unit.inst);
+
+		engine_launch(
+			()=>{
+				try{return !cbchk();}
+				catch(e){return true;}
+			},
+			()=>{unit.ready=true;}
+		);
+	});
+}
 
 function ipl_isready(){
 
@@ -446,7 +483,7 @@ function ipl_monitor(view){
 			var s='';
 			if(unit.ready)s='OK';
 			else if(unit.err)s=unit.err.toString();
-			else s='...';
+			else s='Wait for it...';
 			quickhtml({target:tr,tag:'td',sub:[s]});
 			return true;
 		});
@@ -471,3 +508,4 @@ function ipl_wait4ready(view,cbdone){
 }
 
 start_engine();
+//ipl_wakeup();

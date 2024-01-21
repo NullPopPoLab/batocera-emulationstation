@@ -8,76 +8,28 @@ var metaset={
 	path:{capt:'Path',type:'fixed'},
 	systemName:{capt:'System',type:'fixed'},
 	playcount:{capt:'Play Count',type:'fixed'},
-	lastplayed:{capt:'Last Played Time',type:'fixed',view:metaview_datetime},
-	gametime:{capt:'Played Game Time',type:'fixed',view:metaview_seconds},
-	docsAvailable:{capt:'Has Documents',type:'fixed',view:metaview_yesno},
-	slideshowAvailable:{capt:'Has Slideshow',type:'fixed',view:metaview_yesno},
-	jukeboxAvailable:{capt:'Has Jukebox',type:'fixed',view:metaview_yesno},
-	arcadesystemname:{capt:'Powered by',type:'lineinput'},
-	name:{capt:'Captional Title',type:'lineinput'},
-	title:{capt:'Formal Title',type:'lineinput'},
-	sortname:{capt:'Sortable Title',type:'lineinput'},
-	family:{capt:'Family',type:'lineinput'},
-	desc:{capt:'Description',type:'textinput'},
-	rating:{capt:'Rating',type:'rating',view:metaview_rating},
-	region:{capt:'Region',type:'lineinput'},
-	lang:{capt:'Language',type:'lineinput'},
-	releasedate:{capt:'Release Date',type:'date',view:metaview_date},
-	developer:{capt:'Developer',type:'lineinput'},
-	publisher:{capt:'Publisher',type:'lineinput'},
-	genres:{capt:'Genres',type:'genres',view:metaview_genres},
-	players:{capt:'Players',type:'lineinput'},
+	lastplayed:{capt:'Last Played Time',type:'fixed'},
+	gametime:{capt:'Played Game Time',type:'fixed'},
+	docsAvailable:{capt:'Has Documents',view:metaedit_row_yesno},
+	slideshowAvailable:{capt:'Has Slideshow',view:metaedit_row_yesno},
+	jukeboxAvailable:{capt:'Has Jukebox',view:metaedit_row_yesno},
+	arcadesystemname:{capt:'Powered by',view:metaedit_row_line},
+	name:{capt:'Captional Title',view:metaedit_row_line},
+	title:{capt:'Formal Title',view:metaedit_row_line},
+	sortname:{capt:'Sortable Title',view:metaedit_row_line},
+	family:{capt:'Family',view:metaedit_row_line},
+	desc:{capt:'Description',view:metaedit_row_text},
+	rating:{capt:'Rating',type:'rating',view:metaedit_row_rating},
+	region:{capt:'Region',view:metaedit_row_line},
+	lang:{capt:'Language',view:metaedit_row_line},
+	releasedate:{capt:'Release Date',view:metaedit_row_date},
+	developer:{capt:'Developer',view:metaedit_row_line},
+	publisher:{capt:'Publisher',view:metaedit_row_line},
+	genres:{capt:'Genres',type:'genres'},
+	players:{capt:'Players',view:metaedit_row_line},
 }
 
-function metaview_yesno(val){
-	return booleanize(val)?'Yes':'No';
-}
-
-function mateview_yesno_select(val,editable=false){
-	if(!editable)return metaview_yesno(val);
-	val=booleanize(val);
-
-	var span=quickhtml({
-		tag:'span',
-		style:'display:inline-block',
-	});
-	var label0=quickhtml({target:span,tag:'label'});
-	span.append(' ');
-	var label1=quickhtml({target:span,tag:'label'});
-
-	var radio0=quickhtml({
-		target:label0,
-		tag:'input',
-		attr:{type:'radio'}
-	});
-	label0.append('No');
-	label1.append('Yes');
-	var radio1=quickhtml({
-		target:label1,
-		tag:'input',
-		attr:{type:'radio'}
-	});
-	if(val)radio1.checked=true;
-	else radio0.checked=true;
-
-	var busy=false;
-	radio0.onclick=()=>{
-		if(busy)return;
-		busy=true;
-		radio1.checked=!radio0.checked;
-		busy=false;
-	}
-	radio1.onclick=()=>{
-		if(busy)return;
-		busy=true;
-		radio0.checked=!radio1.checked;
-		busy=false;
-	}
-
-	return span;
-}
-
-function metaview_seconds(val){
+function metaedit_seconds(val){
 	var h=Math.floor(val/3600);
 	val-=h*3600;
 	var m=Math.floor(val/60);
@@ -89,7 +41,8 @@ function metaview_seconds(val){
 	return v;
 }
 
-function metaview_date(val){
+function metaedit_date_format(val){
+
 	if(!val)return '';
 	var yp=0;
 	var mp=4;
@@ -115,12 +68,25 @@ function metaview_date(val){
 	if(isNaN(m))return '';
 	var d=parseInt(val.substring(dp,dp+2));
 	if(isNaN(d))return '';
-
-	return zerofill(y,4)+'-'+zerofill(m,2)+'-'+zerofill(d,2);
+	return [y,m,d]
 }
 
-function metaview_datetime(val){
-	var date=metaview_date(val);
+function metaedit_date_short(val){
+	val=metaedit_date_format(val);
+	if(!val)return '';
+
+	return zerofill(''+val[0],4)+zerofill(val[1],2)+zerofill(val[2],2);
+}
+
+function metaedit_date(val){
+	val=metaedit_date_format(val);
+	if(!val)return '';
+
+	return zerofill(''+val[0],4)+'-'+zerofill(val[1],2)+'-'+zerofill(val[2],2);
+}
+
+function metaedit_datetime(val){
+	var date=metaedit_date(val);
 	if(!date)return '';
 
 	var tp=8;
@@ -156,156 +122,410 @@ function metaview_datetime(val){
 	return date+' '+zerofill(h,2)+':'+zerofill(i,2)+':'+zerofill(s,2);
 }
 
-function metaview_rating(value,editable=false){
+function metaedit_submit_button(row,data,cbbuild){
 
-	var v=Math.floor(value*5+0.5);
+	var opt={
+		target:row.edit,
+		caption:'Submit',
+		cbexec:(ctl)=>{
+			if(!cbbuild){
+				row.msg.innerHTML='No way.';
+				ctl.unlock();
+			}
+			else{
+				row.msg.innerHTML='Wait for it...';
+
+				var dst={}
+				if(!cbbuild(dst)){
+					row.msg.innerHTML='Invalid';
+					ctl.unlock();
+					return;
+				}
+
+				var sname=data['systemName'];
+				var gid=data['id'];
+				var url='/systems/'+sname+'/games/'+gid;
+				es_client.post_json(url,dst,
+					(d2)=>{
+						row.msg.innerHTML='OK';
+						ctl.unlock();
+					},
+					(err)=>{
+						row.msg.innerHTML=err.toString();
+						ctl.unlock();
+					}
+				);
+			}
+		}
+	}
+	return htmlut_safebutton(opt);
+}
+
+function metaedit_upload_button(target,msg,data,name,filter){
+
+	var opt={
+		target:target,
+		filter:filter,
+		caption_select:'Upload',
+		cbselect:(ctl,files)=>{
+			var path=files[0].name;
+			msg.innerHTML=path;
+			ctl.confirm();
+		},
+		cbcancel:(ctl,files)=>{
+			msg.innerHTML='';
+		},
+		cbexec:(ctl,files)=>{
+			msg.innerHTML='Wait for it...';
+
+			var sname=data['systemName'];
+			var gid=data['id'];
+			var url='/systems/'+sname+'/games/'+gid+'/media/'+name;
+			es_client.post_file(url,files[0].type,files[0].name,
+				(d2)=>{
+					msg.innerHTML='OK';
+					ctl.show();
+				},
+				(err)=>{
+					msg.innerHTML=err.toString();
+					ctl.show();
+				}
+			);
+		},
+	}
+	return htmlut_filebutton(opt);
+}
+
+function metaedit_delete_button(target,msg,data,name){
+
+	var opt={
+		visible:!!data[name]??false,
+		target:target,
+		caption_first:'Delete',
+		cbexec:(ctl)=>{
+			msg.innerHTML='Wait for it...';
+
+			var sname=data['systemName'];
+			var gid=data['id'];
+			if(es_caps.DeleteMethod){
+				var url='/systems/'+sname+'/games/'+gid+'/media/'+name;
+				es_client.delete(url,
+					(d2)=>{
+						msg.innerHTML='OK';
+						ctl.show();
+					},
+					(err)=>{
+						msg.innerHTML=err.toString();
+						ctl.show();
+					}
+				);
+			}
+			else{
+				var url='/systems/'+sname+'/games/'+gid+'/remove_media/'+name;
+				es_client.post_text(url,'',
+					(d2)=>{
+						msg.innerHTML='OK';
+						ctl.show();
+					},
+					(err)=>{
+						msg.innerHTML=err.toString();
+						ctl.show();
+					}
+				);
+			}
+		}
+	}
+	return htmlut_confirmbutton(opt);
+}
+
+function metaedit_row_common(capt,data,name){
+
+	var row={
+		capt:quickhtml({tag:'td',sub:[capt]}),
+		val:quickhtml({tag:'td'}),
+		edit:quickhtml({tag:'td'}),
+		msg:quickhtml({tag:'td'}),
+	}
+	row.view=quickhtml({tag:'tr',sub:[row.capt,row.val,row.edit,row.msg]});
+	return row;
+}
+
+function metaedit_row_fixed(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	var val=data[name]??null;
+	if(val)row.val.append(val);
+	return row;
+}
+
+function metaedit_row_yesno(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	row.val.append(booleanize(data[name]??null)?'Yes':'No');
+	return row;
+}
+
+function metaedit_row_yesno_select(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	var val=booleanize(data[name]??null);
+
 	var span=quickhtml({
+		target:row.val,
 		tag:'span',
-		attr:{title:v},
+		style:'display:inline-block',
+	});
+	var label0=quickhtml({target:span,tag:'label'});
+	span.append(' ');
+	var label1=quickhtml({target:span,tag:'label'});
+
+	var radio0=quickhtml({
+		target:label0,
+		tag:'input',
+		attr:{type:'radio'}
+	});
+	label0.append('No');
+	label1.append('Yes');
+	var radio1=quickhtml({
+		target:label1,
+		tag:'input',
+		attr:{type:'radio'}
+	});
+	if(val)radio1.checked=true;
+	else radio0.checked=true;
+
+	var busy=false;
+	radio0.onclick=()=>{
+		if(busy)return;
+		busy=true;
+		val=false;
+		radio1.checked=!radio0.checked;
+		busy=false;
+	}
+	radio1.onclick=()=>{
+		if(busy)return;
+		busy=true;
+		val=true;
+		radio0.checked=!radio1.checked;
+		busy=false;
+	}
+
+	metaedit_submit_button(row,data,(dst)=>{
+		dst[name]=val?'true':'false';
+		return true;
+	});
+
+	return row;
+}
+
+function metaedit_row_line(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	var val=data[name]??'';
+
+	var inp=quickhtml({target:row.val,tag:'input',attr:{type:'text',value:val}});
+	metaedit_submit_button(row,data,(dst)=>{
+		dst[name]=inp.value;
+		return true;
+	});
+
+	return row;
+}
+
+function metaedit_row_date(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	var val=metaedit_date(data[name]??'');
+
+	var inp=quickhtml({target:row.val,tag:'input',attr:{type:'text',value:val}});
+	metaedit_submit_button(row,data,(dst)=>{
+		var date=metaedit_date_short(inp.value);
+		if(!date)return false;
+		dst[name]=date;
+		return true;
+	});
+
+	return row;
+}
+
+function metaedit_row_text(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	var val=data[name]??'';
+
+	var inp=quickhtml({target:row.val,tag:'textarea',sub:[val]});
+	metaedit_submit_button(row,data,(dst)=>{
+		dst[name]=inp.value;
+		return true;
+	});
+
+	return row;
+}
+
+function metaedit_row_rating(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	var val=data[name]??'';
+
+	var score=data[name]??0;
+	var stars=Math.floor(score*5+0.5);
+
+	var inp=quickhtml({
+		target:row.val,
+		tag:'span',
+		attr:{title:score},
 		style:'display:inline-block',
 	});
 
-	var star=[]
-	var rescore=(v2)=>{
+	var mark=[]
+	var repaint=()=>{
 		for(var i=0;i<5;++i){
-			star[i].setAttribute('src',
-				((i<v2)?es_resource.star1:es_resource.star0));
+			mark[i].setAttribute('title',score);
+			mark[i].setAttribute('src',
+				((i<stars)?es_resource.star1:es_resource.star0));
 		}
 	}
 
-	for(var i=0;i<5;++i){
-		star[i]=quickhtml({
-			target:span,
+	safeeachnumber(0,5,1,(i)=>{
+		mark[i]=quickhtml({
+			target:inp,
 			tag:'img',
-			attr:{src:((i<v)?es_resource.star1:es_resource.star0)},
+			attr:{src:((i<stars)?es_resource.star1:es_resource.star0)},
 		});
-		if(!editable)continue;
-		((i_)=>{
-			star[i_].onclick=()=>{
-				v=(v==1 && i_==0)?0:(i_+1);
-				rescore(v);
-			}
-		})(i);
+		mark[i].onclick=()=>{
+			stars=(stars==1 && i==0)?0:(i+1);
+			score=ratingscore[stars]
+			repaint();
+		}
+		return true;
+	});
+
+	metaedit_submit_button(row,data,(dst)=>{
+		dst[name]=score;
+		return true;
+	});
+
+	return row;
+}
+
+function metaedit_row_link(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+
+	var ctl_delete=metaedit_delete_button(row.edit,row.msg,data,name);
+	var ctl_upload=metaedit_upload_button(row.edit,row.msg,data,name,filterType('text','es'));
+
+	var val=data[name]??'';
+	if(val){
+		quickhtml({
+			target:row.val,
+			tag:'a',
+			attr:{target:'_blank',href:val},
+			sub:['[View]']
+		});
 	}
-	return span;
+
+	return row;
 }
 
-function metaview_genres(value,view=null,editable=false){
+function metaedit_image_toolbar(data,name,type){
 
-	return view?view:value;
+	var qht_edit={
+		tag:'div',
+	}
+	var view_edit=quickhtml(qht_edit);
+
+	var qht_msg={
+		tag:'div',
+	}
+	var view_msg=quickhtml(qht_msg);
+
+	var ctl_delete=metaedit_delete_button(view_edit,view_msg,data,name);
+	var ctl_upload=metaedit_upload_button(view_edit,view_msg,data,name,filterType(type,'es'));
+
+	var qht_bar={
+		tag:'div',
+		sub:[
+			view_msg,
+			view_edit,
+		]
+	}
+	return quickhtml(qht_bar);
 }
 
-function metaview(sname,gid,data){
+function metaedit(data){
+
+	var sname=data['systemName'];
+	var gname=data['name'];
+	var gid=data['id'];
 
 	var div=quickhtml({tag:'div'});
 
 	var tbl=quickhtml({target:div,tag:'table',attr:{border:'border'}});
 
-	safeeachobject(metaset,(name,t)=>{
-		var inp=null;
-		var ctl=null;
-		var view=data[name]??'';
-		if(view && t.view)view=t.view(view);
-		switch(t.type){
-			case 'flags':
-			inp=mateview_yesno_select(date[name]??false,true);
-			break;
+	safeeachobject(metaset,(name,attr)=>{
 
-			case 'rating':
-			inp=metaview_rating(data[name]??0,true);
-			break;
-
-			case 'genres':
-			inp=metaview_genres(data['genres']??'',data['genre']??'',true);
-			break;
-
-			case 'lineinput':
-			inp=quickhtml({tag:'input',attr:{type:'text',value:view}});
-			break;
-
-			case 'textinput':
-			inp=quickhtml({tag:'textarea',sub:[view]});
-			break;
-
-			default:
-			inp=view;
-		}
-
-		quickhtml({
-			target:tbl,
-			tag:'tr',
-			sub:[
-				quickhtml({tag:'td',sub:[t.capt]}),
-				quickhtml({tag:'td',sub:[inp??'']}),
-				quickhtml({tag:'td',sub:[ctl??'']}),
-			]
-		});
+		var row=(attr.view??metaedit_row_fixed)(attr.capt,data,name);
+		tbl.append(row.view);
 		return true;
 	});
 
-	safeeachobject(es_caps.Flags,(name,caption)=>{
-		var inp=mateview_yesno_select(data[name]??false,true);
-		quickhtml({
-			target:tbl,
-			tag:'tr',
-			sub:[
-				quickhtml({tag:'td',sub:[caption]}),
-				quickhtml({tag:'td',sub:[inp]}),
-			]
-		});
+	safeeachobject(es_caps.Flags,(name,capt)=>{
+
+		var row=metaedit_row_yesno_select(
+			capt,data,name,(dst,val)=>{
+				dst[name]=val
+			});
+		tbl.append(row.view);
 		return true;
 	});
 
-	safeeachobject(es_caps.Texts,(name,caption)=>{
-		var inp=quickhtml({tag:'textarea',sub:[data[name]??'']});
-		quickhtml({
-			target:tbl,
-			tag:'tr',
-			sub:[
-				quickhtml({tag:'td',sub:[caption]}),
-				quickhtml({tag:'td',sub:[inp]}),
-			]
-		});
+	safeeachobject(es_caps.Texts,(name,capt)=>{
+
+		var row=metaedit_row_text(
+			capt,data,name,(dst,val)=>{
+				dst[name]=val
+			});
+		tbl.append(row.view);
+
 		return true;
 	});
 
-	safeeachobject(es_caps.Books,(name,caption)=>{
-		quickhtml({
-			target:tbl,
-			tag:'tr',
-			sub:[
-				quickhtml({tag:'td',sub:[caption]}),
-				quickhtml({tag:'td',sub:[
-					data[name]?quickhtml({
-						tag:'a',
-						attr:{target:'_blank',href:es_client.makeurl(data[name])},
-						sub:['[View]']
-					}):'(empty)'
-				]}),
-			]
-		});
+	safeeachobject(es_caps.Books,(name,capt)=>{
+
+		var row=metaedit_row_link(
+			capt,data,name,(dst,val)=>{
+				dst[name]=val
+			});
+		tbl.append(row.view);
 		return true;
 	});
 
 	safeeachobject(es_caps.Videos,(name,caption)=>{
+
 		quickhtml({
 			target:div,
 			tag:'fieldset',
 			sub:[
 				quickhtml({tag:'legend',sub:[caption]}),
-				data[name]?mediaview(es_client.makeurl(data[name]),'video'):'(empty)'
+				metaedit_image_toolbar(data,name,'video'),
+				data[name]?mediaview(es_client.makeurl(data[name]),'video'):
+					quickhtml({tag:'div',sub:['(empty)']})
 			]
 		});
 		return true;
 	});
 
 	safeeachobject(es_caps.Images,(name,caption)=>{
+
 		quickhtml({
 			target:div,
 			tag:'fieldset',
 			sub:[
 				quickhtml({tag:'legend',sub:[caption]}),
-				data[name]?mediaview(es_client.makeurl(data[name]),'image'):'(empty)'
+				metaedit_image_toolbar(data,name,'image'),
+				data[name]?mediaview(es_client.makeurl(data[name]),'image'):
+					quickhtml({tag:'div',sub:['(empty)']})
 			]
 		});
 		return true;
@@ -313,3 +533,5 @@ function metaview(sname,gid,data){
 
 	return div;
 }
+
+const metaedit_ready=true;

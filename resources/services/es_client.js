@@ -49,3 +49,5 @@ const es_resource={
 	star0:es_client.makeurl('/resources/star_unfilled.svg'),
 	star1:es_client.makeurl('/resources/star_filled.svg'),
 }
+
+const es_client_ready=true;
