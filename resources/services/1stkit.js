@@ -185,15 +185,37 @@ function http_post_json(url,data,cbok=null,cbng=null){
 	},cbok,cbng);
 }
 
-function http_post_file(url,type,data,cbok=null,cbng=null){
+function readfile(bin,file,cbok=null,cbng=null){
 
-	return http_request(url,{
-		method:'POST',
-		headers:{'Content-Type':type?type:'application/octet-stream'},
-		body:data
-	},(res)=>{
-		return (res.status>=200 && res.status<300)?res:null;
-	},cbok,cbng);
+	var fd=new FileReader();
+	if(bin)fd.readAsArrayBuffer(file);
+	else fd.readAsText(file);
+
+	var end=false;
+	fd.addEventListener('load',()=>{
+		if(end)return;
+		end=true;
+		if(cbok)cbok(file.name,fd.result);
+	});
+	fd.addEventListener('error',(err)=>{
+		if(end)return;
+		end=true;
+		if(cbng)cbng(file.name,err);
+	});
+}
+
+function http_post_file(url,bin,file,cbok=null,cbng=null){
+
+	readfile(bin,file,(name,data)=>{
+console.log(file.type+': size='+data.length);
+		return http_request(url,{
+			method:'POST',
+			headers:{'Content-Type':file.type?file.type:'application/octet-stream'},
+			body:data
+		},(res)=>{
+			return (res.status>=200 && res.status<300)?res:null;
+		},cbok,cbng);
+	},cbng);
 }
 
 function http_delete(url,cbok=null,cbng=null){

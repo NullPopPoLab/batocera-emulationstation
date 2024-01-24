@@ -117,10 +117,10 @@ function http_controller_new(opt={}){
 			ctl.queue.push(rqc);
 			return rqc;
 		},
-		post_file:(path,type,file,cbok,cbng)=>{
+		post_file:(path,bin,file,cbok,cbng)=>{
 			var url=ctl.makeurl(path);
 			var rqc=http_request_context(
-				()=>http_post_file(url,type,file,
+				()=>http_post_file(url,bin,file,
 					(data)=>http_respond_ok(rqc,data),
 					(err)=>http_respond_ng(rqc,err)
 				),
