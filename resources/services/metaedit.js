@@ -4,15 +4,15 @@
 const ratingscore=['0','0.2','0.4','0.6','0.8','1']
 
 var metaset={
-	id:{capt:'ID',type:'fixed'},
-	path:{capt:'Path',type:'fixed'},
-	systemName:{capt:'System',type:'fixed'},
-	playcount:{capt:'Play Count',type:'fixed'},
-	lastplayed:{capt:'Last Played Time',type:'fixed'},
-	gametime:{capt:'Played Game Time',type:'fixed'},
-	docsAvailable:{capt:'Has Documents',view:metaedit_row_yesno},
-	slideshowAvailable:{capt:'Has Slideshow',view:metaedit_row_yesno},
-	jukeboxAvailable:{capt:'Has Jukebox',view:metaedit_row_yesno},
+	id:{capt:'ID'},
+	path:{capt:'Path'},
+	systemName:{capt:'System'},
+	playcount:{capt:'Play Count'},
+	lastplayed:{capt:'Last Played Time',view:metaedit_row_datetime_fixed},
+	gametime:{capt:'Played Game Time',view:metaedit_row_seconds_fixed},
+	docsAvailable:{capt:'Has Documents',view:metaedit_row_yesno_fixed},
+	slideshowAvailable:{capt:'Has Slideshow',view:metaedit_row_yesno_fixed},
+	jukeboxAvailable:{capt:'Has Jukebox',view:metaedit_row_yesno_fixed},
 	arcadesystemname:{capt:'Powered by',view:metaedit_row_line},
 	name:{capt:'Captional Title',view:metaedit_row_line},
 	title:{capt:'Formal Title',view:metaedit_row_line},
@@ -25,7 +25,7 @@ var metaset={
 	releasedate:{capt:'Release Date',view:metaedit_row_date},
 	developer:{capt:'Developer',view:metaedit_row_line},
 	publisher:{capt:'Publisher',view:metaedit_row_line},
-	genres:{capt:'Genres',type:'genres'},
+	genres:{capt:'Genres'},
 	players:{capt:'Players',view:metaedit_row_line},
 }
 
@@ -161,7 +161,7 @@ function metaedit_submit_button(row,data,cbbuild){
 	return htmlut_safebutton(opt);
 }
 
-function metaedit_upload_button(target,msg,data,name,filter){
+function metaedit_upload_button(target,msg,data,name,filter,cbdone){
 
 	var opt={
 		target:target,
@@ -181,9 +181,11 @@ function metaedit_upload_button(target,msg,data,name,filter){
 			var sname=data['systemName'];
 			var gid=data['id'];
 			var url='/systems/'+sname+'/games/'+gid+'/media/'+name;
-			es_client.post_file(url,files[0].type,files[0].name,
+			es_client.post_file(url,true,files[0],
 				(d2)=>{
 					msg.innerHTML='OK';
+					data[name]=url;
+					cbdone();
 					ctl.show();
 				},
 				(err)=>{
@@ -196,7 +198,7 @@ function metaedit_upload_button(target,msg,data,name,filter){
 	return htmlut_filebutton(opt);
 }
 
-function metaedit_delete_button(target,msg,data,name){
+function metaedit_delete_button(target,msg,data,name,cbdone){
 
 	var opt={
 		visible:!!data[name]??false,
@@ -212,6 +214,8 @@ function metaedit_delete_button(target,msg,data,name){
 				es_client.delete(url,
 					(d2)=>{
 						msg.innerHTML='OK';
+						data[name]=null;
+						cbdone();
 						ctl.show();
 					},
 					(err)=>{
@@ -225,6 +229,8 @@ function metaedit_delete_button(target,msg,data,name){
 				es_client.post_text(url,'',
 					(d2)=>{
 						msg.innerHTML='OK';
+						data[name]=null;
+						cbdone();
 						ctl.show();
 					},
 					(err)=>{
@@ -258,7 +264,29 @@ function metaedit_row_fixed(capt,data,name){
 	return row;
 }
 
-function metaedit_row_yesno(capt,data,name){
+function metaedit_row_seconds_fixed(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	var val=parseInt(data[name]??null);
+	if(!isNaN(val)){
+		var h=Math.floor(val/3600);
+		val-=h*3600;
+		var m=Math.floor(val/60);
+		val-=m*60;
+		var s=Math.floor(val);
+		row.val.append(''+h+':'+zerofill(m,2)+':'+zerofill(s,2));
+	}
+	return row;
+}
+
+function metaedit_row_datetime_fixed(capt,data,name){
+
+	var row=metaedit_row_common(capt,data,name);
+	row.val.append(metaedit_datetime(data[name]??''));
+	return row;
+}
+
+function metaedit_row_yesno_fixed(capt,data,name){
 
 	var row=metaedit_row_common(capt,data,name);
 	row.val.append(booleanize(data[name]??null)?'Yes':'No');
@@ -411,24 +439,29 @@ function metaedit_row_rating(capt,data,name){
 function metaedit_row_link(capt,data,name){
 
 	var row=metaedit_row_common(capt,data,name);
+	var updview=()=>{
+		row.val.innerHTML='';
+		var val=data[name]??'';
+		if(val){
+			quickhtml({
+				target:row.val,
+				tag:'a',
+				attr:{target:'_blank',href:val},
+				sub:['[View]']
+			});
+		}
 
-	var ctl_delete=metaedit_delete_button(row.edit,row.msg,data,name);
-	var ctl_upload=metaedit_upload_button(row.edit,row.msg,data,name,filterType('text','es'));
-
-	var val=data[name]??'';
-	if(val){
-		quickhtml({
-			target:row.val,
-			tag:'a',
-			attr:{target:'_blank',href:val},
-			sub:['[View]']
-		});
+		row.edit.innerHTML='';
+		metaedit_delete_button(row.edit,row.msg,data,name,updview);
+		metaedit_upload_button(row.edit,row.msg,data,name,filterType('text','es'),updview);
 	}
+
+	updview();
 
 	return row;
 }
 
-function metaedit_image_toolbar(data,name,type){
+function metaedit_image_toolbar(data,name,type,updview){
 
 	var qht_edit={
 		tag:'div',
@@ -440,8 +473,12 @@ function metaedit_image_toolbar(data,name,type){
 	}
 	var view_msg=quickhtml(qht_msg);
 
-	var ctl_delete=metaedit_delete_button(view_edit,view_msg,data,name);
-	var ctl_upload=metaedit_upload_button(view_edit,view_msg,data,name,filterType(type,'es'));
+	var updview2=()=>{
+		updview();
+		view_edit.innerHTML='';
+		metaedit_delete_button(view_edit,view_msg,data,name,updview2);
+		metaedit_upload_button(view_edit,view_msg,data,name,filterType(type,'es'),updview2);
+	}
 
 	var qht_bar={
 		tag:'div',
@@ -450,6 +487,7 @@ function metaedit_image_toolbar(data,name,type){
 			view_edit,
 		]
 	}
+	updview2();
 	return quickhtml(qht_bar);
 }
 
@@ -503,14 +541,24 @@ function metaedit(data){
 
 	safeeachobject(es_caps.Videos,(name,caption)=>{
 
+		var view=quickhtml({tag:'div'});
+		var updview=()=>{
+			if(data[name]){
+				view.innerHTML='';
+				view.append(mediaview(es_client.makeurl(data[name]),'video'));
+			}
+			else{
+				view.innerHTML='(empty)';
+			}
+		}
+
 		quickhtml({
 			target:div,
 			tag:'fieldset',
 			sub:[
 				quickhtml({tag:'legend',sub:[caption]}),
-				metaedit_image_toolbar(data,name,'video'),
-				data[name]?mediaview(es_client.makeurl(data[name]),'video'):
-					quickhtml({tag:'div',sub:['(empty)']})
+				metaedit_image_toolbar(data,name,'video',updview),
+				view
 			]
 		});
 		return true;
@@ -518,14 +566,24 @@ function metaedit(data){
 
 	safeeachobject(es_caps.Images,(name,caption)=>{
 
+		var view=quickhtml({tag:'div'});
+		var updview=()=>{
+			if(data[name]){
+				view.innerHTML='';
+				view.append(mediaview(es_client.makeurl(data[name]),'image'));
+			}
+			else{
+				view.innerHTML='(empty)';
+			}
+		}
+
 		quickhtml({
 			target:div,
 			tag:'fieldset',
 			sub:[
 				quickhtml({tag:'legend',sub:[caption]}),
-				metaedit_image_toolbar(data,name,'image'),
-				data[name]?mediaview(es_client.makeurl(data[name]),'image'):
-					quickhtml({tag:'div',sub:['(empty)']})
+				metaedit_image_toolbar(data,name,'image',updview),
+				view
 			]
 		});
 		return true;
