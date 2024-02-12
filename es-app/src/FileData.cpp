@@ -171,6 +171,12 @@ std::string FileData::getCleanName()
 	return Utils::String::removeParenthesis(getDisplayName());
 }
 
+const std::string FileData::getSaveDir()
+{
+	auto dir=getSystem()->getSaveDir();
+	return dir+"/"+getGameKey();
+}
+
 std::string FileData::findLocalArt(const std::string& type, std::vector<std::string> exts)
 {
 	if (Settings::getInstance()->getBool("LocalArt"))
