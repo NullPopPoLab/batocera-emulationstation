@@ -64,9 +64,12 @@ GET /{path relative to resources/services}"						-> any other file in resources/
 NullPopPo Custom APIs
 ---------------------
 GET /caps                                                       -> capability info
-GET /screenshots/{fileName}                                     -> download a screenshot image
+GET /screenshots/{subpath}                                      -> screenshot file or directory info
+GET /music/{subpath}                                            -> music file or directory info
+GET /splash/{subpath}                                           -> splash file or directory info
 GET /systems/{systemName}/games_partial/{from}/{limit}          -> partial games list
-GET /systems/{systemName}/games/{gameId}/res                    -> any file in /userdata/media/{systemName}/{gameName}/
+GET /systems/{systemName}/games/{gameId}/res                    -> game media file or directory info
+GET /systems/{systemName}/games/{gameId}/saves                  -> game save file or directory info
 DELETE /systems/{systemName}/games/{gameId}/media/{mediaType}	-> remove MetaData media
 
 */
@@ -382,6 +385,67 @@ void HttpServerThread::run()
 		res.status = 404;		
 	});
 
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/saves/(.*))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			std::string gameId = req.matches[2];
+			auto game = HttpApi::findFileData(system, gameId);
+			if (game != nullptr) {
+				std::string name = req.matches[3];
+				if(name.size()>0 && name[name.size()-1]=='/')name=name.substr(0,name.size()-1);
+				std::string path = game->getSaveDir()+"/"+name;
+				if(Utils::FileSystem::isDirectory(path)){
+					std::string burl="/systems/"+systemName+"/games/"+gameId+"/saves/"+name+(name.size()?"/":"");
+					res.set_content(HttpApi::getFilesInfo(burl,game->getSaveDir(),name), "application/json");
+					return;
+				}
+				else if(Utils::FileSystem::isRegularFile(path)){
+					auto data = ResourceManager::getInstance()->getFileData(path);
+					if (data.ptr)
+					{
+						res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+						return;
+					}
+
+					res.set_content("503 cannot read", "text/html");
+					res.status = 503;
+					return;
+				}
+			}
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/saves)", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			std::string gameId = req.matches[2];
+			auto game = HttpApi::findFileData(system, gameId);
+			if (game != nullptr) {
+				std::string burl="/systems/"+systemName+"/games/"+gameId+"/saves/";
+				res.set_content(HttpApi::getFilesInfo(burl,game->getSaveDir(),""), "application/json");
+				return;
+			}
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
 	mHttpServer->Get(R"(/systems/(.+)/games/(.+)/res/(.*))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
@@ -395,9 +459,11 @@ void HttpServerThread::run()
 			auto game = HttpApi::findFileData(system, gameId);
 			if (game != nullptr) {
 				std::string name = req.matches[3];
+				if(name.size()>0 && name[name.size()-1]=='/')name=name.substr(0,name.size()-1);
 				std::string path = game->getMediaDir()+"/"+name;
 				if(Utils::FileSystem::isDirectory(path)){
-					res.set_content(HttpApi::getScraperFiles(game,name), "application/json");
+					std::string burl="/systems/"+systemName+"/games/"+gameId+"/res/"+name+(name.size()?"/":"");
+					res.set_content(HttpApi::getFilesInfo(burl,game->getMediaDir(),name), "application/json");
 					return;
 				}
 				else if(Utils::FileSystem::isRegularFile(path)){
@@ -431,7 +497,8 @@ void HttpServerThread::run()
 			std::string gameId = req.matches[2];
 			auto game = HttpApi::findFileData(system, gameId);
 			if (game != nullptr) {
-				res.set_content(HttpApi::getScraperFiles(game,""), "application/json");
+				std::string burl="/systems/"+systemName+"/games/"+gameId+"/res/";
+				res.set_content(HttpApi::getFilesInfo(burl,game->getMediaDir(),""), "application/json");
 				return;
 			}
 		}
@@ -890,22 +957,231 @@ void HttpServerThread::run()
 		}
 	});
 
-	mHttpServer->Get(R"(/screenshots/(.+))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
+	mHttpServer->Get(R"(/screenshots/(.*))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
 			return;
 
-		std::string url = req.matches[1];
-		auto path="/userdata/screenshots/"+url;
-		auto data = ResourceManager::getInstance()->getFileData(path);
-		if (data.ptr)
-			res.set_content((char*)data.ptr.get(), data.length, getMimeType(url).c_str());
-		else
-		{
-			res.set_content("404 not found", "text/html");
-			res.status = 404;
+		std::string name = req.matches[1];
+		if(name.size()>0 && name[name.size()-1]=='/')name=name.substr(0,name.size()-1);
+		std::string path = "/userdata/screenshots/"+name;
+		if(Utils::FileSystem::isDirectory(path)){
+			std::string burl="/screenshots/"+name+(name.size()?"/":"");
+			res.set_content(HttpApi::getFilesInfo(burl,"/userdata/screenshots",name), "application/json");
 			return;
 		}
+		else if(Utils::FileSystem::isRegularFile(path)){
+			auto data = ResourceManager::getInstance()->getFileData(path);
+			if (data.ptr)
+			{
+				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				return;
+			}
+
+			res.set_content("503 cannot read", "text/html");
+			res.status = 503;
+			return;
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get("/screenshots", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string burl="/screenshots/";
+		res.set_content(HttpApi::getFilesInfo(burl,"/userdata/screenshots",""), "application/json");
+	});
+
+	mHttpServer->Get(R"(/music/system/(.*))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string name = req.matches[1];
+		if(name.size()>0 && name[name.size()-1]=='/')name=name.substr(0,name.size()-1);
+		std::string path = "/usr/share/batocera/music/"+name;
+		if(Utils::FileSystem::isDirectory(path)){
+			std::string burl="/music/system/"+name+(name.size()?"/":"");
+			res.set_content(HttpApi::getFilesInfo(burl,"/usr/share/batocera/music",name), "application/json");
+			return;
+		}
+		else if(Utils::FileSystem::isRegularFile(path)){
+			auto data = ResourceManager::getInstance()->getFileData(path);
+			if (data.ptr)
+			{
+				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				return;
+			}
+
+			res.set_content("503 cannot read", "text/html");
+			res.status = 503;
+			return;
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get("/music/system", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string burl="/music/system/";
+		res.set_content(HttpApi::getFilesInfo(burl,"/usr/share/batocera/music",""), "application/json");
+	});
+
+	mHttpServer->Get(R"(/music/user/(.*))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string name = req.matches[1];
+		if(name.size()>0 && name[name.size()-1]=='/')name=name.substr(0,name.size()-1);
+		std::string path = "/userdata/music/"+name;
+		if(Utils::FileSystem::isDirectory(path)){
+			std::string burl="/music/user/"+name+(name.size()?"/":"");
+			res.set_content(HttpApi::getFilesInfo(burl,"/userdata/music",name), "application/json");
+			return;
+		}
+		else if(Utils::FileSystem::isRegularFile(path)){
+			auto data = ResourceManager::getInstance()->getFileData(path);
+			if (data.ptr)
+			{
+				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				return;
+			}
+
+			res.set_content("503 cannot read", "text/html");
+			res.status = 503;
+			return;
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get("/music/user", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string burl="/music/user/";
+		res.set_content(HttpApi::getFilesInfo(burl,"/userdata/music",""), "application/json");
+	});
+
+	mHttpServer->Get("/music/", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		res.set_content(HttpApi::getMusicRootInfo(), "application/json");
+	});
+
+	mHttpServer->Get("/music", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		res.set_content(HttpApi::getMusicRootInfo(), "application/json");
+	});
+
+	mHttpServer->Get(R"(/splash/system/(.*))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string name = req.matches[1];
+		if(name.size()>0 && name[name.size()-1]=='/')name=name.substr(0,name.size()-1);
+		std::string path = "/usr/share/batocera/splash/"+name;
+		if(Utils::FileSystem::isDirectory(path)){
+			std::string burl="/splash/system/"+name+(name.size()?"/":"");
+			res.set_content(HttpApi::getFilesInfo(burl,"/usr/share/batocera/splash",name), "application/json");
+			return;
+		}
+		else if(Utils::FileSystem::isRegularFile(path)){
+			auto data = ResourceManager::getInstance()->getFileData(path);
+			if (data.ptr)
+			{
+				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				return;
+			}
+
+			res.set_content("503 cannot read", "text/html");
+			res.status = 503;
+			return;
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get("/splash/system", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string burl="/splash/system/";
+		res.set_content(HttpApi::getFilesInfo(burl,"/usr/share/batocera/splash",""), "application/json");
+	});
+
+	mHttpServer->Get(R"(/splash/user/(.*))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string name = req.matches[1];
+		if(name.size()>0 && name[name.size()-1]=='/')name=name.substr(0,name.size()-1);
+		std::string path = "/userdata/splash/"+name;
+		if(Utils::FileSystem::isDirectory(path)){
+			std::string burl="/splash/user/"+name+(name.size()?"/":"");
+			res.set_content(HttpApi::getFilesInfo(burl,"/userdata/splash",name), "application/json");
+			return;
+		}
+		else if(Utils::FileSystem::isRegularFile(path)){
+			auto data = ResourceManager::getInstance()->getFileData(path);
+			if (data.ptr)
+			{
+				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				return;
+			}
+
+			res.set_content("503 cannot read", "text/html");
+			res.status = 503;
+			return;
+		}
+
+		res.set_content("404 media not found", "text/html");
+		res.status = 404;
+	});
+
+	mHttpServer->Get("/splash/user", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string burl="/splash/user/";
+		res.set_content(HttpApi::getFilesInfo(burl,"/userdata/splash",""), "application/json");
+	});
+
+	mHttpServer->Get("/splash/", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		res.set_content(HttpApi::getSplashRootInfo(), "application/json");
+	});
+
+	mHttpServer->Get("/splash", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		res.set_content(HttpApi::getSplashRootInfo(), "application/json");
 	});
 
 	mHttpServer->Get(R"(/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)

@@ -353,28 +353,89 @@ std::string HttpApi::getSystemGames(SystemData* system, size_t from, size_t limi
 	return s.GetString();
 }
 
-std::string HttpApi::getScraperFiles(FileData* file, const std::string& path){
+std::string HttpApi::getMusicRootInfo(){
 
-	auto dir=file->getMediaDir();
-	if(path!="")dir+="/"+path;
-	if(!Utils::FileSystem::isDirectory(dir))return "{}";
+	rapidjson::StringBuffer s;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+	writer.StartObject();
+	writer.Key("base"); writer.String("/music/");
 
-	auto contents = Utils::FileSystem::getDirectoryFiles(dir);
+	writer.Key("dirs");
+	writer.StartArray();
+	writer.String("./system");
+	writer.String("./user");
+	writer.EndArray();
+
+	writer.Key("files");
+	writer.StartArray();
+	writer.EndArray();
+
+	writer.EndObject();
+	return s.GetString();
+}
+
+std::string HttpApi::getSplashRootInfo(){
+
+	rapidjson::StringBuffer s;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
+	writer.StartObject();
+	writer.Key("base"); writer.String("/splash/");
+
+	writer.Key("dirs");
+	writer.StartArray();
+	writer.String("./system");
+	writer.String("./user");
+	writer.EndArray();
+
+	writer.Key("files");
+	writer.StartArray();
+	writer.EndArray();
+
+	writer.EndObject();
+	return s.GetString();
+}
+
+std::string HttpApi::getFilesInfo(const std::string& baseurl, const std::string& dir, const std::string& path){
+
+	auto sub=dir;
+	if(path!="")sub+="/"+path;
+
+	if(!Utils::FileSystem::isDirectory(sub)){
+		rapidjson::StringBuffer s1;
+		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s1);
+		writer.StartObject();
+		writer.Key("base"); writer.String(baseurl.c_str());
+		writer.Key("pwd"); writer.String(sub.c_str());
+
+		writer.Key("dirs");
+		writer.StartArray();
+		writer.EndArray();
+
+		writer.Key("files");
+		writer.StartArray();
+		writer.EndArray();
+
+		writer.EndObject();
+		return s1.GetString();
+	}
+
+	auto contents = Utils::FileSystem::getDirectoryFiles(sub);
 	std::vector<std::string> dirs;
 	std::vector<std::string> files;
 	for (auto& ent : contents){
 		if(Utils::FileSystem::isDirectory(ent.path)){
-			dirs.push_back(Utils::FileSystem::createRelativePath(ent.path, dir, false));
+			dirs.push_back(Utils::FileSystem::createRelativePath(ent.path, sub, false));
 		}
 		else if(Utils::FileSystem::isRegularFile(ent.path)){
-			files.push_back(Utils::FileSystem::createRelativePath(ent.path, dir, false));
+			files.push_back(Utils::FileSystem::createRelativePath(ent.path, sub, false));
 		}
 	}
 
 	rapidjson::StringBuffer s;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
 	writer.StartObject();
-	writer.Key("base"); writer.String(path.c_str());
+	writer.Key("base"); writer.String(baseurl.c_str());
+	writer.Key("pwd"); writer.String(sub.c_str());
 
 	writer.Key("dirs");
 	writer.StartArray();
@@ -423,6 +484,9 @@ std::string HttpApi::getCaps()
 	writer.Key("SlideShow"); writer.Bool(true);
 	writer.Key("PartialGameList"); writer.Bool(true);
 	writer.Key("DeleteMethod"); writer.Bool(true);
+	writer.Key("CanGetMusic"); writer.Bool(true);
+	writer.Key("CanGetSplash"); writer.Bool(true);
+	writer.Key("CanGetSaves"); writer.Bool(true);
 
 	writer.Key("GenreLanguages");
 	writer.StartObject();
