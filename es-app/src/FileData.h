@@ -85,6 +85,7 @@ public:
 
 	virtual SystemEnvironmentData* getSystemEnvData() const;
 
+	virtual const std::string getSaveDir();
 	virtual const std::string getThumbnailPath();
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();
