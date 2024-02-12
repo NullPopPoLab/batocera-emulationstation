@@ -1,5 +1,5 @@
 // † EmulationStation NullPopPoCustom † //
-// required: 1stkit.js 
+// GUI main //
 
 const ratingscore=['0','0.2','0.4','0.6','0.8','1']
 var caps={
@@ -1055,7 +1055,21 @@ function createFileChooser(bin,buttonloc,panelloc,filter,action,onload=null,onca
 			t.View=null;
 			panelloc.innerHTML='';
 			showConfirmPanel(panelloc,action+' ['+t.Selected.name+']',()=>{
+//				var fd=new FileReader();
 				if(onload)onload(t.Selected);
+
+//				if(bin){
+//					fd.readAsArrayBuffer(t.Selected);
+//					fd.addEventListener('load',()=>{
+//						if(onload)onload(t.Selected.name,fd.result);
+//					});
+//				}
+//				else{
+//					fd.readAsText(t.Selected);
+//					fd.addEventListener('load',()=>{
+//						if(onload)onload(t.Selected.name,fd.result);
+//					});
+//				}
 			},()=>{
 				if(oncancel)oncancel();
 			});
@@ -1474,10 +1488,10 @@ function exportTSV(st,data){
 		d.push(gt.lang??'');
 		var date=parseDate(gt.releasedate);
 		d.push(isNaN(d)?'':(new Date(date).toISOString().substring(0,10)));
-		t.push(d.join("\t"));
 		d.push(gt.developer??'');
 		d.push(gt.publisher??'');
 		d.push(gt.players??'');
+		t.push(d.join("\t"));
 	}
 
 	return t.join("\n")+"\n";
@@ -1504,7 +1518,6 @@ function importTSV(st,data,tsv,cbok,cbng){
 		if(!s)continue;
 		var sa=s.trimEnd().split("\t");
 		var id=sa[hd.ID];
-console.log(id+'; '+sa[hd.Path]);
 		if(!(id in dd)){
 			console.log(id+': not found');
 			continue;
