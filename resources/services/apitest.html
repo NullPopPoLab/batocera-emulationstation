@@ -21,14 +21,7 @@ main.innerHTML='IPL loading...';
 function ipldone(){
 
 	ipl_styles.load('apitest.css');
-	ipl_modules.load_debug('htmlut.js',()=>htmlut_ready);
-	ipl_modules.load_debug('http_client.js',()=>http_client_ready);
-	ipl_modules.load_debug('es_client.js',()=>es_client_ready);
-	ipl_modules.load_debug('mediatype.js',()=>mediatype_ready);
-	ipl_modules.load_debug('confirming.js',()=>confirming_ready);
-	ipl_modules.load_debug('metaedit.js',()=>metaedit_ready);
-	ipl_modules.load_debug('objview.js',()=>objview_ready);
-	ipl_modules.load_debug('apitest.js',()=>apitest_ready);
+	ipl_modules.load('apitest.js');
 	ipl_wait4ready(main,()=>{
 		runAPITest(main);
 	});

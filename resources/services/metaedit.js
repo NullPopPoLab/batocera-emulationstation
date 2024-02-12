@@ -1,5 +1,7 @@
 // † EmulationStation NullPopPoCustom † //
-// required: 1stkit.js 
+// meta editor //
+
+ipl_modules.load('genres.js');
 
 const ratingscore=['0','0.2','0.4','0.6','0.8','1']
 
@@ -25,7 +27,7 @@ var metaset={
 	releasedate:{capt:'Release Date',view:metaedit_row_date},
 	developer:{capt:'Developer',view:metaedit_row_line},
 	publisher:{capt:'Publisher',view:metaedit_row_line},
-	genres:{capt:'Genres'},
+	genres:{capt:'Genres',view:metaedit_row_genre},
 	players:{capt:'Players',view:metaedit_row_line},
 }
 
@@ -41,96 +43,15 @@ function metaedit_seconds(val){
 	return v;
 }
 
-function metaedit_date_format(val){
-
-	if(!val)return '';
-	var yp=0;
-	var mp=4;
-	var dp=6;
-	switch(val.length){
-		// YYYYMMDDThhmmss 
-		case 8: case 15:
-		break;
-
-		// YYYY-MM-DDThh:mm:ss 
-		case 10: case 19:
-		mp+=1;
-		dp+=2;
-		break;
-
-		default:
-		return '';
-	}
-
-	var y=parseInt(val.substring(yp,yp+4));
-	if(isNaN(y))return '';
-	var m=parseInt(val.substring(mp,mp+2));
-	if(isNaN(m))return '';
-	var d=parseInt(val.substring(dp,dp+2));
-	if(isNaN(d))return '';
-	return [y,m,d]
-}
-
-function metaedit_date_short(val){
-	val=metaedit_date_format(val);
-	if(!val)return '';
-
-	return zerofill(''+val[0],4)+zerofill(val[1],2)+zerofill(val[2],2);
-}
-
-function metaedit_date(val){
-	val=metaedit_date_format(val);
-	if(!val)return '';
-
-	return zerofill(''+val[0],4)+'-'+zerofill(val[1],2)+'-'+zerofill(val[2],2);
-}
-
-function metaedit_datetime(val){
-	var date=metaedit_date(val);
-	if(!date)return '';
-
-	var tp=8;
-	var hp=9;
-	var ip=11;
-	var sp=13;
-	switch(val.length){
-		// YYYYMMDDThhmmss 
-		case 8: case 15:
-		break;
-
-		// YYYY-MM-DDThh:mm:ss 
-		case 10: case 19:
-		tp+=2;
-		hp+=2;
-		ip+=3;
-		sp+=4;
-		break;
-
-		default:
-		return date;
-	}
-
-	if(val.substring(tp,tp+1)!='T')return date;
-
-	var h=parseInt(val.substring(hp,hp+2));
-	if(isNaN(h))return date;
-	var i=parseInt(val.substring(ip,ip+2));
-	if(isNaN(i))return date;
-	var s=parseInt(val.substring(sp,sp+2));
-	if(isNaN(s))return date;
-
-	return date+' '+zerofill(h,2)+':'+zerofill(i,2)+':'+zerofill(s,2);
-}
-
 function metaedit_submit_button(row,data,cbbuild){
 
 	var opt={
 		target:row.edit,
 		caption:'Submit',
-		cbexec:(ctl)=>{
+		cbexec:(ctrl)=>{
 			if(!cbbuild){
 				row.msg.innerHTML='No way.';
-				ctl.unlock();
+				ctrl.unlock();
 			}
 			else{
 				row.msg.innerHTML='Wait for it...';
@@ -138,7 +59,7 @@ function metaedit_submit_button(row,data,cbbuild){
 				var dst={}
 				if(!cbbuild(dst)){
 					row.msg.innerHTML='Invalid';
-					ctl.unlock();
+					ctrl.unlock();
 					return;
 				}
 
@@ -148,11 +69,11 @@ function metaedit_submit_button(row,data,cbbuild){
 				es_client.post_json(url,dst,
 					(d2)=>{
 						row.msg.innerHTML='OK';
-						ctl.unlock();
+						ctrl.unlock();
 					},
 					(err)=>{
 						row.msg.innerHTML=err.toString();
-						ctl.unlock();
+						ctrl.unlock();
 					}
 				);
 			}
@@ -167,15 +88,15 @@ function metaedit_upload_button(target,msg,data,name,filter,cbdone){
 		target:target,
 		filter:filter,
 		caption_select:'Upload',
-		cbselect:(ctl,files)=>{
+		cbselect:(ctrl,files)=>{
 			var path=files[0].name;
-			msg.innerHTML=path;
-			ctl.confirm();
+//			msg.innerHTML=path;
+			ctrl.confirm();
 		},
-		cbcancel:(ctl,files)=>{
+		cbcancel:(ctrl,files)=>{
 			msg.innerHTML='';
 		},
-		cbexec:(ctl,files)=>{
+		cbexec:(ctrl,files)=>{
 			msg.innerHTML='Wait for it...';
 
 			var sname=data['systemName'];
@@ -186,11 +107,11 @@ function metaedit_upload_button(target,msg,data,name,filter,cbdone){
 					msg.innerHTML='OK';
 					data[name]=url;
 					cbdone();
-					ctl.show();
+					ctrl.show();
 				},
 				(err)=>{
 					msg.innerHTML=err.toString();
-					ctl.show();
+					ctrl.show();
 				}
 			);
 		},
@@ -204,7 +125,7 @@ function metaedit_delete_button(target,msg,data,name,cbdone){
 		visible:!!data[name]??false,
 		target:target,
 		caption_first:'Delete',
-		cbexec:(ctl)=>{
+		cbexec:(ctrl)=>{
 			msg.innerHTML='Wait for it...';
 
 			var sname=data['systemName'];
@@ -216,11 +137,11 @@ function metaedit_delete_button(target,msg,data,name,cbdone){
 						msg.innerHTML='OK';
 						data[name]=null;
 						cbdone();
-						ctl.show();
+						ctrl.show();
 					},
 					(err)=>{
 						msg.innerHTML=err.toString();
-						ctl.show();
+						ctrl.show();
 					}
 				);
 			}
@@ -231,11 +152,11 @@ function metaedit_delete_button(target,msg,data,name,cbdone){
 						msg.innerHTML='OK';
 						data[name]=null;
 						cbdone();
-						ctl.show();
+						ctrl.show();
 					},
 					(err)=>{
 						msg.innerHTML=err.toString();
-						ctl.show();
+						ctrl.show();
 					}
 				);
 			}
@@ -244,7 +165,37 @@ function metaedit_delete_button(target,msg,data,name,cbdone){
 	return htmlut_confirmbutton(opt);
 }
 
-function metaedit_row_common(capt,data,name){
+function metaedit_genres_button(row,data,name,dialog,cbdone){
+
+	var opt={
+		target:row.edit,
+		caption:'Select',
+		cbexec:(ctrl)=>{
+			var src={}
+			var csv=data['genres'];
+			if(csv)for(var n of csv.split(',')){
+				src[n]=true;
+			}
+			dialog.open(src,(dst)=>{
+				var gn=[]
+				var gs=[]
+				for(var id in dst){
+					gn.push(id);
+					gs.push(genres_work.flat[id].path??'');
+				}
+				data['genre']=gs.join(', ');
+				data['genres']=gn.join(',');
+				if(cbdone)cbdone();
+				ctrl.unlock();
+			},()=>{
+				ctrl.unlock();
+			});
+		}
+	}
+	return htmlut_safebutton(opt);
+}
+
+function metaedit_row_common(capt,data,name,outside){
 
 	var row={
 		capt:quickhtml({tag:'td',sub:[capt]}),
@@ -256,17 +207,17 @@ function metaedit_row_common(capt,data,name){
 	return row;
 }
 
-function metaedit_row_fixed(capt,data,name){
+function metaedit_row_fixed(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
+	var row=metaedit_row_common(capt,data,name,outside);
 	var val=data[name]??null;
 	if(val)row.val.append(val);
 	return row;
 }
 
-function metaedit_row_seconds_fixed(capt,data,name){
+function metaedit_row_seconds_fixed(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
+	var row=metaedit_row_common(capt,data,name,outside);
 	var val=parseInt(data[name]??null);
 	if(!isNaN(val)){
 		var h=Math.floor(val/3600);
@@ -279,23 +230,23 @@ function metaedit_row_seconds_fixed(capt,data,name){
 	return row;
 }
 
-function metaedit_row_datetime_fixed(capt,data,name){
+function metaedit_row_datetime_fixed(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
-	row.val.append(metaedit_datetime(data[name]??''));
+	var row=metaedit_row_common(capt,data,name,outside);
+	row.val.append(es_datetime(data[name]??''));
 	return row;
 }
 
-function metaedit_row_yesno_fixed(capt,data,name){
+function metaedit_row_yesno_fixed(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
+	var row=metaedit_row_common(capt,data,name,outside);
 	row.val.append(booleanize(data[name]??null)?'Yes':'No');
 	return row;
 }
 
-function metaedit_row_yesno_select(capt,data,name){
+function metaedit_row_yesno_select(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
+	var row=metaedit_row_common(capt,data,name,outside);
 	var val=booleanize(data[name]??null);
 
 	var span=quickhtml({
@@ -346,9 +297,9 @@ function metaedit_row_yesno_select(capt,data,name){
 	return row;
 }
 
-function metaedit_row_line(capt,data,name){
+function metaedit_row_line(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
+	var row=metaedit_row_common(capt,data,name,outside);
 	var val=data[name]??'';
 
 	var inp=quickhtml({target:row.val,tag:'input',attr:{type:'text',value:val}});
@@ -360,14 +311,14 @@ function metaedit_row_line(capt,data,name){
 	return row;
 }
 
-function metaedit_row_date(capt,data,name){
+function metaedit_row_date(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
-	var val=metaedit_date(data[name]??'');
+	var row=metaedit_row_common(capt,data,name,outside);
+	var val=es_date(data[name]??'');
 
 	var inp=quickhtml({target:row.val,tag:'input',attr:{type:'text',value:val}});
 	metaedit_submit_button(row,data,(dst)=>{
-		var date=metaedit_date_short(inp.value);
+		var date=es_date_short(inp.value);
 		if(!date)return false;
 		dst[name]=date;
 		return true;
@@ -376,9 +327,9 @@ function metaedit_row_date(capt,data,name){
 	return row;
 }
 
-function metaedit_row_text(capt,data,name){
+function metaedit_row_text(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
+	var row=metaedit_row_common(capt,data,name,outside);
 	var val=data[name]??'';
 
 	var inp=quickhtml({target:row.val,tag:'textarea',sub:[val]});
@@ -390,9 +341,9 @@ function metaedit_row_text(capt,data,name){
 	return row;
 }
 
-function metaedit_row_rating(capt,data,name){
+function metaedit_row_rating(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
+	var row=metaedit_row_common(capt,data,name,outside);
 	var val=data[name]??'';
 
 	var score=data[name]??0;
@@ -414,7 +365,7 @@ function metaedit_row_rating(capt,data,name){
 		}
 	}
 
-	safeeachnumber(0,5,1,(i)=>{
+	safestepiter(0,5,1,(i)=>{
 		mark[i]=quickhtml({
 			target:inp,
 			tag:'img',
@@ -436,9 +387,30 @@ function metaedit_row_rating(capt,data,name){
 	return row;
 }
 
-function metaedit_row_link(capt,data,name){
+function metaedit_row_genre(capt,data,name,outside){
 
-	var row=metaedit_row_common(capt,data,name);
+	var row=metaedit_row_common(capt,data,name,outside);
+	var updview=()=>{
+		row.val.innerHTML='';
+		row.val.append(data['genre']??'');
+	}
+
+	var dialog=genres_setup(outside,{langs:es_caps.GenreLanguages});
+
+	metaedit_genres_button(row,data,name,dialog,updview);
+	metaedit_submit_button(row,data,(dst)=>{
+		if(es_caps.SaveGenreByIDs)dst['genres']=data['genres'];
+		else dst['genre']=data['genre'];
+		return true;
+	});
+
+	updview();
+	return row;
+}
+
+function metaedit_row_link(capt,data,name,outside){
+
+	var row=metaedit_row_common(capt,data,name,outside);
 	var updview=()=>{
 		row.val.innerHTML='';
 		var val=data[name]??'';
@@ -500,15 +472,16 @@ function metaedit(data){
 	var div=quickhtml({tag:'div'});
 
 	var tbl=quickhtml({target:div,tag:'table',attr:{border:'border'}});
+	var outside=quickhtml({target:div,tag:'div'});
 
-	safeeachobject(metaset,(name,attr)=>{
+	safeobjectiter(metaset,(name,attr)=>{
 
-		var row=(attr.view??metaedit_row_fixed)(attr.capt,data,name);
+		var row=(attr.view??metaedit_row_fixed)(attr.capt,data,name,outside);
 		tbl.append(row.view);
 		return true;
 	});
 
-	safeeachobject(es_caps.Flags,(name,capt)=>{
+	safeobjectiter(es_caps.Flags,(name,capt)=>{
 
 		var row=metaedit_row_yesno_select(
 			capt,data,name,(dst,val)=>{
@@ -518,7 +491,7 @@ function metaedit(data){
 		return true;
 	});
 
-	safeeachobject(es_caps.Texts,(name,capt)=>{
+	safeobjectiter(es_caps.Texts,(name,capt)=>{
 
 		var row=metaedit_row_text(
 			capt,data,name,(dst,val)=>{
@@ -529,7 +502,7 @@ function metaedit(data){
 		return true;
 	});
 
-	safeeachobject(es_caps.Books,(name,capt)=>{
+	safeobjectiter(es_caps.Books,(name,capt)=>{
 
 		var row=metaedit_row_link(
 			capt,data,name,(dst,val)=>{
@@ -539,7 +512,7 @@ function metaedit(data){
 		return true;
 	});
 
-	safeeachobject(es_caps.Videos,(name,caption)=>{
+	safeobjectiter(es_caps.Videos,(name,caption)=>{
 
 		var view=quickhtml({tag:'div'});
 		var updview=()=>{
@@ -564,7 +537,7 @@ function metaedit(data){
 		return true;
 	});
 
-	safeeachobject(es_caps.Images,(name,caption)=>{
+	safeobjectiter(es_caps.Images,(name,caption)=>{
 
 		var view=quickhtml({tag:'div'});
 		var updview=()=>{
