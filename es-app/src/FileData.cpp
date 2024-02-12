@@ -186,6 +186,12 @@ const std::string FileData::getMediaDir()
 	return dir+"/"+getGameKey();
 }
 
+const std::string FileData::getSaveDir()
+{
+	auto dir=getSystem()->getSaveDir();
+	return dir+"/"+getGameKey();
+}
+
 std::string FileData::getMetaPath(MetaDataId key){
 
 	auto name=getMetadata(key);

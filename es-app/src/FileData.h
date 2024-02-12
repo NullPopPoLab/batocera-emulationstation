@@ -88,6 +88,7 @@ public:
 
 	virtual const std::string getOfficialMediaDir();
 	virtual const std::string getMediaDir();
+	virtual const std::string getSaveDir();
 	virtual const std::string getThumbnailPath();
 	virtual const std::string getVideoPath();
 	virtual const std::string getMarqueePath();

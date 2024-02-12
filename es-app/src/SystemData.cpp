@@ -1249,6 +1249,11 @@ std::string SystemData::getMediaDir() const{
 	return Scraper::getMediaDir()+"/"+mMetadata.name;
 }
 
+std::string SystemData::getSaveDir() const{
+
+	return const_cast<SystemData*>(this)->getSaveStateRepository()->getSavesPath();
+}
+
 std::string SystemData::getGamelistPath(bool forWrite) const
 {
 	std::string filePath;
