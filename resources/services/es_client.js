@@ -3,6 +3,9 @@
 
 ipl_modules.load('http_client.js');
 
+var es_client=null;
+var es_resource={}
+
 var es_caps={
 	Version:'unknown (maybe official)',
 	GenreLanguages:{
@@ -121,16 +124,17 @@ function es_datetime(val){
 	return date+' '+zerofill(h,2)+':'+zerofill(i,2)+':'+zerofill(s,2);
 }
 
-const es_client=http_controller({
-	secure:false,
-	base:'',
-	limit:5,
-	interval:100,
-});
+function es_init(){
 
-const es_resource={
-	star0:es_client.makeurl('/resources/star_unfilled.svg'),
-	star1:es_client.makeurl('/resources/star_filled.svg'),
+	es_client=http_controller({
+		secure:false,
+		base:'',
+		limit:5,
+		interval:100,
+	});
+
+	es_resource.star0=es_client.makeurl('/resources/star_unfilled.svg');
+	es_resource.star1=es_client.makeurl('/resources/star_filled.svg');
 }
 
 const es_client_ready=true;

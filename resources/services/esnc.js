@@ -140,11 +140,11 @@ function retrieveSystems(cbok,cbng){
 
 function retrieveRunning(cbok,cbng){
 
-	return http_request('/runningGame',{
-		method:'GET',
-	},(res)=>{
-		return (res.status==200)?res.json():null;
-	},cbok,cbng);
+	http_get_json('/runningGame',(data)=>{
+		if(cbok)cbok(data);
+	},(err)=>{
+		if(cbng)cbng(err);
+	});
 }
 
 function reloadGames(cbok,cbng){
