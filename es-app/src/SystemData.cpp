@@ -2086,3 +2086,62 @@ std::string SystemData::getProperty(const std::string& name)
 
 	return "";
 }
+
+void SystemData::complement()
+{
+	for(auto& it: mRootFolder->getFilesRecursive(GAME, true)){
+		it->complement();
+	}
+}
+
+const std::vector<std::string>& SystemData::getGameIdList(){
+
+	if(mUnsortedGameIdList.empty()){
+		std::stack<FolderData*> stack;
+		stack.push(getRootFolder());
+
+		while (stack.size())
+		{
+			FolderData* current = stack.top();
+			stack.pop();
+
+			for (auto it : current->getChildren())
+			{
+				auto type=it->getType();
+				if (type == GAME){
+					auto& id=it->getId();
+					mUnsortedGameIdList.push_back(id);
+					mGameLookupTable[id]=it;
+				}
+				else if (type == FOLDER)
+					stack.push((FolderData*)it);
+			}
+		}
+	}
+	return mUnsortedGameIdList;
+}
+
+const std::vector<std::string>& SystemData::getGameIdList(unsigned SortId){
+
+	auto sort=FileSorts::getSortType(SortId);
+	SortId=sort.id;
+
+	if(mSortedGameIdList.count(SortId)<1){
+		auto& target=mSortedGameIdList[SortId]=getGameIdList();
+		std::sort(target.begin(),target.end(),[this,sort](const std::string& id1,const std::string& id2){
+			auto* file1=lookupGame(id1);
+			auto* file2=lookupGame(id2);
+			return sort.comparisonFunction(file1,file2);
+		});
+		if (!sort.ascending)
+			std::reverse(target.begin(), target.end());
+	}
+
+	return mSortedGameIdList[SortId];
+}
+
+FileData* SystemData::lookupGame(const std::string& id){
+
+	getGameIdList();
+	return (mGameLookupTable.count(id)>0)?mGameLookupTable[id]:nullptr;
+}

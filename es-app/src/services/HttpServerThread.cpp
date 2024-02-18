@@ -374,6 +374,28 @@ void HttpServerThread::run()
 		res.status = 404;		
 	});
 
+	mHttpServer->Get(R"(/systems/(.+)/games_partial/(.+)/(.+)/(.+)(/?))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		size_t from=0,limit=0;
+		unsigned sortid=0;
+		try{from=std::stoull(req.matches[2]);}catch(...){}
+		try{limit=std::stoull(req.matches[3]);}catch(...){}
+		try{sortid=std::stoul(req.matches[4]);}catch(...){}
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			set_content_with_size(res,HttpApi::getSystemGames(system,from,limit,sortid), "application/json");
+			return;
+		}
+		
+		res.set_content("404 system not found", "text/html");
+		res.status = 404;		
+	});
+
 	mHttpServer->Get(R"(/systems/(.+)/games_partial/(.+)/(.+)(/?))", [](const httplib::Request& req, httplib::Response& res)
 	{
 		if (!isAllowed(req, res))
@@ -386,7 +408,7 @@ void HttpServerThread::run()
 		SystemData* system = SystemData::getSystem(systemName);
 		if (system != nullptr)
 		{
-			set_content_with_size(res,HttpApi::getSystemGames(system,from,limit), "application/json");
+			set_content_with_size(res,HttpApi::getSystemGames(system,from,limit,0), "application/json");
 			return;
 		}
 		
