@@ -118,118 +118,232 @@ function readfile(bin,file,cbok=null,cbng=null){
 	});
 }
 
-function http_request(url,opt,cbres=null,cbok=null,cbng=null){
+function http_request(method,url,opt,cbres=null,cbok=null,cbng=null){
 
+	var req=new XMLHttpRequest();
 	var ctx={
 		url:url,
 		opt:opt,
+		accepted:false,
 		end:false,
+		send_progress:0.0,
+		recv_progress:0.0,
+		progress:0.0,
+		req:req,
 		abort:()=>{
-			end=true;
+			req.abort();
 		},
 	}
+	var res={
+		status:0,
+		msg:'',
+		timeout:false,
+		data:null,
+	}
+	var sendratio=opt.sendratio??0.0;
+	if(sendratio<0.0)sendratio=0.0;
+	else if(sendratio>1.0)sendratio=1.0;
 
-	fetch(url,opt)
-		.then((res)=>{
-			if(ctx.end)return res;
-			if(res.status==200){
-				var r=cbres?cbres(res):res;
-				if(r!==null)return r;
+	req.addEventListener('loadstart',(ev)=>{
+		ctx.accepted=true;
+		ctx.send_progress=1.0;
+		ctx.progress=sendratio;
+	});
+	req.addEventListener('progress',(ev)=>{
+		if(!ev.lengthComputable)return;
+		if(ev.total<1)return;
+		ctx.recv_progress=ev.loaded/ev.total;
+		ctx.progress=sendratio+((1.0-sendratio)*ctx.recv_progress);
+	});
+	req.addEventListener('load',(ev)=>{
+		if(ctx.end)return;
+		ctx.end=true;
+		ctx.recv_progress=1.0;
+		res.status=req.status;
+		res.msg=req.statusText;
+		res.body=req.response;
+
+		if(res.status>299){
+			if(cbng)cbng(error_http(req));
+		}
+		else if(cbres){
+			var r=null;
+			var e=null;
+			try{
+				r=cbres(res);
 			}
-			ctx.end=true;
-			if(cbng)cbng(error_http(res));
-			else console.log(JSON.stringify(err));
-		})
-		.then((data)=>{
+			catch(exc){
+				e=error_obj(exc);
+				r=null;
+			}
+
+			if(e){
+				if(cbng)cbng(e);
+			}
+			else if(r===null){
+				e=error_msg('invalid response:');
+				e.res=req.response;
+				if(cbng)cbng(e);
+			}
+			else{
+				if(cbok)cbok(r);
+			}
+		}
+		else{
+			if(cbok)cbok(res.body);
+		}
+	});
+	req.addEventListener('error',(ev)=>{
+		if(ctx.end)return;
+		ctx.end=true;
+		res.msg=ev.toString();
+		if(cbng)cbng(error_msg(res.msg));
+		else console.log(res.msg);
+	});
+	req.addEventListener('timeout',(ev)=>{
+		if(ctx.end)return;
+		ctx.end=true;
+		res.timeout=true;
+		res.msg='timed out';
+		if(cbng)cbng(error_msg(res.msg));
+		else console.log(res.msg);
+	});
+	req.addEventListener('abort',(ev)=>{
+		if(ctx.end)return;
+		ctx.end=true;
+		res.msg='aborted';
+		if(cbng)cbng(error_msg(res.msg));
+		else console.log(res.msg);
+	});
+
+	if(opt.restype)req.responseType=opt.restype;
+	if(opt.timeout)req.timeout=opt.timeout;
+	if(opt.header){
+		for(var k in opt.header){
+			req.setRequestHeader(k,opt.header[k]);
+		}
+	}
+
+	if(opt.body){
+		req.upload.addEventListener('progress',(ev)=>{
 			if(ctx.end)return;
-			ctx.end=true;
-			if(cbok)cbok(data);
-		})
-		.catch((err)=>{
-			if(ctx.end)return;
-			ctx.end=true;
-			if(cbng)cbng(error_obj(err));
-			else console.log(err.toString());
+			if(ev.total<1)return;
+			ctx.send_progress=ev.loaded/ev.total;
+			ctx.progress=sendratio*ctx.send_progress;
 		});
+	}
+
+	req.open(method,url);
+	if(opt.body){
+		if(opt.type)req.setRequestHeader('Content-Type',opt.type);
+		req.send(opt.body);
+	}
+	else req.send();
 
 	return ctx;
 }
 
-function http_get_text(url,cbok=null,cbng=null){
+function http_get_text(url,cbok=null,cbng=null,opt={}){
 
-	return http_request(url,{
-		method:'GET',
-	},(res)=>{
-		return (res.status==200)?res.text():null;
+	return http_request('GET',url,opt,
+	(res)=>{
+		if(res.status!=200)return null;
+		return res.body;
 	},cbok,cbng);
 }
 
-function http_get_json(url,cbok=null,cbng=null){
+function http_get_blob(url,cbok=null,cbng=null,opt={}){
 
-	return http_request(url,{
-		method:'GET',
-	},(res)=>{
-		return (res.status==200)?res.json():null;
+	return http_request('GET',url,Object.assign({
+		restype:'blob',
+	},opt),
+	(res)=>{
+		if(res.status!=200)return null;
+		return res.body;
 	},cbok,cbng);
 }
 
-function http_get_xml(url,cbok=null,cbng=null){
+function http_get_buf(url,cbok=null,cbng=null,opt={}){
 
-	return http_request(url,{
-		method:'GET',
-	},(res)=>{
-		return (res.status==200)?res:null;
-	},(res)=>{
-		return res.text().then((xml)=>{
-			var psr=new DOMParser();
-			var data=psr.parseFromString(xml, "text/xml");
-			if(cbok)cbok(data);
-		});
-	},cbng);
+	return http_request('GET',url,Object.assign({
+		restype:'arraybuffer',
+	},opt),
+	(res)=>{
+		if(res.status!=200)return null;
+		return res.body;
+	},cbok,cbng);
 }
 
-function http_post_text(url,text,cbok=null,cbng=null){
+function http_get_json(url,cbok=null,cbng=null,opt={}){
 
-	return http_request(url,{
-		method:'POST',
+	return http_request('GET',url,{
+	},(res)=>{
+		if(res.status!=200)return null;
+		return JSON.parse(res.body);
+	},cbok,cbng);
+}
+
+function http_get_xml(url,cbok=null,cbng=null,opt={}){
+
+	return http_request('GET',url,opt,
+	(res)=>{
+		if(res.status!=200)return null;
+		var psr=new DOMParser();
+		return psr.parseFromString(res.body,"text/xml");
+	},cbok,cbng);
+}
+
+function http_post_text(url,text,cbok=null,cbng=null,opt={}){
+
+	return http_request('POST',url,Object.assign({
 		headers:{'Content-Type':'text/plain'},
-		body:text
-	},(res)=>{
-		return (res.status>=200 && res.status<300)?res:null;
+		body:text,
+		sendratio:0.99,
+	},opt),
+	(res)=>{
+		if(res.status<200)return null;
+		if(res.status>299)return null;
+		return res.body;
 	},cbok,cbng);
 }
 
-function http_post_json(url,data,cbok=null,cbng=null){
+function http_post_json(url,data,cbok=null,cbng=null,opt={}){
 
-	return http_request(url,{
-		method:'POST',
+	return http_request('POST',url,Object.assign({
 		headers:{'Content-Type':'application/json'},
-		body:JSON.stringify(data)
-	},(res)=>{
-		return (res.status>=200 && res.status<300)?res:null;
+		body:JSON.stringify(data),
+		sendratio:0.99,
+	},opt),
+	(res)=>{
+		if(res.status<200)return null;
+		if(res.status>299)return null;
+		return res.body;
 	},cbok,cbng);
 }
 
-function http_post_file(url,bin,file,cbok=null,cbng=null){
+function http_post_file(url,bin,file,cbok=null,cbng=null,opt={}){
 
 	readfile(bin,file,(name,data)=>{
-console.log(file.type+': size='+data.length);
-		return http_request(url,{
-			method:'POST',
-			headers:{'Content-Type':file.type?file.type:'application/octet-stream'},
-			body:data
-		},(res)=>{
-			return (res.status>=200 && res.status<300)?res:null;
+		return http_request('POST',url,Object.assign({
+			type:file.type?file.type:'application/octet-stream',
+			body:data,
+			sendratio:0.99,
+		},opt),
+		(res)=>{
+			if(res.status<200)return null;
+			if(res.status>299)return null;
+			return res.body;
 		},cbok,cbng);
 	},cbng);
 }
 
-function http_delete(url,cbok=null,cbng=null){
+function http_delete(url,cbok=null,cbng=null,opt={}){
 
-	return http_request(url,{
-		method:'DELETE',
-	},(res)=>{
-		return (res.status==200)?res.text():null;
+	return http_request('DELETE',url,opt,
+	(res)=>{
+		if(res.status<200)return null;
+		if(res.status>299)return null;
+		return res.body;
 	},cbok,cbng);
 }
 
@@ -298,26 +412,31 @@ function engine_launch(cbpoll,cbdone,cbabort){
 	return proc;
 }
 
+function poll_engine(){
+
+	if(engine.length<1)return;
+
+	var proc=engine.shift();
+	var r=(proc.cbpoll && !proc.end)?proc.cbpoll():false;
+	if(r)engine.push(proc);
+	else if(!proc.end){
+		proc.end=true;
+		if(proc.cbdone)proc.cbdone();
+	}
+
+	engine_toid=setTimeout(poll_engine,20);
+}
+
 function start_engine(){
 
-	engine_toid=setInterval(()=>{
-
-		if(engine.length<1)return;
-
-		var proc=engine.shift();
-		var r=(proc.cbpoll && !proc.end)?proc.cbpoll():false;
-		if(r)engine.push(proc);
-		else if(!proc.end){
-			proc.end=true;
-			if(proc.cbdone)proc.cbdone();
-		}
-	},1);
+	if(engine_toid)return;
+	engine_toid=setTimeout(poll_engine,1);
 }
 
 function stop_engine(){
 
 	if(engine_toid){
-		clearInterval(engine_toid);
+		clearTimeout(engine_toid);
 		engine_toid=null;
 	}
 
@@ -339,6 +458,7 @@ function ipl_manage(cate,ctor,dtor){
 
 	var mng={
 		working:true,
+		uncache:false,
 		ctor:ctor,
 		dtor:dtor,
 		target:{},
@@ -394,7 +514,9 @@ function ipl_manage(cate,ctor,dtor){
 
 		return mng.load_special(path,(handle)=>{
 			var unit=handle.unit;
-			http_get_text(path,(text)=>{
+			var url=path;
+			if(mng.uncache)url+='?'+Date.now();
+			http_get_text(url,(text)=>{
 				if(mng.ctor){
 					try{
 						unit.inst=mng.ctor(text);
@@ -464,9 +586,11 @@ ipl_modules.load_debug=(path,cbchk)=>{
 		var unit=handle.unit;
 		unit.ready=false;
 
+		var url=path;
+		if(ipl_modules.uncache)url+='?'+Date.now();
 		unit.inst=quickhtml({
 			tag:'script',
-			attr:{src:handle.path},
+			attr:{src:url},
 		});
 		module_holder.append(unit.inst);
 

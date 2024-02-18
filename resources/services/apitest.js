@@ -16,6 +16,8 @@ ipl_modules.load('jukebox.js');
 
 const gamelist_pagenation=200;
 
+var sortid=0;
+
 var objviewopt={
 	style_field:'objview_field',
 	style_caption:'objview_caption',
@@ -53,6 +55,12 @@ function progress(main,cbreq){
 		tag:'div',
 		sub:['Wait for it...']
 	});
+	var prgbar=quickhtml({
+		target:main.rightpane.view,
+		tag:'meter',
+		attr:{value:0,min:0,max:1},
+		style:{width:'100%'},
+	});
 	var btn=quickhtml({
 		target:main.rightpane.view,
 		tag:'button',
@@ -71,6 +79,11 @@ function progress(main,cbreq){
 	}
 
 	main.requesting=cbreq();
+	engine_launch(()=>{
+		if(!main.requesting)return false;
+		prgbar.value=main.requesting.progress();
+		return !main.requesting.end;
+	},null,null);
 	btn.onclick=()=>{
 		main.abort();
 	}
@@ -214,6 +227,23 @@ function mediaview(url,type=null){
 
 function exportGames(main){
 
+	var showerr=(err)=>{
+		ctrl.view.innerHTML='';
+		quickhtml({
+			target:ctrl.view,
+			tag:'div',
+			sub:[err.toString()]
+		});
+		var btn=quickhtml({
+			target:ctrl.view,
+			tag:'button',
+			sub:['Cancel']
+		});
+		btn.onclick=()=>{
+			ctrl.view.close();
+		}
+	}
+
 	var ctrl={
 		view:quickhtml({
 			target:main.rightpane.view,
@@ -228,10 +258,24 @@ function exportGames(main){
 				tag:'div',
 				sub:['Wait for it...']
 			});
+			var prgbar=quickhtml({
+				target:ctrl.view,
+				tag:'meter',
+				attr:{value:0,min:0,max:1},
+				style:{width:'100%'},
+			});
+			var btn=quickhtml({
+				target:ctrl.view,
+				tag:'button',
+				sub:['Cancel']
+			});
+			btn.onclick=()=>{
+				req.abort();
+			}
 			ctrl.view.showModal();
 
 			var sname=sdata.name;
-			es_client.get_json('/systems/'+sname+'/games',(data)=>{
+			var req=es_client.get_json('/systems/'+sname+'/games',(data)=>{
 				ctrl.view.innerHTML='';
 				var tsv=xsv_export_full(data,tsvproc);
 				var blob=new Blob([tsv],{type:'text/tab-separated-values'});
@@ -247,15 +291,36 @@ function exportGames(main){
 				if(cbdone)cbdone();
 			},
 			(err)=>{
-				ctrl.view.innerHTML='';
-				ctrl.view.append(err.toString());
+				showerr(err);
 			});
+			engine_launch(()=>{
+				prgbar.value=req.progress();
+				return !req.end;
+			},null,null);
 		}
 	}
 	return ctrl;
 }
 
 function importGames(main,target){
+
+	var showerr=(err,filebtn)=>{
+		ctrl.view.innerHTML='';
+		quickhtml({
+			target:ctrl.view,
+			tag:'div',
+			sub:[err.toString()]
+		});
+		var btn=quickhtml({
+			target:ctrl.view,
+			tag:'button',
+			sub:['End']
+		});
+		btn.onclick=()=>{
+			ctrl.view.close();
+			filebtn.show();
+		}
+	}
 
 	var ctrl={
 		view:quickhtml({
@@ -286,25 +351,32 @@ function importGames(main,target){
 						attr:{value:0,min:0,max:1},
 						style:{width:'100%'},
 					});
+					var btn1=quickhtml({
+						target:ctrl.view,
+						tag:'button',
+						sub:['Cancel']
+					});
+					btn1.onclick=()=>{
+						http.abort();
+					}
 					ctrl.view.showModal();
 	
+					var http=http_controller({
+						secure:es_client.secure,
+						base:es_client.base,
+						limit:10,
+						interval:25,
+					});
 					var fr=new FileReader();
 					fr.onerror=()=>{
-						console.log(fr.error);
-						
-						ctrl.view.close();
-						btn.show();
+						showerr(fr.error,btn);
 					}
 					fr.onload=()=>{
 						var data=xsv_import_full(fr.result,tsvproc);
 						if(!data){
-							ctrl.view.innerHTML='format error';
-						
-							ctrl.view.close();
-							btn.show();
+							showerr('format error',btn);
 						}
 						else{
-							var reqs=http_multi();
 							var sname=sdata.name;
 							for(var row of data){
 								if(sname!=row.systemName)continue;
@@ -318,16 +390,22 @@ function importGames(main,target){
 								}
 
 								var url='/systems/'+sname+'/games/'+gid;
-								reqs.push(es_client.post_json(url,dst));
+								http.post_json(url,dst);
 							}
-							reqs.wait_all(
-							(oks,ngs)=>{
-								prgbar.value=reqs.progress();
-							},
-							(oks,ngs)=>{
-								ctrl.view.close();
-								btn.show();
-							});
+							http.sync(
+								()=>{
+									prgbar.value=http.progress();
+								},
+								()=>{
+									if(http.is_ng()){
+										showerr(''+http.count_ng()+' entries failure',btn);
+									}
+									else{
+										ctrl.view.close();
+										btn.show();
+									}
+								}
+							);
 						}
 					}
 					fr.readAsText(files[0]);
@@ -395,7 +473,7 @@ function callGetGames(main,sdata,page=0){
 
 	var pgsuf='';
 	if(gamelist_pagenation && es_caps.PartialGameList){
-		pgsuf='_partial/'+(page*gamelist_pagenation)+'/'+gamelist_pagenation;
+		pgsuf='_partial/'+(page*gamelist_pagenation)+'/'+gamelist_pagenation+'/'+sortid;
 	}
 
 	var prc=progress(main,()=>es_client.get_json('/systems/'+sname+'/games'+pgsuf,
@@ -421,6 +499,31 @@ function callGetGames(main,sdata,page=0){
 			});
 			crumbview(crumb,div2);
 		}
+
+		if(es_caps.GameSorts){
+			var idxs=[]
+			var sel=quickhtml({
+				target:div2,
+				tag:'select',
+				style:{align:'right'},
+			});
+			for(var i in es_caps.GameSorts){
+				idxs.push(i);
+				var attr={value:i}
+				if(i==sortid)attr.selected='selected';
+				var opt=quickhtml({
+					target:sel,
+					tag:'option',
+					attr:attr,
+					sub:[es_caps.GameSorts[i]]
+				});
+			}
+			sel.onchange=()=>{
+				sortid=idxs[sel.selectedIndex];
+				callGetGames(main,sdata,page);
+			}
+		}
+
 		safearrayiter(data,(gt)=>{
 			var ov=objview(gt,objviewopt);
 			var lg=quickhtml({target:ov,tag:'legend'});
@@ -429,6 +532,7 @@ function callGetGames(main,sdata,page=0){
 			div2.append(ov);
 			return true;
 		});
+
 		prc.ok(div);
 	},
 	(err)=>{
@@ -584,6 +688,7 @@ function setupRightPane(main){
 function runAPITest(view){
 
 	tsvproc_init();
+	es_init();
 
 	var main={
 		requesting:null,

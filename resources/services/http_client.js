@@ -7,13 +7,19 @@ function http_request_context(cbreq,cbok,cbng){
 		done:false,
 		end:false,
 		err:null,
+		req:null,
 		cbreq:cbreq,
 		cbok:cbok,
 		cbng:cbng,
 
+		progress:()=>{
+			return rqc.req?rqc.req.progress:0.0;
+		},
+
 		abort:()=>{
 			if(rqc.end)return;
 			rqc.end=true;
+			if(rqc.req)rqc.req.abort();
 			if(!rqc.err)rqc.err=error_msg('Aborted');
 			if(rqc.cbng)rqc.cbng(rqc.err);
 		},
@@ -22,33 +28,74 @@ function http_request_context(cbreq,cbok,cbng){
 }
 
 function http_respond_ok(rqc,data){
-	if(rqc.end)return;
+	if(rqc.end)return rqc.end;
 	rqc.end=true;
 	rqc.done=true;
 	if(rqc.cbok)rqc.cbok(data);
 }
 
 function http_respond_ng(rqc,err){
-	if(rqc.end)return;
+	if(rqc.end)return rqc.end;
 	rqc.end=true;
 	if(!rqc.err)rqc.err=err;
 	if(rqc.cbng)rqc.cbng(err);
 }
 
 function http_controller_new(opt={}){
+	var count_ok=0;
+	var count_ng=0;
 
 	var ctrl={
 		end:false,
 		secure:opt.secure??false,
 		base:opt.base??'',
 		limit:opt.limit??null,
-		interval:opt.interval??500,
+		interval:opt.interval??100,
 		wip:[],
 		queue:[],
+		cbprg:[],
+		cbend:[],
 		proc:engine_launch(()=>http_controller_poll(ctrl),()=>http_controller_abort(ctrl)),
 
+		count_ok:()=>{return count_ok;},
+		count_ng:()=>{return count_ng;},
+		count_all:()=>{return count_ok+count_ng+ctrl.wip.length+ctrl.queue.length;},
+		count_reset:()=>{
+			count_ok=0;
+			count_ng=0;
+		},
+		is_ng:()=>{return count_ng>0;},
+		is_ok:()=>{return count_ng<1 && ctrl.wip.length<1 && ctrl.queue.length<1;},
+		progress:()=>{
+			var d=ctrl.count_all();
+			if(d<1)return 1.0;
+			var m=ctrl.count_ok();
+			for(var rqc of ctrl.wip){
+				// todo: rqc progress 
+			}
+			return m/d;
+		},
+
 		abort:()=>{
+			if(ctrl.end)return;
+			ctrl.end=true;
 			ctrl.proc.abort();
+			for(var rqc of ctrl.wip)rqc.abort();
+			for(var rqc of ctrl.queue)rqc.abort();
+			ctrl.wip=[]
+			count_ng+=ctrl.queue.length;
+			ctrl.queue=[]
+			for(var cb of ctrl.cbend)cb();
+			ctrl.cbend=[]
+			ctrl.cbprg=[]
+		},
+		sync:(cbp,cbe)=>{
+			if(ctrl.end){
+				if(cbe)cbe();
+				return;
+			}
+			if(cbp)ctrl.cbprg.push(cbp);
+			if(cbe)ctrl.cbend.push(cbe);
 		},
 
 		makeurl:(path)=>{
@@ -57,93 +104,134 @@ function http_controller_new(opt={}){
 			return scheme+'://'+ctrl.base+path;
 		},
 
-		get_text:(path,cbok,cbng)=>{
+		get_text:(path,cbok=null,cbng=null,opt={})=>{
 			var url=ctrl.makeurl(path);
 			var rqc=http_request_context(
 				()=>http_get_text(url,
-					(data)=>http_respond_ok(rqc,data),
-					(err)=>http_respond_ng(rqc,err)
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
 				),
-				cbok,cbng
+				cbok,cbng,opt
 			);
 			ctrl.queue.push(rqc);
+			if(ctrl.end)rqc.abort();
 			return rqc;
 		},
-		get_json:(path,cbok,cbng)=>{
+		get_blob:(path,cbok=null,cbng=null,opt={})=>{
+			var url=ctrl.makeurl(path);
+			var rqc=http_request_context(
+				()=>http_get_blob(url,
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
+				),
+				cbok,cbng,opt
+			);
+			ctrl.queue.push(rqc);
+			if(ctrl.end)rqc.abort();
+			return rqc;
+		},
+		get_buf:(path,cbok=null,cbng=null,opt={})=>{
+			var url=ctrl.makeurl(path);
+			var rqc=http_request_context(
+				()=>http_get_buf(url,
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
+				),
+				cbok,cbng,opt
+			);
+			ctrl.queue.push(rqc);
+			if(ctrl.end)rqc.abort();
+			return rqc;
+		},
+		get_json:(path,cbok=null,cbng=null,opt={})=>{
 			var url=ctrl.makeurl(path);
 			var rqc=http_request_context(
 				()=>http_get_json(url,
-					(data)=>http_respond_ok(rqc,data),
-					(err)=>http_respond_ng(rqc,err)
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
 				),
-				cbok,cbng
+				cbok,cbng,opt
 			);
 			ctrl.queue.push(rqc);
+			if(ctrl.end)rqc.abort();
 			return rqc;
 		},
-		get_xml:(path,cbok,cbng)=>{
+		get_xml:(path,cbok=null,cbng=null,opt={})=>{
 			var url=ctrl.makeurl(path);
 			var rqc=http_request_context(
 				()=>http_get_xml(url,
-					(data)=>http_respond_ok(rqc,data),
-					(err)=>http_respond_ng(rqc,err)
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
 				),
-				cbok,cbng
+				cbok,cbng,opt
 			);
 			ctrl.queue.push(rqc);
+			if(ctrl.end)rqc.abort();
 			return rqc;
 		},
 
-		post_text:(path,text,cbok,cbng)=>{
+		post_text:(path,text,cbok=null,cbng=null,opt={})=>{
 			var url=ctrl.makeurl(path);
 			var rqc=http_request_context(
 				()=>http_post_text(url,text,
-					(data)=>http_respond_ok(rqc,data),
-					(err)=>http_respond_ng(rqc,err)
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
 				),
-				cbok,cbng
+				cbok,cbng,opt
 			);
 			ctrl.queue.push(rqc);
+			if(ctrl.end)rqc.abort();
 			return rqc;
 		},
-		post_json:(path,json,cbok,cbng)=>{
+		post_json:(path,json,cbok=null,cbng=null,opt={})=>{
 			var url=ctrl.makeurl(path);
 			var rqc=http_request_context(
 				()=>http_post_json(url,json,
-					(data)=>http_respond_ok(rqc,data),
-					(err)=>http_respond_ng(rqc,err)
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
 				),
-				cbok,cbng
+				cbok,cbng,opt
 			);
 			ctrl.queue.push(rqc);
+			if(ctrl.end)rqc.abort();
 			return rqc;
 		},
-		post_file:(path,bin,file,cbok,cbng)=>{
+		post_file:(path,bin,file,cbok=null,cbng=null,opt={})=>{
 			var url=ctrl.makeurl(path);
 			var rqc=http_request_context(
 				()=>http_post_file(url,bin,file,
-					(data)=>http_respond_ok(rqc,data),
-					(err)=>http_respond_ng(rqc,err)
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
 				),
-				cbok,cbng
+				cbok,cbng,opt
 			);
 			ctrl.queue.push(rqc);
+			if(ctrl.end)rqc.abort();
 			return rqc;
 		},
 
-		delete:(path,cbok,cbng)=>{
+		delete:(path,cbok=null,cbng=null,opt={})=>{
 			var url=ctrl.makeurl(path);
 			var rqc=http_request_context(
 				()=>http_delete(url,
-					(data)=>http_respond_ok(rqc,data),
-					(err)=>http_respond_ng(rqc,err)
+					(data)=>respond_ok(rqc,data),
+					(err)=>respond_ng(rqc,err)
 				),
-				cbok,cbng
+				cbok,cbng,opt
 			);
 			ctrl.queue.push(rqc);
 			return rqc;
 		},
 	}
+	var respond_ok=(rqc,data)=>{
+		++count_ok;
+		http_respond_ok(rqc,data);
+	}
+	var respond_ng=(rqc,err)=>{
+		++count_ng;
+		http_respond_ng(rqc,err);
+	}
+
 	ctrl.last_launched=Date.now()-ctrl.interval;
 	return ctrl;
 }
@@ -152,19 +240,31 @@ function http_controller_poll(ctrl){
 
 	if(ctrl.end)return false;
 
+	var pf=false;
 	var cont=[]
 	for(var rqc of ctrl.wip){
-		if(rqc.end)continue;
-		cont.push(rqc);
+		if(rqc.end)pf=true;
+		else cont.push(rqc);
 	}
 	ctrl.wip=cont;
 
 	while(ctrl.queue.length>0){
 		if(ctrl.limit!==null && ctrl.wip.length>=ctrl.limit)break;
 		if(Date.now()<ctrl.last_launched+ctrl.interval)break;
+		pf=true;
 		var rqc=ctrl.queue.shift();
 		ctrl.wip.push(rqc);
-		rqc.cbreq();
+		rqc.req=rqc.cbreq();
+	}
+
+	if(pf){
+		for(var cb of ctrl.cbprg)cb();
+	}
+	if(ctrl.wip.length<1 && ctrl.cbend.length>0){
+		var cbe=ctrl.cbend;
+		ctrl.cbend=[]
+		for(var cb of cbe)cb();
+		ctrl.cbprg=[]
 	}
 
 	return true;
@@ -189,60 +289,6 @@ function http_controller(opt={}){
 		null,
 		()=>http_controller_abort(ctrl)
 	);
-
-	return ctrl;
-}
-
-function http_multi(){
-	var count_ok=0;
-	var count_ng=0;
-	var cur=null;
-	var cbprg=[];
-	var cbend=[];
-	var wip=[]
-	var oked=[]
-	var nged=[]
-
-	var ctrl={
-		count_ok:()=>{return count_ok;},
-		count_ng:()=>{return count_ng;},
-		count_all:()=>{return count_ok+count_ng+wip.length+(cur?1:0);},
-		is_ng:()=>{return count_ng>0;},
-		is_ok:()=>{return count_ng<1 && wip.length<1;},
-		progress:()=>{
-			var d=ctrl.count_all();
-			if(d<1)return 1.0;
-			var m=ctrl.count_ok();
-			return m/d;
-		},
-
-		push:(rqc)=>{wip.push(rqc);},
-		wait_all:(cbp,cbe)=>{cbprg.push(cbp); cbend.push(cbe);},
-	}
-
-	engine_launch(()=>{
-		var pf=false;
-		for(var i=0;i<wip.length;++i){
-			if(wip.length<1)break;
-			cur=wip.shift();
-			if(!cur.end)wip.push(cur);
-			else if(cur.done){pf=true; ++count_ok; oked.push(cur);}
-			else{pf=true; ++count_ng; nged.push(cur);}
-			cur=null;
-		}
-
-		if(pf){
-			for(var cb of cbprg)cb(oked,nged);
-		}
-		if(wip.length<1 && cbend.length>0){
-			var cbe=cbend;
-			cbend=[]
-			for(var cb of cbe)cb(oked,nged);
-			cbprg=[]
-		}
-
-		return true;
-	});
 
 	return ctrl;
 }
