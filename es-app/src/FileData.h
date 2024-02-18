@@ -71,6 +71,7 @@ public:
 
 	static FileData* GetRunningGame() { return mRunningGame; }
 
+	const std::string& getId() const{return mId;}
 	virtual const std::string getName();
 	virtual const std::string getSortName();	
 
