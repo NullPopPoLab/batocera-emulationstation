@@ -33,6 +33,7 @@
 #include "guis/GuiMsgBox.h"
 #include "Paths.h"
 #include "resources/TextureData.h"
+#include "utils/md5.h"
 
 using namespace Utils::Platform;
 
@@ -41,6 +42,11 @@ FileData* FileData::mRunningGame = nullptr;
 FileData::FileData(FileType type, const std::string& path, SystemData* system)
 	: mPath(path), mType(type), mSystem(system), mParent(nullptr), mDisplayName(nullptr), mMetadata(type == GAME ? GAME_METADATA : FOLDER_METADATA) // metadata is REALLY set in the constructor!
 {
+	MD5 md5;
+	md5.update(path.c_str(), path.size());
+	md5.finalize();
+	mId=md5.hexdigest();
+
 	mMetadata.init(system,this);
 
 	// metadata needs at least a name field (since that's what getName() will return)

@@ -102,10 +102,7 @@ std::string HttpApi::getSystemList()
 
 std::string HttpApi::getFileDataId(FileData* game)
 {
-	MD5 md5;
-	md5.update(game->getPath().c_str(), game->getPath().size());
-	md5.finalize();
-	return md5.hexdigest();
+	return game->getId();
 }
 
 FileData* HttpApi::findFileData(SystemData* system, const std::string& id)
