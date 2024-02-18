@@ -214,6 +214,9 @@ public:
 	std::string getProperty(const std::string& name);
 
 	void complement();
+	const std::vector<std::string>& getGameIdList();
+	const std::vector<std::string>& getGameIdList(unsigned SortId);
+	FileData* lookupGame(const std::string& id);
 
 private:
 	std::string getKeyboardMappingFilePath();
@@ -256,6 +259,10 @@ private:
 	SaveStateRepository* mSaveRepository;
 
 	bool mHidden;
+
+	std::vector<std::string> mUnsortedGameIdList;
+	std::map<unsigned,std::vector<std::string>> mSortedGameIdList;
+	std::map<std::string,FileData*> mGameLookupTable;
 };
 
 #endif // ES_APP_SYSTEM_DATA_H
