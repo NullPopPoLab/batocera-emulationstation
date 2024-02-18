@@ -148,6 +148,15 @@ static bool isAllowed(const httplib::Request& req, httplib::Response& res)
 	return true;
 }
 
+static void set_content_with_size(httplib::Response& res,const char* src,size_t size,const char* type){
+
+	res.set_content(src, size, type);
+}
+
+static void set_content_with_size(httplib::Response& res,const std::string& src,const char* type){
+	set_content_with_size(res,src.c_str(),src.size(),type);
+}
+
 void HttpServerThread::run()
 {
 	mHttpServer = new httplib::Server();
@@ -167,7 +176,7 @@ void HttpServerThread::run()
 
 		auto data = ResourceManager::getInstance()->getFileData(":/window_icon_256.png");
 		if (data.ptr)
-			res.set_content((char*)data.ptr.get(), data.length, "image/png");
+			set_content_with_size(res,(char*)data.ptr.get(), data.length, "image/png");
 	});
 
 	mHttpServer->Get("/index.html", [](const httplib::Request& req, httplib::Response& res)
@@ -178,7 +187,7 @@ void HttpServerThread::run()
 		auto data = ResourceManager::getInstance()->getFileData(":/services/index.html");
 		if (data.ptr)
 		{
-			res.set_content((char*)data.ptr.get(), data.length, "text/html");
+			set_content_with_size(res,(char*)data.ptr.get(), data.length, "text/html");
 			return;
 		}
 
@@ -268,7 +277,7 @@ void HttpServerThread::run()
 		if (!isAllowed(req, res))
 			return;
 
-		res.set_content(HttpApi::getCaps(), "application/json");
+		set_content_with_size(res,HttpApi::getCaps(), "application/json");
 	});
 
 	mHttpServer->Get("/systems", [](const httplib::Request& req, httplib::Response& res)
@@ -276,7 +285,7 @@ void HttpServerThread::run()
 		if (!isAllowed(req, res))
 			return;
 
-		res.set_content(HttpApi::getSystemList(), "application/json");
+		set_content_with_size(res,HttpApi::getSystemList(), "application/json");
 	});
 
 	mHttpServer->Get("/runningGame", [](const httplib::Request& req, httplib::Response& res)
@@ -291,7 +300,7 @@ void HttpServerThread::run()
 			res.status = 201;
 		}
 		else
-			res.set_content(ret, "application/json");
+			set_content_with_size(res,ret, "application/json");
 	});
 
 	mHttpServer->Get("/isIdle", [](const httplib::Request& req, httplib::Response& res)
@@ -337,7 +346,7 @@ void HttpServerThread::run()
 					auto data = ResourceManager::getInstance()->getFileData(logo);
 					if (data.ptr)
 					{
-						res.set_content((char*)data.ptr.get(), data.length, getMimeType(logo).c_str());
+						set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(logo).c_str());
 						return;
 					}
 				}
@@ -357,7 +366,29 @@ void HttpServerThread::run()
 		SystemData* system = SystemData::getSystem(systemName);
 		if (system != nullptr)
 		{
-			res.set_content(HttpApi::getSystemGames(system), "application/json");
+			set_content_with_size(res,HttpApi::getSystemGames(system), "application/json");
+			return;
+		}
+		
+		res.set_content("404 system not found", "text/html");
+		res.status = 404;		
+	});
+
+	mHttpServer->Get(R"(/systems/(.+)/games_partial/(.+)/(.+)/(.+)(/?))", [](const httplib::Request& req, httplib::Response& res)
+	{
+		if (!isAllowed(req, res))
+			return;
+
+		std::string systemName = req.matches[1];
+		size_t from=0,limit=0;
+		unsigned sortid=0;
+		try{from=std::stoull(req.matches[2]);}catch(...){}
+		try{limit=std::stoull(req.matches[3]);}catch(...){}
+		try{sortid=std::stoul(req.matches[4]);}catch(...){}
+		SystemData* system = SystemData::getSystem(systemName);
+		if (system != nullptr)
+		{
+			set_content_with_size(res,HttpApi::getSystemGames(system,from,limit,sortid), "application/json");
 			return;
 		}
 		
@@ -377,7 +408,7 @@ void HttpServerThread::run()
 		SystemData* system = SystemData::getSystem(systemName);
 		if (system != nullptr)
 		{
-			res.set_content(HttpApi::getSystemGames(system,from,limit), "application/json");
+			set_content_with_size(res,HttpApi::getSystemGames(system,from,limit,0), "application/json");
 			return;
 		}
 		
@@ -402,14 +433,14 @@ void HttpServerThread::run()
 				std::string path = game->getSaveDir()+"/"+name;
 				if(Utils::FileSystem::isDirectory(path)){
 					std::string burl="/systems/"+systemName+"/games/"+gameId+"/saves/"+name+(name.size()?"/":"");
-					res.set_content(HttpApi::getFilesInfo(burl,game->getSaveDir(),name), "application/json");
+					set_content_with_size(res,HttpApi::getFilesInfo(burl,game->getSaveDir(),name), "application/json");
 					return;
 				}
 				else if(Utils::FileSystem::isRegularFile(path)){
 					auto data = ResourceManager::getInstance()->getFileData(path);
 					if (data.ptr)
 					{
-						res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+						set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(name).c_str());
 						return;
 					}
 
@@ -437,7 +468,7 @@ void HttpServerThread::run()
 			auto game = HttpApi::findFileData(system, gameId);
 			if (game != nullptr) {
 				std::string burl="/systems/"+systemName+"/games/"+gameId+"/saves/";
-				res.set_content(HttpApi::getFilesInfo(burl,game->getSaveDir(),""), "application/json");
+				set_content_with_size(res,HttpApi::getFilesInfo(burl,game->getSaveDir(),""), "application/json");
 				return;
 			}
 		}
@@ -463,14 +494,14 @@ void HttpServerThread::run()
 				std::string path = game->getMediaDir()+"/"+name;
 				if(Utils::FileSystem::isDirectory(path)){
 					std::string burl="/systems/"+systemName+"/games/"+gameId+"/res/"+name+(name.size()?"/":"");
-					res.set_content(HttpApi::getFilesInfo(burl,game->getMediaDir(),name), "application/json");
+					set_content_with_size(res,HttpApi::getFilesInfo(burl,game->getMediaDir(),name), "application/json");
 					return;
 				}
 				else if(Utils::FileSystem::isRegularFile(path)){
 					auto data = ResourceManager::getInstance()->getFileData(path);
 					if (data.ptr)
 					{
-						res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+						set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(name).c_str());
 						return;
 					}
 
@@ -498,7 +529,7 @@ void HttpServerThread::run()
 			auto game = HttpApi::findFileData(system, gameId);
 			if (game != nullptr) {
 				std::string burl="/systems/"+systemName+"/games/"+gameId+"/res/";
-				res.set_content(HttpApi::getFilesInfo(burl,game->getMediaDir(),""), "application/json");
+				set_content_with_size(res,HttpApi::getFilesInfo(burl,game->getMediaDir(),""), "application/json");
 				return;
 			}
 		}
@@ -530,7 +561,7 @@ void HttpServerThread::run()
 						auto data = ResourceManager::getInstance()->getFileData(path);
 						if (data.ptr)
 						{
-							res.set_content((char*)data.ptr.get(), data.length, getMimeType(path).c_str());
+							set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(path).c_str());
 							return;
 						}
 
@@ -688,7 +719,7 @@ void HttpServerThread::run()
 			if (game != nullptr)
 			{
 				bool localpaths = req.has_param("localpaths") && req.get_param_value("localpaths") == "true";
-				res.set_content(HttpApi::ToJson(game, localpaths), "application/json");
+				set_content_with_size(res,HttpApi::ToJson(game, localpaths), "application/json");
 				return;
 			}
 		}
@@ -707,7 +738,7 @@ void HttpServerThread::run()
 		if (system != nullptr)
 		{
 			bool localpaths = req.has_param("localpaths") && req.get_param_value("localpaths") == "true";
-			res.set_content(HttpApi::ToJson(system, localpaths), "application/json");
+			set_content_with_size(res,HttpApi::ToJson(system, localpaths), "application/json");
 			return;
 		}
 
@@ -948,7 +979,7 @@ void HttpServerThread::run()
 		std::string url = req.matches[1];
 		auto data = ResourceManager::getInstance()->getFileData(":/" + url);
 		if (data.ptr)
-			res.set_content((char*)data.ptr.get(), data.length, getMimeType(url).c_str());
+			set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(url).c_str());
 		else
 		{
 			res.set_content("404 not found", "text/html");
@@ -967,14 +998,14 @@ void HttpServerThread::run()
 		std::string path = "/userdata/screenshots/"+name;
 		if(Utils::FileSystem::isDirectory(path)){
 			std::string burl="/screenshots/"+name+(name.size()?"/":"");
-			res.set_content(HttpApi::getFilesInfo(burl,"/userdata/screenshots",name), "application/json");
+			set_content_with_size(res,HttpApi::getFilesInfo(burl,"/userdata/screenshots",name), "application/json");
 			return;
 		}
 		else if(Utils::FileSystem::isRegularFile(path)){
 			auto data = ResourceManager::getInstance()->getFileData(path);
 			if (data.ptr)
 			{
-				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(name).c_str());
 				return;
 			}
 
@@ -993,7 +1024,7 @@ void HttpServerThread::run()
 			return;
 
 		std::string burl="/screenshots/";
-		res.set_content(HttpApi::getFilesInfo(burl,"/userdata/screenshots",""), "application/json");
+		set_content_with_size(res,HttpApi::getFilesInfo(burl,"/userdata/screenshots",""), "application/json");
 	});
 
 	mHttpServer->Get(R"(/music/system/(.*))", [](const httplib::Request& req, httplib::Response& res)
@@ -1006,14 +1037,14 @@ void HttpServerThread::run()
 		std::string path = "/usr/share/batocera/music/"+name;
 		if(Utils::FileSystem::isDirectory(path)){
 			std::string burl="/music/system/"+name+(name.size()?"/":"");
-			res.set_content(HttpApi::getFilesInfo(burl,"/usr/share/batocera/music",name), "application/json");
+			set_content_with_size(res,HttpApi::getFilesInfo(burl,"/usr/share/batocera/music",name), "application/json");
 			return;
 		}
 		else if(Utils::FileSystem::isRegularFile(path)){
 			auto data = ResourceManager::getInstance()->getFileData(path);
 			if (data.ptr)
 			{
-				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(name).c_str());
 				return;
 			}
 
@@ -1032,7 +1063,7 @@ void HttpServerThread::run()
 			return;
 
 		std::string burl="/music/system/";
-		res.set_content(HttpApi::getFilesInfo(burl,"/usr/share/batocera/music",""), "application/json");
+		set_content_with_size(res,HttpApi::getFilesInfo(burl,"/usr/share/batocera/music",""), "application/json");
 	});
 
 	mHttpServer->Get(R"(/music/user/(.*))", [](const httplib::Request& req, httplib::Response& res)
@@ -1045,14 +1076,14 @@ void HttpServerThread::run()
 		std::string path = "/userdata/music/"+name;
 		if(Utils::FileSystem::isDirectory(path)){
 			std::string burl="/music/user/"+name+(name.size()?"/":"");
-			res.set_content(HttpApi::getFilesInfo(burl,"/userdata/music",name), "application/json");
+			set_content_with_size(res,HttpApi::getFilesInfo(burl,"/userdata/music",name), "application/json");
 			return;
 		}
 		else if(Utils::FileSystem::isRegularFile(path)){
 			auto data = ResourceManager::getInstance()->getFileData(path);
 			if (data.ptr)
 			{
-				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(name).c_str());
 				return;
 			}
 
@@ -1071,7 +1102,7 @@ void HttpServerThread::run()
 			return;
 
 		std::string burl="/music/user/";
-		res.set_content(HttpApi::getFilesInfo(burl,"/userdata/music",""), "application/json");
+		set_content_with_size(res,HttpApi::getFilesInfo(burl,"/userdata/music",""), "application/json");
 	});
 
 	mHttpServer->Get("/music/", [](const httplib::Request& req, httplib::Response& res)
@@ -1079,7 +1110,7 @@ void HttpServerThread::run()
 		if (!isAllowed(req, res))
 			return;
 
-		res.set_content(HttpApi::getMusicRootInfo(), "application/json");
+		set_content_with_size(res,HttpApi::getMusicRootInfo(), "application/json");
 	});
 
 	mHttpServer->Get("/music", [](const httplib::Request& req, httplib::Response& res)
@@ -1087,7 +1118,7 @@ void HttpServerThread::run()
 		if (!isAllowed(req, res))
 			return;
 
-		res.set_content(HttpApi::getMusicRootInfo(), "application/json");
+		set_content_with_size(res,HttpApi::getMusicRootInfo(), "application/json");
 	});
 
 	mHttpServer->Get(R"(/splash/system/(.*))", [](const httplib::Request& req, httplib::Response& res)
@@ -1100,14 +1131,14 @@ void HttpServerThread::run()
 		std::string path = "/usr/share/batocera/splash/"+name;
 		if(Utils::FileSystem::isDirectory(path)){
 			std::string burl="/splash/system/"+name+(name.size()?"/":"");
-			res.set_content(HttpApi::getFilesInfo(burl,"/usr/share/batocera/splash",name), "application/json");
+			set_content_with_size(res,HttpApi::getFilesInfo(burl,"/usr/share/batocera/splash",name), "application/json");
 			return;
 		}
 		else if(Utils::FileSystem::isRegularFile(path)){
 			auto data = ResourceManager::getInstance()->getFileData(path);
 			if (data.ptr)
 			{
-				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(name).c_str());
 				return;
 			}
 
@@ -1126,7 +1157,7 @@ void HttpServerThread::run()
 			return;
 
 		std::string burl="/splash/system/";
-		res.set_content(HttpApi::getFilesInfo(burl,"/usr/share/batocera/splash",""), "application/json");
+		set_content_with_size(res,HttpApi::getFilesInfo(burl,"/usr/share/batocera/splash",""), "application/json");
 	});
 
 	mHttpServer->Get(R"(/splash/user/(.*))", [](const httplib::Request& req, httplib::Response& res)
@@ -1139,14 +1170,14 @@ void HttpServerThread::run()
 		std::string path = "/userdata/splash/"+name;
 		if(Utils::FileSystem::isDirectory(path)){
 			std::string burl="/splash/user/"+name+(name.size()?"/":"");
-			res.set_content(HttpApi::getFilesInfo(burl,"/userdata/splash",name), "application/json");
+			set_content_with_size(res,HttpApi::getFilesInfo(burl,"/userdata/splash",name), "application/json");
 			return;
 		}
 		else if(Utils::FileSystem::isRegularFile(path)){
 			auto data = ResourceManager::getInstance()->getFileData(path);
 			if (data.ptr)
 			{
-				res.set_content((char*)data.ptr.get(), data.length, getMimeType(name).c_str());
+				set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(name).c_str());
 				return;
 			}
 
@@ -1165,7 +1196,7 @@ void HttpServerThread::run()
 			return;
 
 		std::string burl="/splash/user/";
-		res.set_content(HttpApi::getFilesInfo(burl,"/userdata/splash",""), "application/json");
+		set_content_with_size(res,HttpApi::getFilesInfo(burl,"/userdata/splash",""), "application/json");
 	});
 
 	mHttpServer->Get("/splash/", [](const httplib::Request& req, httplib::Response& res)
@@ -1173,7 +1204,7 @@ void HttpServerThread::run()
 		if (!isAllowed(req, res))
 			return;
 
-		res.set_content(HttpApi::getSplashRootInfo(), "application/json");
+		set_content_with_size(res,HttpApi::getSplashRootInfo(), "application/json");
 	});
 
 	mHttpServer->Get("/splash", [](const httplib::Request& req, httplib::Response& res)
@@ -1181,7 +1212,7 @@ void HttpServerThread::run()
 		if (!isAllowed(req, res))
 			return;
 
-		res.set_content(HttpApi::getSplashRootInfo(), "application/json");
+		set_content_with_size(res,HttpApi::getSplashRootInfo(), "application/json");
 	});
 
 	mHttpServer->Get(R"(/(/?.*))", [](const httplib::Request& req, httplib::Response& res)  // (.*)
@@ -1193,7 +1224,7 @@ void HttpServerThread::run()
 
 		auto data = ResourceManager::getInstance()->getFileData(":/services/" + url);
 		if (data.ptr)
-			res.set_content((char*)data.ptr.get(), data.length, getMimeType(url).c_str());
+			set_content_with_size(res,(char*)data.ptr.get(), data.length, getMimeType(url).c_str());
 		else 
 		{
 			res.set_content("404 not found", "text/html");

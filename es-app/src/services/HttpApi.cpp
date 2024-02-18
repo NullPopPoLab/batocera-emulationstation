@@ -10,6 +10,7 @@
 #include "Gamelist.h"
 #include "SystemData.h"
 #include "FileData.h"
+#include "FileSorts.h"
 #include "views/ViewController.h"
 #include "CollectionSystemManager.h"
 #include "utils/FileSystemUtil.h"
@@ -102,32 +103,12 @@ std::string HttpApi::getSystemList()
 
 std::string HttpApi::getFileDataId(FileData* game)
 {
-	MD5 md5;
-	md5.update(game->getPath().c_str(), game->getPath().size());
-	md5.finalize();
-	return md5.hexdigest();
+	return game->getId();
 }
 
 FileData* HttpApi::findFileData(SystemData* system, const std::string& id)
 {
-	std::stack<FolderData*> stack;
-	stack.push(system->getRootFolder());
-
-	while (stack.size())
-	{
-		FolderData* current = stack.top();
-		stack.pop();
-
-		for (auto it : current->getChildren())
-		{			
-			if (it->getType() == FOLDER)
-				stack.push((FolderData*)it);
-			else if (getFileDataId(it) == id)
-				return it;
-		}
-	}
-
-	return nullptr;
+	return system->lookupGame(id);
 }
 
 void HttpApi::getFileDataJson(rapidjson::PrettyWriter<rapidjson::StringBuffer>& writer, FileData* game, bool localpaths)
@@ -313,39 +294,20 @@ std::string HttpApi::ToJson(SystemData* system, bool localpaths)
 	return s.GetString();
 }
 
-std::string HttpApi::getSystemGames(SystemData* system, size_t from, size_t limit)
+std::string HttpApi::getSystemGames(SystemData* system, size_t from, size_t limit, unsigned sortid)
 {
 	rapidjson::StringBuffer s;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(s);
 
 	writer.StartArray();
 
-	std::vector<FileData*> files;
-
-	std::stack<FolderData*> stack;
-	stack.push(system->getRootFolder());
-
-	while (stack.size())
-	{
-		FolderData* current = stack.top();
-		stack.pop();
-
-		for (auto it : current->getChildren())
-		{
-			if(from>0)--from;
-			else{
-				if(limit>0){
-					if(files.size()>=limit)break;
-				}
-				files.push_back(it);
-			}
-			if (it->getType() == FOLDER)
-				stack.push((FolderData*)it);
-		}
+	auto& list=system->getGameIdList(sortid);
+	auto l=list.size();
+	if(limit>0){
+		if(from+limit<l)l=from+limit;
 	}
-
-	for (auto game : files){
-		getFileDataJson(writer, game);
+	for(auto i=from;i<l;++i){
+		getFileDataJson(writer, system->lookupGame(list[i]));
 	}
 
 	writer.EndArray();
@@ -487,6 +449,14 @@ std::string HttpApi::getCaps()
 	writer.Key("CanGetMusic"); writer.Bool(true);
 	writer.Key("CanGetSplash"); writer.Bool(true);
 	writer.Key("CanGetSaves"); writer.Bool(true);
+
+	const std::vector<FileSorts::SortType>& sorts=FileSorts::getSortTypes();
+	writer.Key("GameSorts");
+	writer.StartObject();
+	for(auto& it: sorts){
+		writer.Key(std::to_string(it.id).c_str()); writer.String(it.description.c_str());
+	}
+	writer.EndObject();
 
 	writer.Key("GenreLanguages");
 	writer.StartObject();

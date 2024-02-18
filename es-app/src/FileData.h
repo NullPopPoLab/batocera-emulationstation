@@ -71,6 +71,7 @@ public:
 
 	static FileData* GetRunningGame() { return mRunningGame; }
 
+	const std::string& getId() const{return mId;}
 	virtual const std::string& getName();
 
 	inline FileType getType() const { return mType; }
@@ -183,6 +184,7 @@ private:
 	std::string getKeyboardMappingFilePath();
 	std::string getMessageFromExitCode(int exitCode);
 	MetaDataList mMetadata;
+	std::string mId;
 
 protected:	
 	std::string  findLocalArt(const std::string& type = "", std::vector<std::string> exts = { ".png", ".jpg" });
@@ -255,7 +257,6 @@ public:
 
 private:
 	void getFilesRecursiveWithContext(std::vector<FileData*>& out, unsigned int typeMask, GetFileContext* filter, bool displayedOnly, SystemData* system, bool includeVirtualStorage) const;
-
 
 	std::vector<FileData*> mChildren;
 	bool	mOwnsChildrens;
