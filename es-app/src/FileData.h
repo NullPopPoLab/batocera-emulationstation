@@ -71,7 +71,7 @@ public:
 
 	static FileData* GetRunningGame() { return mRunningGame; }
 
-	const std::string& getId() const{return mId;}
+	virtual const std::string& getId() const{return mId;}
 	virtual const std::string& getName();
 
 	inline FileType getType() const { return mType; }
@@ -203,7 +203,9 @@ class CollectionFileData : public FileData
 public:
 	CollectionFileData(FileData* file, SystemData* system);
 	~CollectionFileData();
-	const std::string& getName();	
+
+	virtual const std::string& getId() const{return mSourceFileData->getId();}
+	const std::string getName();	
 	FileData* getSourceFileData();
 	std::string getKey();
 	virtual const std::string getPath() const;
