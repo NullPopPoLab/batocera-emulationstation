@@ -97,6 +97,28 @@ function showPageBar(target,main,sdata,page){
 	}
 }
 
+function showMetaDialog(target,gdata,cbclose){
+
+	target.innerHTML='';
+	var top=quickhtml({
+		target:target,
+		tag:'div',
+		attr:{class:'metaedit_top_right'},
+	});
+	var btn=quickhtml({
+		target:top,
+		tag:'button',
+		attr:{class:'metaedit_dialog_close'},
+		sub:['X']
+	});
+	btn.onclick=()=>{
+		target.close();
+		if(cbclose)cbclose();
+	}
+	target.append(metaedit(gdata));
+	target.showModal();
+}
+
 function updateGameList(main,sdata,page=0){
 
 	var sname=sdata.name;
@@ -176,26 +198,11 @@ function updateGameList(main,sdata,page=0){
 					tag:'button',
 					sub:['Meta']
 				}).onclick=()=>{
-					dialog_meta.innerHTML='';
-					var top=quickhtml({
-						target:dialog_meta,
-						tag:'div',
-						attr:{class:'metaedit_top_right'},
-					});
-					var btn=quickhtml({
-						target:top,
-						tag:'button',
-						attr:{class:'metaedit_dialog_close'},
-						sub:['X']
-					});
-					btn.onclick=()=>{
-						dialog_meta.close();
+					showMetaDialog(dialog_meta,gdata,()=>{
 						vset.favobtn.lock(booleanize(gdata.favorite));
 						vset.hidebtn.lock(booleanize(gdata.hidden));
 						vset.stars.set(gdata.rating);
-					}
-					dialog_meta.append(metaedit(gdata));
-					dialog_meta.showModal();
+					});
 				}
 				if(booleanize(gdata.jukeboxAvailable)){
 					quickhtml({
@@ -373,6 +380,12 @@ function updateGameList(main,sdata,page=0){
 
 function showRunning(target,main,sinfo,gdata){
 
+	var dialog_meta=quickhtml({
+		target:target,
+		tag:'dialog',
+		attr:{class:'metaedit_dialog'},
+	});
+
 	var box=quickhtml({
 		target:target,
 		tag:'div',
@@ -422,7 +435,9 @@ function showRunning(target,main,sinfo,gdata){
 		target:toolbar,
 		tag:'button',
 		sub:['Meta']
-	});
+	}).onclick=()=>{
+		showMetaDialog(dialog_meta,gdata,null);
+	}
 	if(booleanize(gdata.jukeboxAvailable)){
 		var detailbtn=quickhtml({
 			target:toolbar,
