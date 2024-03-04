@@ -1,7 +1,9 @@
 // † EmulationStation NullPopPoCustom † //
+// Slideshow //
 
 ipl_styles.load('slideshow.css');
 ipl_modules.load('mediatype.js');
+ipl_modules.load('es_client.js');
 
 function slideshow_stop(ctrl){
 
