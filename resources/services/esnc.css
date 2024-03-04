@@ -1,169 +1,102 @@
-.langslect{
-	text-align:center;
+html, body { 
+	margin:0px; 
+	padding:0px; 
+	background-color:#202020; 
+	color:white;
+	overflow:hidden;
+	height: 100vh;
+	width: 100vw;
 }
 
-.systemlist {
+screen{
+	display:flex;
+	flex-direction:column;
+}
+
+header {
+	width: 100%;
+	height: 1.5em;
+	background-color:#F0F0F0;
+	color:black;
+	flex-shrink:0;
+}
+
+footer{
+	width: 100%;
+	height: 1.5em;
+	background-color:#F0F0F0;
+	color:black;
+	flex-shrink:0;
+}
+
+main {
+}
+
+.mainboard{
+}
+.leftpane {
 	color:white;
 	background-color:#202020; 
 	flex-shrink:0;
 	overflow-y: auto;
 	max-height: calc(100vh - 5em);
 }
-.systemview {
+.rightpane {
 	flex-grow:1;
 	overflow-y: auto;
 	max-height: calc(100vh - 3em);
 }
-.screenshots {
-	flex-grow:1;
-	overflow-y: auto;
-	max-height: calc(100vh - 3em);
-}
-.gamelist{
-	margin-left:auto;
-	margin-right:auto;
-	margin-top:1.5em;
-	
+.dialog{
+	color:white;
+	background-color:#202020; 
+	width:60%;
+	height:40%;
 }
 
-.homeview{
-	color:white;
-	background-color:#202020; 
-	text-align:center;
+input[type="text"]{
+	width:40em;
 }
-.currentgame{
-	margin-top: 1.5em;
-	border: ridge;
-	font-size:150%;
+textarea{
+	width:40em;
+	height:6em;
 }
 
-.audiohead {
-	flex-shrink:0;
-	width: 99%;
-	height: 6em;
+.iplmon_table{
+	border-style:outset;
+	border-width:2px;
 }
-.audioctrl {
-	flex-grow:1;
+.iplmon_thr{
 }
-.music_title{
-	font-size:150%;
+.iplmon_tdr{
 }
-.music_play{
+.iplmon_th{
+	border-style:outset;
 }
-.music_opt{
+.iplmon_td_category{
+	border-style:inset;
 }
-.music_list{
-	max-height: calc(100vh - 3em - 6em);
+.iplmon_td_path{
+	border-style:inset;
 }
-.music_listed{
-}
-.music_current{
-	background-color:#005070; 
-}
-.music_mode_on{
-	background-color:#aaffff;
-}
-.music_mode_off{
+.iplmon_td_condition{
+	border-style:inset;
 }
 
-.imageviewer {
-	text-align:center;
-	display:flex;
-	flex-direction:column;
+.toolbox{
+	padding:0.3em;
 }
-
-.imagehead {
-	flex-shrink:0;
-	width: 99%;
-	height: 3.5em;
+.toolbtn{
+	font-size:120%;
 }
-.imagetool {
-	display:flex;
+.sysbox{
+	padding:0.3em;
 }
-.imagectrl {
-	flex-grow:1;
-	font-size:150%;
+.syslist{
 }
-.imagebtns {
+.syscollection{
 }
-.imagebtn {
-	font-size:200%;
+.syshardware{
 }
-.imageview {
-	flex-grow:1;
-	overflow: scroll;
-	max-height: calc(100vh - 3em - 3.5em);
-}
-.imagedir {
-	flex-shrink:0;
-}
-.imagecanvas {
-	border:groove;
-}
-.ssmode_on{
-	font-size:150%;
-	background-color:#aaffff;
-}
-.ssmode_off{
-	font-size:150%;
-}
-
-.gamelist {
-	color:white;
-	background-color:#202020; 
-	text-align:center;
-}
-.gameview{
-	color:white;
-	background-color:#202020; 
-	text-align:center;
-}
-.genreeditor {
-	flex-grow:1;
-	max-height: calc(100vh - 3em);
-	overflow-y: scroll;
-	color:white;
-	background-color:#202020; 
-	text-align:center;
-}
-.genretree {
-	font-size:200%;
-}
-.metaeditor {
-	flex-grow:1;
-	max-height: calc(100vh - 3em);
-	overflow-y: scroll;
-	color:white;
-	background-color:#202020; 
-	text-align:center;
-}
-.buttontray{
-	padding-top:0.3em;
-}
-.ratingtray{
-	padding-top:0.3em;
-	padding-bottom:0.5em;
-}
-.mediatray {
-	max-width:100%;
-}
-.mediaviewer {
-	flex-grow:1;
-	max-height: calc(100vh - 3em);
-	overflow-y: scroll;
-	color:white;
-	background-color:#202020; 
-	text-align:center;
-}
-.doclist {
-	flex-grow:1;
-	max-height: calc(100vh - 3em);
-	overflow-y: scroll;
-	color:white;
-	background-color:#202020; 
-	text-align:center;
-}
-
 .cardgroup{
 	color:white;
 	background-color:#202020; 
@@ -180,57 +113,14 @@
 	color:white;
 }
 
-.genregroup{
-	line-height:1.8em;
-	word-break:keep-all;
+.homeview{
+	padding:0.3em;
+	text-align:center;
 }
-.genre_off{
-	border:outset;
-	background-color:#777777; 
-	color:white;
-	padding:0.2em;
-	white-space:nowrap;
-	font-size:100%;
-}
-.genre_on{
-	border:inset;
-	background-color:#cccc44; 
-	color:#444466;
-	padding:0.2em;
-	white-space:nowrap;
-	font-size:100%;
-}
-
-.btn_normal{
-}
-.btn_runnable{
-	background-color:#aaffff;
-}
-.btn_kidgame{
-	background-color:#aaffaa;
-}
-.btn_favorite{
-	background-color:#ffdd00;
-}
-.btn_hidden{
-	background-color:#444444;
-}
-
-.imgframe{
-	border:ridge;
-	overflow:auto;
-}
-.metatextbox{
-	width:65vw;
-}
-.metatextarea{
-	width:65vw;
-	height:5em;
-	overflow:scroll;
-}
-
-.gamethumb{
-	max-width:60vw;
+.currentgame{
+	margin-top: 1.5em;
+	border: ridge;
+	font-size:150%;
 }
 
 .homecaption{
@@ -249,14 +139,13 @@
 .gamecaption{
 	font-size:200%;
 }
-.editorcaption{
-	font-size:300%;
+.gamethumb{
+	max-width:60vw;
 }
-.mediacaption{
-	font-size:150%;
-}
-.instanterror{
-	color:#ff6666;
+
+.gamelisview{
+	padding:0.3em;
+	text-align:center;
 }
 .systemicon{
 	max-width:60vw;
@@ -264,60 +153,64 @@
 	font-size:350%;
 }
 
-.toolbar {
-	background-color:#304070FF;
+.gamelist_table{
+	border-style:outset;
+	border-width:2px;
+	text-align:left;
+}
+.gamelist_thr{
+}
+.gamelist_tdr{
+}
+.gamelist_th{
+	border-style:outset;
+	text-align:center;
+}
+.gamelist_td_str{
+	border-style:inset;
+	text-align:left;
+}
+.gamelist_td_num{
+	border-style:inset;
+	text-align:right;
+}
+.gamelist_tdn{
 }
 
-.toolbarbutton {
-	color:white;
-	background-color:#304070FF;
-	border:none;
-	font-size:12pt;
-	padding:6px 8px;
-	cursor: pointer;
-}
-
-
-.toolbarbutton:hover {
-	background-color:#405080FF;
-}
-
-.system:hover {
-	background-color:#303030;
-}
-
-.gamelist {	
+.metaedit_dialog{
 	color:white;
 	background-color:#202020; 
-	overflow-y:scroll;
+	width:80%;
+	height:90%;
+	text-align:left;
+}
+.metaedit_top_right{
+	width:100%;
+	text-align:right;
+}
+.metaedit_dialog_close{
+	font-size:125%;
 }
 
-.game:hover {
-	background-color:#303030;
+.btn_normal{
+}
+.btn_runnable{
+	background-color:#aaffff;
+}
+.btn_kidgame{
+	background-color:#aaffaa;
+}
+.btn_favorite{
+	background-color:#ffdd00;
+}
+.btn_hidden{
+	background-color:#444444;
 }
 
-.desc { 
-	color:#A0A0A0; 	
-	font-size:8pt;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	height:22pt
-}
-
-.playitBtn {
-	background-color: #808080;
-	cursor: pointer;
-	font-size: 0.9em;
-	
-	border: solid 1px #303030;
-	padding: 3px 8px;
-	border-radius: 4px;
-}
-
-.playitBtn:hover {
-	background-color: #909090;
-}
-
-.playitBtn:active {
-	background-color: #606060;
+.docs_dialog{
+	color:white;
+	background-color:#202020; 
+	width:60%;
+	height:60%;
+	text-align:center;
 }

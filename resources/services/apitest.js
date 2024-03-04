@@ -1,29 +1,21 @@
 // † EmulationStation NullPopPoCustom † //
 // API test //
 
-ipl_modules.load('xsv.js');
 ipl_modules.load('objview.js');
 ipl_modules.load('metaedit.js');
 ipl_modules.load('htmlut.js');
-ipl_modules.load('http_client.js');
 ipl_modules.load('es_client.js');
 ipl_modules.load('mediatype.js');
 ipl_modules.load('langsel.js');
 ipl_modules.load('genres.js');
 ipl_modules.load('confirming.js');
+ipl_modules.load('mediaview.js');
 ipl_modules.load('slideshow.js');
 ipl_modules.load('jukebox.js');
 
 const gamelist_pagenation=200;
 
-var sortid=0;
-
-var objviewopt={
-	style_field:'objview_field',
-	style_caption:'objview_caption',
-	style_key:'objview_key',
-	style_value:'objview_value',
-}
+var gamelist_sortid=0;
 
 function crumbview(src,dst=null){
 
@@ -45,377 +37,53 @@ function crumbview(src,dst=null){
 	return div;
 }
 
-function progress(main,cbreq){
-
-	main.abort();
-	main.rightpane.view.innerHTML='';
-
-	quickhtml({
-		target:main.rightpane.view,
-		tag:'div',
-		sub:['Wait for it...']
-	});
-	var prgbar=quickhtml({
-		target:main.rightpane.view,
-		tag:'meter',
-		attr:{value:0,min:0,max:1},
-		style:{width:'100%'},
-	});
-	var btn=quickhtml({
-		target:main.rightpane.view,
-		tag:'button',
-		sub:['Cancel']
-	});
-
-	var prc={
-		ok:(view)=>{
-			main.rightpane.view.innerHTML='';
-			main.rightpane.view.append(view);
-		},
-		ng:(err)=>{
-			main.rightpane.view.innerHTML='';
-			main.rightpane.view.append(err.toString());
-		},
-	}
-
-	main.requesting=cbreq();
-	engine_launch(()=>{
-		if(!main.requesting)return false;
-		prgbar.value=main.requesting.progress();
-		return !main.requesting.end;
-	},null,null);
-	btn.onclick=()=>{
-		main.abort();
-	}
-	return prc;
-}
-
 function callGet(main,path){
 
-	var prc=progress(main,()=>es_client.get_text(path,
+	var stg=main.monoq.stage(es_client.get_text(path,
 	(data)=>{
-		prc.ok('Done');
+		stg.show('Done');
 	},
 	(err)=>{
-		prc.ng(err);
+		stg.show(objview(err.getSource()));
 	}));
 }
 
 function getText(main,path){
 
-	var prc=progress(main,()=>es_client.get_text(path,
+	var stg=main.monoq.stage(es_client.get_text(path,
 	(data)=>{
-		prc.ok(data);
+		stg.show(data);
 	},
 	(err)=>{
-		prc.ng(err);
+		stg.show(objview(err.getSource()));
 	}));
 }
 
-function callGetJSON(main,path){
+function callGetJSON(main,path,opt={}){
 
-	var prc=progress(main,()=>es_client.get_json(path,
+	var stg=main.monoq.stage(es_client.get_json(path,
 	(data)=>{
-		prc.ok(objview(data,objviewopt));
+		stg.show(objview(data));
 	},
 	(err)=>{
-		prc.ng(err);
-	}));
+		stg.show(objview(err.getSource()));
+	},opt));
 }
 
-function callGetCaps(main,path){
+function callGetCaps(main){
 
-	var prc=progress(main,()=>es_client.get_json(path,
+	var stg=main.monoq.stage(es_client.get_json('/caps',
 	(data)=>{
 		if(!data.Flags)data.Flags=es_caps.Flags;
 		if(!data.Texts)data.Texts=es_caps.Texts;
 		if(!data.Videos)data.Videos=es_caps.Videos;
 		if(!data.Images)data.Images=es_caps.Images;
 		es_caps=data;
-		prc.ok(objview(data,objviewopt));
+		stg.show(objview(data));
 	},
 	(err)=>{
-		prc.ng(err);
+		stg.show(objview(err.getSource()));
 	}));
-}
-
-var tsvproc=null;
-
-function tsvproc_init(){
-
-	tsvproc={
-		ID:xsv_proc_string('id'),
-		Platform:xsv_proc_string('systemName'),
-		Path:{
-			key:'path',
-			export:(row,key)=>{
-				var v=row[key];
-				if(!v)return '';
-				return v.substring(16+row.systemName.length);
-			},
-			import:(row,key,val)=>{
-				// for index 
-				// don't import 
-				return true;
-			},
-		},
-		Powered:xsv_proc_string('arcadesystemname'),
-		Caption:xsv_proc_string('name'),
-		Title:xsv_proc_string('title'),
-		Sortable:xsv_proc_string('sortname'),
-		Family:xsv_proc_string('family'),
-		Rating:{
-			key:'rating',
-			export:(row,key)=>{
-				var v=row[key];
-				if(!v)return '';
-				var n=Math.floor(v*5+0.5);
-				return n;
-			},
-			import:(row,key,val)=>{
-				var n=parseInt(val);
-				if(n>5)n=5;
-				row[key]=ratingscore[n];
-				return true;
-			},
-		},
-		Runa:xsv_proc_bool('runable',{import_true:'true',import_false:'false'}),
-		Favo:xsv_proc_bool('favorite',{import_true:'true',import_false:'false'}),
-		Hide:xsv_proc_bool('hidden',{import_true:'true',import_false:'false'}),
-		Kids:xsv_proc_bool('kidgame',{import_true:'true',import_false:'false'}),
-		Reg:xsv_proc_string('region'),
-		Lang:xsv_proc_string('lang'),
-		Date:xsv_proc_string('releasedate'),
-		Developer:xsv_proc_string('developer'),
-		Publisher:xsv_proc_string('publisher'),
-		Players:xsv_proc_string('players'),
-	}
-}
-
-function mediaview(url,type=null){
-
-	if(!type)type=getMajorMediaType(url);
-	switch(type){
-		case 'image':
-		return quickhtml({
-			tag:'img',
-			attr:{src:url},
-			style:{'max-width':'100%'},
-		});
-
-		case 'video':
-		return quickhtml({
-			tag:'video',
-			attr:{controls:'controls',autoplay:'autoplay'},
-			style:{'max-width':'100%'},
-			sub:[quickhtml({tag:'source',attr:{src:url}})
-		]});
-
-		case 'audio':
-		return quickhtml({
-			tag:'audio',
-			attr:{controls:'controls',autoplay:'autoplay'},
-			sub:[quickhtml({tag:'source',attr:{src:url}})
-		]});
-	}
-
-	return quickhtml({
-		tag: 'div',
-		sub:['Unknown type for '+url]
-	});
-}
-
-function exportGames(main){
-
-	var showerr=(err)=>{
-		ctrl.view.innerHTML='';
-		quickhtml({
-			target:ctrl.view,
-			tag:'div',
-			sub:[err.toString()]
-		});
-		var btn=quickhtml({
-			target:ctrl.view,
-			tag:'button',
-			sub:['Cancel']
-		});
-		btn.onclick=()=>{
-			ctrl.view.close();
-		}
-	}
-
-	var ctrl={
-		view:quickhtml({
-			target:main.rightpane.view,
-			tag:'dialog',
-			attr:{class:'dialog'},
-		}),
-
-		exec:(sdata,cbdone)=>{
-			ctrl.view.innerHTML='';
-			quickhtml({
-				target:ctrl.view,
-				tag:'div',
-				sub:['Wait for it...']
-			});
-			var prgbar=quickhtml({
-				target:ctrl.view,
-				tag:'meter',
-				attr:{value:0,min:0,max:1},
-				style:{width:'100%'},
-			});
-			var btn=quickhtml({
-				target:ctrl.view,
-				tag:'button',
-				sub:['Cancel']
-			});
-			btn.onclick=()=>{
-				req.abort();
-			}
-			ctrl.view.showModal();
-
-			var sname=sdata.name;
-			var req=es_client.get_json('/systems/'+sname+'/games',(data)=>{
-				ctrl.view.innerHTML='';
-				var tsv=xsv_export_full(data,tsvproc);
-				var blob=new Blob([tsv],{type:'text/tab-separated-values'});
-
-				var saver=quickhtml({
-					target:ctrl.view,
-					tag:'a',
-				});
-				saver.href=URL.createObjectURL(blob);
-				saver.download=sname+'.tsv';
-				saver.click();
-				ctrl.view.close();
-				if(cbdone)cbdone();
-			},
-			(err)=>{
-				showerr(err);
-			});
-			engine_launch(()=>{
-				prgbar.value=req.progress();
-				return !req.end;
-			},null,null);
-		}
-	}
-	return ctrl;
-}
-
-function importGames(main,target){
-
-	var showerr=(err,filebtn)=>{
-		ctrl.view.innerHTML='';
-		quickhtml({
-			target:ctrl.view,
-			tag:'div',
-			sub:[err.toString()]
-		});
-		var btn=quickhtml({
-			target:ctrl.view,
-			tag:'button',
-			sub:['End']
-		});
-		btn.onclick=()=>{
-			ctrl.view.close();
-			filebtn.show();
-		}
-	}
-
-	var ctrl={
-		view:quickhtml({
-			target:target,
-			tag:'dialog',
-			attr:{class:'dialog'},
-		}),
-
-		seton:(target,sdata)=>{
-			var opt=({
-				target:target,
-				filter:'.tsv',
-				caption_select:'Import',
-				cbselect:(ctrl2,files)=>{
-					var path=files[0].name;
-					ctrl.view.innerHTML=path;
-					btn.confirm();
-				},
-				cbcancel:(ctrl2,files)=>{
-					ctrl.view.close();
-					btn.show();
-				},
-				cbexec:(ctrl2,files)=>{
-					ctrl.view.innerHTML='Wait for it...';
-					var prgbar=quickhtml({
-						target:ctrl.view,
-						tag:'meter',
-						attr:{value:0,min:0,max:1},
-						style:{width:'100%'},
-					});
-					var btn1=quickhtml({
-						target:ctrl.view,
-						tag:'button',
-						sub:['Cancel']
-					});
-					btn1.onclick=()=>{
-						http.abort();
-					}
-					ctrl.view.showModal();
-	
-					var http=http_controller({
-						secure:es_client.secure,
-						base:es_client.base,
-						limit:10,
-						interval:25,
-					});
-					var fr=new FileReader();
-					fr.onerror=()=>{
-						showerr(fr.error,btn);
-					}
-					fr.onload=()=>{
-						var data=xsv_import_full(fr.result,tsvproc);
-						if(!data){
-							showerr('format error',btn);
-						}
-						else{
-							var sname=sdata.name;
-							for(var row of data){
-								if(sname!=row.systemName)continue;
-								var gid=row.id;
-								var dst={}
-								for(var k in row){
-									if(k=='id')continue;
-									if(k=='path')continue;
-									if(k=='systemName')continue;
-									dst[k]=row[k];
-								}
-
-								var url='/systems/'+sname+'/games/'+gid;
-								http.post_json(url,dst);
-							}
-							http.sync(
-								()=>{
-									prgbar.value=http.progress();
-								},
-								()=>{
-									if(http.is_ng()){
-										showerr(''+http.count_ng()+' entries failure',btn);
-									}
-									else{
-										ctrl.view.close();
-										btn.show();
-									}
-								}
-							);
-						}
-					}
-					fr.readAsText(files[0]);
-				},
-			});
-			var btn=htmlut_filebutton(opt);
-		}
-	}
-
-	return ctrl;
 }
 
 function getAGame(main,sdata,gid){
@@ -423,7 +91,7 @@ function getAGame(main,sdata,gid){
 	var sname=sdata.name;
 
 	var url='/systems/'+sname+'/games/'+gid;
-	var prc=progress(main,()=>es_client.get_json(url,
+	var stg=main.monoq.stage(es_client.get_json(url,
 	(data)=>{
 		var div=quickhtml({tag:'div'});
 		var crumb={}
@@ -460,10 +128,10 @@ function getAGame(main,sdata,gid){
 		else{
 			div.append(metaedit(data));
 		}
-		prc.ok(div);
+		stg.show(div);
 	},
 	(err)=>{
-		prc.ng(err);
+		stg.show(objview(err.getSource()));
 	}));
 }
 
@@ -473,21 +141,20 @@ function callGetGames(main,sdata,page=0){
 
 	var pgsuf='';
 	if(gamelist_pagenation && es_caps.PartialGameList){
-		pgsuf='_partial/'+(page*gamelist_pagenation)+'/'+gamelist_pagenation+'/'+sortid;
+		pgsuf='_partial/'+(page*gamelist_pagenation)+'/'+gamelist_pagenation+'/'+gamelist_sortid;
 	}
 
-	var prc=progress(main,()=>es_client.get_json('/systems/'+sname+'/games'+pgsuf,
+	var stg=main.monoq.stage(es_client.get_json('/systems/'+sname+'/games'+pgsuf,
 	(data)=>{
 		var div=quickhtml({tag:'div'});
 		var div1=quickhtml({tag:'div',target:div});
 		var crumb={}
 		crumb['Systems']=()=>{callGetSystems(main);}
 		crumb[sname]=()=>{callGetASystem(main,sname);}
-		crumb['Export']=()=>{exportGames(main).exec(sdata);}
+		crumb['Export']=()=>{es_games_export(main.rightpane.view).exec(sdata);}
 		crumbview(crumb,div1);
 
-		var importer=importGames(main,div1);
-		importer.seton(div1,sdata);
+		es_games_import(div1).seton(div1,sdata);
 
 		var div2=quickhtml({tag:'div',target:div});
 		if(gamelist_pagenation && es_caps.PartialGameList){
@@ -505,12 +172,11 @@ function callGetGames(main,sdata,page=0){
 			var sel=quickhtml({
 				target:div2,
 				tag:'select',
-				style:{align:'right'},
 			});
 			for(var i in es_caps.GameSorts){
 				idxs.push(i);
 				var attr={value:i}
-				if(i==sortid)attr.selected='selected';
+				if(i==gamelist_sortid)attr.selected='selected';
 				var opt=quickhtml({
 					target:sel,
 					tag:'option',
@@ -519,13 +185,13 @@ function callGetGames(main,sdata,page=0){
 				});
 			}
 			sel.onchange=()=>{
-				sortid=idxs[sel.selectedIndex];
+				gamelist_sortid=idxs[sel.selectedIndex];
 				callGetGames(main,sdata,page);
 			}
 		}
 
 		safearrayiter(data,(gt)=>{
-			var ov=objview(gt,objviewopt);
+			var ov=objview(gt);
 			var lg=quickhtml({target:ov,tag:'legend'});
 			var btn=quickhtml({target:lg,tag:'button',sub:[gt.name]});
 			btn.onclick=()=>getAGame(main,sdata,gt.id);
@@ -533,10 +199,10 @@ function callGetGames(main,sdata,page=0){
 			return true;
 		});
 
-		prc.ok(div);
+		stg.show(div);
 	},
 	(err)=>{
-		prc.ng(err);
+		stg.show(objview(err.getSource()));
 	}));
 }
 
@@ -548,14 +214,14 @@ function callGetScreenshots(main){
 
 function callGetASystem(main,sname){
 
-	var prc=progress(main,()=>es_client.get_json('/systems/'+sname,
+	var stg=main.monoq.stage(es_client.get_json('/systems/'+sname,
 	(data)=>{
 		var div=quickhtml({tag:'div'});
 		crumbview({
 			'Systems':()=>{callGetSystems(main);},
 			'Games':()=>{callGetGames(main,data);},
 		},div);
-		div.append(objview(data,objviewopt,sname));
+		div.append(objview(data,sname));
 		div.append(quickhtml({
 			tag:'fieldset',
 			sub:[
@@ -567,37 +233,34 @@ function callGetASystem(main,sname){
 				})
 			]
 		}));
-		prc.ok(div);
+		stg.show(div);
 	},
 	(err)=>{
-		prc.ng(err);
+		stg.show(objview(err.getSource()));
 	}));
 }
 
 function callGetSystems(main){
 
-	var prc=progress(main,()=>es_client.get_json('/systems',
+	var stg=main.monoq.stage(es_client.get_json('/systems',
 	(data)=>{
 		var div=quickhtml({tag:'div'});
 		safearrayiter(data,(st)=>{
-			var ov=objview(st,objviewopt);
+			var ov=objview(st);
 			var lg=quickhtml({target:ov,tag:'legend'});
 			var btn=quickhtml({target:lg,tag:'button',sub:[st.name]});
 			btn.onclick=()=>callGetASystem(main,st.name);
 			div.append(ov);
 			return true;
 		});
-		prc.ok(div);
+		stg.show(div);
 	},
 	(err)=>{
-		prc.ng(err);
+		stg.show(objview(err.getSource()));
 	}));
 }
 
 function callNotify(main){
-
-	main.abort();
-	main.rightpane.view.innerHTML='';
 
 	var btn_n=quickhtml({tag:'button',sub:['Notify']});
 	var btn_m=quickhtml({tag:'button',sub:['Message']});
@@ -641,13 +304,30 @@ function setupLeftPane(main){
 	}
 
 	var testlist=[
-		{caption:'Capability',func:()=>callGetCaps(main,'/caps')},
+		{caption:'Capability',func:()=>callGetCaps(main)},
 		{caption:'Systems',func:()=>callGetSystems(main)},
 		{caption:'Screenshots',func:()=>callGetScreenshots(main)},
 		{caption:'Splash',func:()=>{main.slideshow.open('/splash');}},
 		{caption:'Music',func:()=>{main.jukebox.open('/music');}},
 		{caption:'JukeBox',func:()=>{main.jukebox.reopen();}},
-		{caption:'RunningGame',func:()=>callGetJSON(main,'/runningGame')},
+		{caption:'RunningGame',func:()=>{
+			return callGetJSON(main,'/runningGame',{
+				cbgate:(res)=>{
+					switch(res.status){
+						case 200: return null;
+						default:
+						var j=null;
+						try{
+							j=JSON.parse(res.body);
+						}
+						catch(e){
+							throw res;
+						}
+						throw j;
+					}
+				}
+			});
+		}},
 		{caption:'ReloadGames',func:()=>callGet(main,'/reloadgames')},
 		{caption:'Notify',func:()=>callNotify(main)},
 		{caption:'EmuKill',func:()=>callGet(main,'/emukill')},
@@ -687,21 +367,13 @@ function setupRightPane(main){
 
 function runAPITest(view){
 
-	tsvproc_init();
 	es_init();
 
 	var main={
-		requesting:null,
 		view:quickhtml({
 			tag:'div',
 			attr:{class:'mainboard'},
 		}),
-
-		abort:()=>{
-			if(!main.requesting)return;
-			main.requesting.abort();
-			main.requesting=null;
-		}
 	}
 
 	view.innerHTML='';
@@ -710,6 +382,7 @@ function runAPITest(view){
 
 	main.leftpane=setupLeftPane(main);
 	main.rightpane=setupRightPane(main);
+	main.monoq=es_monoq(main.rightpane.view),
 	main.slideshow=slideshow_setup(main.view);
 	main.jukebox=jukebox_setup(main.view);
 }

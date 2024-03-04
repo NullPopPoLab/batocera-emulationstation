@@ -1,4 +1,5 @@
-// † Web Fitst Kit † //
+// † MKKKKKS for web JS † //
+// First Kit //
 
 function booleanize(val){
 	if(val===undefined)return false;
@@ -17,13 +18,16 @@ function rxescape(src){
 	return src.replace(rg,'\\$&');
 }
 
+function uriescape(src){
+}
+
 function safestepiter(bgn,end,step,cbiter){
 
 	var abort=false;
 	for(var i=bgn;i<end;i+=step){
 		if(abort)return;
 		((i_)=>{
-			if(!cbiter(i_))abort=true;
+			if(cbiter(i_)===false)abort=true;
 		})(i);
 	}
 }
@@ -34,7 +38,7 @@ function safearrayiter(src,cbiter){
 	for(var t of src){
 		if(abort)return;
 		((t_)=>{
-			if(!cbiter(t_))abort=true;
+			if(cbiter(t_)===false)abort=true;
 		})(t);
 	}
 }
@@ -45,7 +49,7 @@ function safeobjectiter(src,cbiter){
 	for(var k in src){
 		if(abort)return;
 		((k_)=>{
-			if(!cbiter(k_,src[k_]))abort=true;
+			if(cbiter(k_,src[k_])===false)abort=true;
 		})(k);
 	}
 }
@@ -81,21 +85,19 @@ function log_put(lev,msg){
 	log_func(lev,msg);
 }
 
-function error_msg(s){
-	var e={msg:s}
-	e.toString=()=>{return s;}
+function error_msg(src){
+	var e={
+		getSource:()=>{msg:src},
+		toString:()=>src,
+	}
 	return e;
 }
 
 function error_obj(src){
-	var e={obj:src}
-	e.toString=()=>{return src.toString();}
-	return e;
-}
-
-function error_http(res){
-	var e={code:res.status,msg:res.statusText}
-	e.toString=()=>{return '['+e.code+'] '+e.msg;}
+	var e={
+		getSource:()=>src,
+		toString:()=>JSON.stringify(src),
+	}
 	return e;
 }
 
@@ -162,11 +164,29 @@ function http_request(method,url,opt,cbres=null,cbok=null,cbng=null){
 		res.status=req.status;
 		res.msg=req.statusText;
 		res.body=req.response;
-
-		if(res.status>299){
-			if(cbng)cbng(error_http(req));
+		res.head={}
+		if(opt.refhead){
+			for(var k of opt.refhead){
+				res.head[k]=req.getResponseHeader(k);
+			}
 		}
-		else if(cbres){
+
+		if(opt.cbgate){
+			try{
+				var r=opt.cbgate(res);
+				if(r)cbres=r;
+			}
+			catch(e){
+				if(cbng)cbng(error_obj(e));
+				return;
+			}
+		}
+		else if(res.status>299){
+			if(cbng)cbng(error_obj(res));
+			return;
+		}
+
+		if(cbres){
 			var r=null;
 			var e=null;
 			try{
@@ -198,7 +218,7 @@ function http_request(method,url,opt,cbres=null,cbok=null,cbng=null){
 		ctx.end=true;
 		res.msg=ev.toString();
 		if(cbng)cbng(error_msg(res.msg));
-		else console.log(res.msg);
+		else log_fatal(res.msg);
 	});
 	req.addEventListener('timeout',(ev)=>{
 		if(ctx.end)return;
@@ -206,14 +226,14 @@ function http_request(method,url,opt,cbres=null,cbok=null,cbng=null){
 		res.timeout=true;
 		res.msg='timed out';
 		if(cbng)cbng(error_msg(res.msg));
-		else console.log(res.msg);
+		else log_fatal(res.msg);
 	});
 	req.addEventListener('abort',(ev)=>{
 		if(ctx.end)return;
 		ctx.end=true;
 		res.msg='aborted';
 		if(cbng)cbng(error_msg(res.msg));
-		else console.log(res.msg);
+		else log_notice(res.msg);
 	});
 
 	if(opt.restype)req.responseType=opt.restype;
@@ -276,8 +296,8 @@ function http_get_buf(url,cbok=null,cbng=null,opt={}){
 
 function http_get_json(url,cbok=null,cbng=null,opt={}){
 
-	return http_request('GET',url,{
-	},(res)=>{
+	return http_request('GET',url,opt,
+	(res)=>{
 		if(res.status!=200)return null;
 		return JSON.parse(res.body);
 	},cbok,cbng);
@@ -301,8 +321,6 @@ function http_post_text(url,text,cbok=null,cbng=null,opt={}){
 		sendratio:0.99,
 	},opt),
 	(res)=>{
-		if(res.status<200)return null;
-		if(res.status>299)return null;
 		return res.body;
 	},cbok,cbng);
 }
@@ -315,8 +333,6 @@ function http_post_json(url,data,cbok=null,cbng=null,opt={}){
 		sendratio:0.99,
 	},opt),
 	(res)=>{
-		if(res.status<200)return null;
-		if(res.status>299)return null;
 		return res.body;
 	},cbok,cbng);
 }
@@ -330,8 +346,6 @@ function http_post_file(url,bin,file,cbok=null,cbng=null,opt={}){
 			sendratio:0.99,
 		},opt),
 		(res)=>{
-			if(res.status<200)return null;
-			if(res.status>299)return null;
 			return res.body;
 		},cbok,cbng);
 	},cbng);
@@ -341,8 +355,6 @@ function http_delete(url,cbok=null,cbng=null,opt={}){
 
 	return http_request('DELETE',url,opt,
 	(res)=>{
-		if(res.status<200)return null;
-		if(res.status>299)return null;
 		return res.body;
 	},cbok,cbng);
 }
@@ -622,12 +634,12 @@ function ipl_monitor(view){
 
 	var tbl=quickhtml({
 		tag:'table',
-		attr:{border:'border'},
+		attr:{class:'iplmon_table'},
 		sub:[
-			quickhtml({tag:'tr',sub:[
-				quickhtml({tag:'th',sub:['Category']}),
-				quickhtml({tag:'th',sub:['Label']}),
-				quickhtml({tag:'th',sub:['Condition']}),
+			quickhtml({tag:'tr',attr:{class:'iplmon_thr'},sub:[
+				quickhtml({tag:'th',attr:{class:'iplmon_th'},sub:['Category']}),
+				quickhtml({tag:'th',attr:{class:'iplmon_th'},sub:['Label']}),
+				quickhtml({tag:'th',attr:{class:'iplmon_th'},sub:['Condition']}),
 			]}),
 		]
 	});
@@ -636,9 +648,10 @@ function ipl_monitor(view){
 			var tr=quickhtml({
 				target:tbl,
 				tag:'tr',
+				attr:{class:'iplmon_tdr'},
 				sub:[
-					quickhtml({tag:'td',sub:[cate]}),
-					quickhtml({tag:'td',sub:[unit.path]}),
+					quickhtml({tag:'td',attr:{class:'iplmon_td_category'},sub:[cate]}),
+					quickhtml({tag:'td',attr:{class:'iplmon_td_path'},sub:[unit.path]}),
 				]
 			});
 
@@ -646,7 +659,7 @@ function ipl_monitor(view){
 			if(unit.ready)s='OK';
 			else if(unit.err)s=unit.err.toString();
 			else s='Wait for it...';
-			quickhtml({target:tr,tag:'td',sub:[s]});
+			quickhtml({target:tr,tag:'td',attr:{class:'iplmon_td_condition'},sub:[s]});
 			return true;
 		});
 		return true;

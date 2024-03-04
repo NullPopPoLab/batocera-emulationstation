@@ -2,6 +2,7 @@
 // meta editor //
 
 ipl_modules.load('genres.js');
+ipl_modules.load('mediaview.js');
 
 const ratingscore=['0','0.2','0.4','0.6','0.8','1']
 
@@ -70,6 +71,7 @@ function metaedit_submit_button(row,data,cbbuild){
 					(d2)=>{
 						row.msg.innerHTML='OK';
 						ctrl.unlock();
+						for(var k in dst)data[k]=dst[k];
 					},
 					(err)=>{
 						row.msg.innerHTML=err.toString();
@@ -123,6 +125,7 @@ function metaedit_delete_button(target,msg,data,name,cbdone){
 
 	var opt={
 		visible:!!data[name]??false,
+		phasing:true,
 		target:target,
 		caption_first:'Delete',
 		cbexec:(ctrl)=>{
@@ -218,15 +221,7 @@ function metaedit_row_fixed(capt,data,name,outside){
 function metaedit_row_seconds_fixed(capt,data,name,outside){
 
 	var row=metaedit_row_common(capt,data,name,outside);
-	var val=parseInt(data[name]??null);
-	if(!isNaN(val)){
-		var h=Math.floor(val/3600);
-		val-=h*3600;
-		var m=Math.floor(val/60);
-		val-=m*60;
-		var s=Math.floor(val);
-		row.val.append(''+h+':'+zerofill(m,2)+':'+zerofill(s,2));
-	}
+	row.val.append(es_seconds(data[name]??''));
 	return row;
 }
 
@@ -341,19 +336,14 @@ function metaedit_row_text(capt,data,name,outside){
 	return row;
 }
 
-function metaedit_row_rating(capt,data,name,outside){
+function metaedit_stars(target,score,cbchg=null){
 
-	var row=metaedit_row_common(capt,data,name,outside);
-	var val=data[name]??'';
-
-	var score=data[name]??0;
 	var stars=Math.floor(score*5+0.5);
 
 	var inp=quickhtml({
-		target:row.val,
 		tag:'span',
 		attr:{title:score},
-		style:'display:inline-block',
+		style:{display:'inline-block'},
 	});
 
 	var mark=[]
@@ -375,9 +365,32 @@ function metaedit_row_rating(capt,data,name,outside){
 			stars=(stars==1 && i==0)?0:(i+1);
 			score=ratingscore[stars]
 			repaint();
+			if(cbchg)cbchg(score);
 		}
 		return true;
 	});
+
+	if(target)target.append(inp);
+
+	var ctrl={
+		view:inp,
+		set:(v)=>{
+			score=v;
+			stars=Math.floor(score*5+0.5);
+			repaint();
+		},
+	}
+
+	return ctrl;
+}
+
+function metaedit_row_rating(capt,data,name,outside){
+
+	var row=metaedit_row_common(capt,data,name,outside);
+	var val=data[name]??'';
+
+	var score=data[name]??0;
+	metaedit_stars(row.val,score,(v)=>{score=v;});
 
 	metaedit_submit_button(row,data,(dst)=>{
 		dst[name]=score;

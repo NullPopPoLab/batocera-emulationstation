@@ -1,4 +1,5 @@
 // † EmulationStation NullPopPoCustom † //
+// Jukebox //
 
 ipl_styles.load('jukebox.css');
 ipl_modules.load('mediatype.js');
@@ -318,20 +319,20 @@ function jukebox_build(ctrl){
 			sub:['×']
 		}),
 	}
-	ctrl.view_body=quickhtml({
-		target:ctrl.view,
-		tag:'div',
-		attr:{class:'jukebox_body'},
-	});
 	ctrl.view_player=quickhtml({
-		target:ctrl.view_body,
+		target:ctrl.view,
 		tag:'div',
 		attr:{class:'jukebox_player'},
 	});
 	ctrl.view_dirsel=quickhtml({
-		target:ctrl.view_body,
+		target:ctrl.view,
 		tag:'div',
 		attr:{class:'jukebox_dir'},
+	});
+	ctrl.view_body=quickhtml({
+		target:ctrl.view,
+		tag:'div',
+		attr:{class:'jukebox_body'},
 	});
 	ctrl.view_list=quickhtml({
 		target:ctrl.view_body,

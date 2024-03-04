@@ -109,9 +109,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_get_text(url,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			if(ctrl.end)rqc.abort();
@@ -122,9 +123,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_get_blob(url,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			if(ctrl.end)rqc.abort();
@@ -135,9 +137,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_get_buf(url,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			if(ctrl.end)rqc.abort();
@@ -148,9 +151,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_get_json(url,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			if(ctrl.end)rqc.abort();
@@ -161,9 +165,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_get_xml(url,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			if(ctrl.end)rqc.abort();
@@ -175,9 +180,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_post_text(url,text,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			if(ctrl.end)rqc.abort();
@@ -188,9 +194,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_post_json(url,json,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			if(ctrl.end)rqc.abort();
@@ -201,9 +208,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_post_file(url,bin,file,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			if(ctrl.end)rqc.abort();
@@ -215,9 +223,10 @@ function http_controller_new(opt={}){
 			var rqc=http_request_context(
 				()=>http_delete(url,
 					(data)=>respond_ok(rqc,data),
-					(err)=>respond_ng(rqc,err)
+					(err)=>respond_ng(rqc,err),
+					opt
 				),
-				cbok,cbng,opt
+				cbok,cbng
 			);
 			ctrl.queue.push(rqc);
 			return rqc;
