@@ -944,6 +944,11 @@ std::set<std::string> FileData::getContentFiles()
 						if(trim.size()<=ep+1)continue;
 						trim=trim.substr(ep+1);
 					}
+					auto lp=trim.find('|');
+					if(lp!=std::string::npos){
+						// skip label 
+						trim=Utils::String::trim(trim.substr(0,lp));
+					}
 					files.insert(path + "/" + trim);
 				}
 
