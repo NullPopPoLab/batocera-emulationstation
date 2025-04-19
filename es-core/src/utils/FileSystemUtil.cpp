@@ -820,6 +820,14 @@ namespace Utils
 
 		} // createRelativePath
 
+		std::string createRelativePath_undot (const std::string& _path, const std::string& _relativeTo, const bool _allowHome)
+		{
+			auto path=createRelativePath(_path,_relativeTo,_allowHome);
+			if(path.size()<2)return path;
+			if(path[0]=='.' && path[1]=='/')path.erase(path.begin()+0,path.begin()+2);
+			return path;
+		}
+
 		std::string removeCommonPath(const std::string& _path, const std::string& _common, bool& _contains)
 		{
 			std::string path = _path; // getGenericPath(_path);
