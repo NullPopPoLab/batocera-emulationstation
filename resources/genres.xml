@@ -83,6 +83,12 @@
     <parent>10</parent>
   </genre>
   <genre>
+    <id>29046</id>
+    <nom_en>Traversing</nom_en>
+    <nom_ja>突破系</nom_ja>
+    <parent>10</parent>
+  </genre>
+  <genre>
     <id>1</id>
     <nom_fr>Beat'em All</nom_fr>
     <nom_de>Beat'em Up</nom_de>
@@ -139,6 +145,12 @@
     <nom_pt>Tiro com rolagem</nom_pt>
     <nom_ja>急襲系</nom_ja>
     <parent>7</parent>
+  </genre>
+  <genre>
+    <id>29123</id>
+    <nom_en>Vania Like</nom_en>
+    <nom_ja>冒険型</nom_ja>
+    <parent>14</parent>
   </genre>
   <genre>
     <id>14</id>
@@ -209,6 +221,24 @@
     <nom_es>Vertical</nom_es>
     <nom_pt>Vertical</nom_pt>
     <nom_ja>見下ろし型</nom_ja>
+    <parent>14</parent>
+  </genre>
+  <genre>
+    <id>29120</id>
+    <nom_en>Levitating Battle</nom_en>
+    <nom_ja>浮揚型</nom_ja>
+    <parent>14</parent>
+  </genre>
+  <genre>
+    <id>29121</id>
+    <nom_en>Shooting Battle</nom_en>
+    <nom_ja>銃撃型</nom_ja>
+    <parent>14</parent>
+  </genre>
+  <genre>
+    <id>29122</id>
+    <nom_en>Brandishing Battle</nom_en>
+    <nom_ja>剣戟型</nom_ja>
     <parent>14</parent>
   </genre>
 
@@ -722,6 +752,24 @@
     <parent>40</parent>
   </genre>
   <genre>
+    <id>29063</id>
+    <nom_en>Defending</nom_en>
+    <nom_ja>防衛系</nom_ja>
+    <parent>40</parent>
+  </genre>
+  <genre>
+    <id>29064</id>
+    <nom_en>Growth</nom_en>
+    <nom_ja>成長系</nom_ja>
+    <parent>40</parent>
+  </genre>
+  <genre>
+    <id>29065</id>
+    <nom_en>Crafting</nom_en>
+    <nom_ja>工作系</nom_ja>
+    <parent>40</parent>
+  </genre>
+  <genre>
     <id>20682</id>
     <nom_fr>Construction &amp; Management</nom_fr>
     <nom_en>Build And Management</nom_en>
@@ -751,7 +799,7 @@
     <nom_de>Lebenssimulation</nom_de>
     <nom_en>Life</nom_en>
     <nom_es>Vida</nom_es>
-    <nom_ja>生物系</nom_ja>
+    <nom_ja>生活系</nom_ja>
     <parent>40</parent>
   </genre>
   <genre>
@@ -928,6 +976,12 @@
     <nom_ja>ペンシルパズル</nom_ja>
     <parent>26</parent>
   </genre>
+  <genre>
+    <id>29086</id>
+    <nom_en>Situation Puzzle</nom_en>
+    <nom_ja>シチュエーションパズル</nom_ja>
+    <parent>26</parent>
+  </genre>
 
   <genre>
     <id>2649</id>
@@ -1083,6 +1137,12 @@
     <id>29093</id>
     <nom_en>Monopoly Like</nom_en>
     <nom_ja>モノポリータイプ</nom_ja>
+    <parent>29998</parent>
+  </genre>
+  <genre>
+    <id>29094</id>
+    <nom_en>Table Roleplay</nom_en>
+    <nom_ja>テーブルロールプレイング</nom_ja>
     <parent>29998</parent>
   </genre>
 
@@ -1647,26 +1707,6 @@
     <parent>39</parent>
   </genre>
   <genre>
-    <id>2855</id>
-    <nom_fr>Système</nom_fr>
-    <nom_de>System</nom_de>
-    <nom_en>System</nom_en>
-    <nom_es>Sistema</nom_es>
-    <nom_pt>Sistema</nom_pt>
-    <nom_ja>システム</nom_ja>
-    <parent>39</parent>
-  </genre>
-  <genre>
-    <id>2904</id>
-    <nom_fr>Utilitaires</nom_fr>
-    <nom_de>Dienstprogramme</nom_de>
-    <nom_en>Utilities</nom_en>
-    <nom_es>Utilidades</nom_es>
-    <nom_pt>Utilitários</nom_pt>
-    <nom_ja>実用系</nom_ja>
-    <parent>39</parent>
-  </genre>
-  <genre>
     <id>3511</id>
     <nom_fr>Réflexion</nom_fr>
     <nom_de>Überlegung</nom_de>
@@ -1676,6 +1716,45 @@
     <parent>39</parent>
   </genre>
   <genre>
+    <id>29201</id>
+    <nom_en>Fortune Telling</nom_en>
+    <nom_ja>占い</nom_ja>
+    <parent>39</parent>
+  </genre>
+  <genre>
+    <id>29204</id>
+    <nom_en>N in 1</nom_en>
+    <nom_ja>ゲームパック</nom_ja>
+    <parent>39</parent>
+  </genre>
+
+  <genre>
+    <id>2904</id>
+    <nom_fr>Utilitaires</nom_fr>
+    <nom_de>Dienstprogramme</nom_de>
+    <nom_en>Utilities</nom_en>
+    <nom_es>Utilidades</nom_es>
+    <nom_pt>Utilitários</nom_pt>
+    <nom_ja>実用系</nom_ja>
+  </genre>
+  <genre>
+    <id>2855</id>
+    <nom_fr>Système</nom_fr>
+    <nom_de>System</nom_de>
+    <nom_en>System</nom_en>
+    <nom_es>Sistema</nom_es>
+    <nom_pt>Sistema</nom_pt>
+    <nom_ja>システム</nom_ja>
+    <parent>2904</parent>
+  </genre>
+  <genre>
+    <id>29203</id>
+    <nom_en>Game Editor</nom_en>
+    <nom_ja>ゲームエディタ</nom_ja>
+    <parent>2904</parent>
+  </genre>
+
+  <genre>
     <id>2974</id>
     <nom_fr>Demo</nom_fr>
     <nom_de>Demo</nom_de>
@@ -1683,25 +1762,18 @@
     <nom_es>Demo</nom_es>
     <nom_pt>Demo</nom_pt>
     <nom_ja>鑑賞系</nom_ja>
-    <parent>39</parent>
   </genre>
   <genre>
     <id>29202</id>
     <nom_en>Art Collection</nom_en>
     <nom_ja>画集</nom_ja>
-    <parent>39</parent>
+    <parent>2974</parent>
   </genre>
   <genre>
     <id>29200</id>
     <nom_en>Document</nom_en>
     <nom_ja>ドキュメント</nom_ja>
-    <parent>39</parent>
-  </genre>
-  <genre>
-    <id>29201</id>
-    <nom_en>Fortune Telling</nom_en>
-    <nom_ja>占い</nom_ja>
-    <parent>39</parent>
+    <parent>2974</parent>
   </genre>
 
   <genre>
