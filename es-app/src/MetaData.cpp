@@ -35,6 +35,9 @@ void MetaDataList::initMetadata()
 		{ Title,      		"title",       MD_STRING,              "",                 false,      _("Strict Title"),		  _("strict game title"),		false },
 		{ SortName,         "sortname",    MD_STRING,              "",                 false,      _("Sortable Title"),       _("sortable game title"),		true },
 		{ Family,           "family",      MD_STRING,              "",                 false,      _("Game Family"),		  _("this game's game family"),		false },
+		{ Inspired,         "inspired",    MD_STRING,              "",                 false,      _("Inspired"),		      _("this game is inspired from"),		false },
+		{ Originally,       "originally",  MD_STRING,              "",                 false,      _("Originally"),		      _("original works"),		false },
+		{ Starring,         "starring",    MD_STRING,              "",                 false,      _("Starring"),		      _("acted in this game"),		false },
 		{ Desc,             "desc",        MD_MULTILINE_STRING,    "",                 false,      _("Description"),          _("this game's description"),		true },
 
 		{ Rating,           "rating",      MD_RATING,              "0",                false,      _("Rating"),               _("grading score"),            false },
@@ -72,6 +75,7 @@ void MetaDataList::initMetadata()
 		{ Genre,            "genre",       MD_STRING,              "",                 false,      _("Genre"),                _("enter game genre"),		false }, 
 		{ GenreIds,         "genres",      MD_STRING,              "",                 false,      _("Genre IDs"),            _("enter game genres"),		false },
 		{ Players,          "players",     MD_STRING,              "",                 false,      _("Players"),              _("this game's number of players"),	false },
+		{ Tags,             "tags",        MD_STRING,              "",                 false,      _("Tags"),		          _("tags in csv"),		false },
 		{ Included,         "included",    MD_MULTILINE_STRING,    "",                 false,      _("Included"),             _("included games"),	false },
 		{ Premise,          "premise",     MD_MULTILINE_STRING,    "",                 false,      _("Premise"),              _("premise for this game"),	false },
 		{ Story,            "story",       MD_MULTILINE_STRING,    "",                 false,      _("Story"),                _("this game's story"),		false },
