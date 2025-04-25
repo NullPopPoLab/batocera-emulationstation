@@ -63,7 +63,7 @@ function xsv_proc_float(key){
 
 function xsv_export_byline(row,proc,opt=tsv_default){
 
-	const delim=new RegExp('('+rxescape(opt.intercell)+'|'+rxescape(opt.interline)+'|'+rxescape(opt.quote)+')','g');
+	const delim=new RegExp('('+regxescape(opt.intercell)+'|'+regxescape(opt.interline)+'|'+regxescape(opt.quote)+')','g');
 
 	var d=[]
 	for(var k in proc){

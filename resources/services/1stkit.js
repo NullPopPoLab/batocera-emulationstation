@@ -13,12 +13,9 @@ function zerofill(val,col){
 	return s.substring(s.length-col);
 }
 
-function rxescape(src){
+function regxescape(src){
 	const rg=/[\\^$.*+?()[\]{}|]/g;
 	return src.replace(rg,'\\$&');
-}
-
-function uriescape(src){
 }
 
 function safestepiter(bgn,end,step,cbiter){

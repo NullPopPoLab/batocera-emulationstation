@@ -21,6 +21,9 @@ var metaset={
 	title:{capt:'Formal Title',view:metaedit_row_line},
 	sortname:{capt:'Sortable Title',view:metaedit_row_line},
 	family:{capt:'Family',view:metaedit_row_line},
+	inspired:{capt:'Inspired from',view:metaedit_row_line},
+	originally:{capt:'Original Works',view:metaedit_row_line},
+	starring:{capt:'Starring',view:metaedit_row_line},
 	desc:{capt:'Description',view:metaedit_row_text},
 	rating:{capt:'Rating',type:'rating',view:metaedit_row_rating},
 	region:{capt:'Region',view:metaedit_row_line},
@@ -30,6 +33,7 @@ var metaset={
 	publisher:{capt:'Publisher',view:metaedit_row_line},
 	genres:{capt:'Genres',view:metaedit_row_genre},
 	players:{capt:'Players',view:metaedit_row_line},
+	tags:{capt:'Tags',view:metaedit_row_line},
 }
 
 function metaedit_seconds(val){

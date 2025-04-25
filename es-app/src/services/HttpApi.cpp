@@ -436,6 +436,10 @@ std::string HttpApi::getCaps()
 	writer.Key("Version"); writer.String(ApiSystem::getInstance()->getVersion().c_str());
 	writer.Key("SortName"); writer.Bool(true);
 	writer.Key("StrictTitle"); writer.Bool(true);
+	writer.Key("Inspired"); writer.Bool(true);
+	writer.Key("Original"); writer.Bool(true);
+	writer.Key("Starring"); writer.Bool(true);
+	writer.Key("Tags"); writer.Bool(true);
 	writer.Key("Documentation"); writer.Bool(true);
 	writer.Key("GetScraperMedia"); writer.Bool(false);
 	writer.Key("GetMediaResource"); writer.Bool(true);
