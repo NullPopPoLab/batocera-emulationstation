@@ -408,6 +408,9 @@ function es_init(){
 		Title:xsv_proc_string('title'),
 		Sortable:xsv_proc_string('sortname'),
 		Family:xsv_proc_string('family'),
+		Inspired:xsv_proc_string('inspired'),
+		Originally:xsv_proc_string('originally'),
+		Starring:xsv_proc_string('starring'),
 		Rating:{
 			key:'rating',
 			export:(row,key)=>{
@@ -433,6 +436,7 @@ function es_init(){
 		Developer:xsv_proc_string('developer'),
 		Publisher:xsv_proc_string('publisher'),
 		Players:xsv_proc_string('players'),
+		Tags:xsv_proc_string('tags'),
 	}
 
 	es_resource.star0=es_client.makeurl('/resources/star_unfilled.svg');
