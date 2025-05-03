@@ -89,6 +89,12 @@
     <parent>10</parent>
   </genre>
   <genre>
+    <id>29047</id>
+    <nom_en>Endurance</nom_en>
+    <nom_ja>耐久系</nom_ja>
+    <parent>10</parent>
+  </genre>
+  <genre>
     <id>1</id>
     <nom_fr>Beat'em All</nom_fr>
     <nom_de>Beat'em Up</nom_de>
