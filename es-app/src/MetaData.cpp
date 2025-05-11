@@ -243,9 +243,6 @@ void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node)
 			continue;
 		}
 
-		if (mdd.id == MetaDataId::GenreIds)
-			continue;
-
 		if (value == mdd.defaultValue)
 			continue;
 
@@ -383,10 +380,6 @@ void MetaDataList::appendToXML(pugi::xml_node& parent, bool ignoreDefaults, cons
 			parent.append_child("name").text().set(mName.c_str());
 			continue;
 		}
-
-		// Don't save GenreIds
-		if (mddIter->id == MetaDataId::GenreIds)
-			continue;
 
 		auto mapIter = mMap.find(mddIter->id);
 		if(mapIter != mMap.cend())
