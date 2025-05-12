@@ -9,6 +9,7 @@
 #include "Settings.h"
 #include "FileData.h"
 #include "ImageIO.h"
+#include "Genres.h"
 #include "scrapers/Scraper.h"
 
 MetaDataDecl mInvalidMetaDataDecl(Invalid, "", MD_INVALID, "", true, "", "", false, false);
@@ -258,6 +259,12 @@ void MetaDataList::loadFromXML(MetaDataListType type, pugi::xml_node& node)
 			value = Utils::String::replace(value, "1-", "");
 
 		set(mdd.id, value);
+
+		// GenreIds -> Genre 
+		if (mdd.id == MetaDataId::GenreIds)
+		{
+			set(MetaDataId::Genre, Genres::genreStringFromIds(Utils::String::split(value,',',true),false));
+		}
 	}
 
 	for (pugi::xml_attribute xattr : node.attributes())

@@ -11,6 +11,7 @@
 #include "SystemData.h"
 #include "FileData.h"
 #include "FileSorts.h"
+#include "Genres.h"
 #include "views/ViewController.h"
 #include "CollectionSystemManager.h"
 #include "utils/FileSystemUtil.h"
@@ -179,6 +180,13 @@ bool HttpApi::ImportFromJson(FileData* file, const std::string& json)
 			continue;
 
 		std::string newValue = value.GetString();
+
+		// GenreIds -> Genre 
+		if (mdd.id == MetaDataId::GenreIds)
+		{
+			meta.set(MetaDataId::Genre, Genres::genreStringFromIds(Utils::String::split(newValue,',',true),false));
+		}
+
 		std::string currentValue = meta.get(mdd.id);
 		if (newValue == currentValue){
 			continue;
