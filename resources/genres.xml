@@ -156,7 +156,7 @@
     <id>29123</id>
     <nom_en>Vania Like</nom_en>
     <nom_ja>冒険型</nom_ja>
-    <parent>14</parent>
+    <parent>7</parent>
   </genre>
   <genre>
     <id>14</id>
