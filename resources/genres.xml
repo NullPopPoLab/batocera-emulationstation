@@ -351,6 +351,12 @@
     <parent>2646</parent>
   </genre>
   <genre>
+    <id>29031</id>
+    <nom_en>Around</nom_en>
+    <nom_ja>全方向</nom_ja>
+    <parent>2646</parent>
+  </genre>
+  <genre>
     <id>3024</id>
     <nom_fr>1ere Personne</nom_fr>
     <nom_de>1st Pers.</nom_de>
@@ -1703,6 +1709,12 @@
     <parent>39</parent>
   </genre>
   <genre>
+    <id>29205</id>
+    <nom_en>Typing</nom_en>
+    <nom_ja>タイピング</nom_ja>
+    <parent>39</parent>
+  </genre>
+  <genre>
     <id>2879</id>
     <nom_fr>Print Club</nom_fr>
     <nom_de>Print Club</nom_de>
@@ -1902,6 +1914,12 @@
     <id>29910</id>
     <nom_en>Cyberpunk</nom_en>
     <nom_ja>サイバーパンク</nom_ja>
+    <parent>29999</parent>
+  </genre>
+  <genre>
+    <id>29913</id>
+    <nom_en>School</nom_en>
+    <nom_ja>スクール</nom_ja>
     <parent>29999</parent>
   </genre>
   <genre>
