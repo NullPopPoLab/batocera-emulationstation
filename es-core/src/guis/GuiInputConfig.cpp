@@ -78,6 +78,8 @@ void GuiInputConfig::initInputConfigStructure()
 		{ "r4",               true,  "RIGHT EXTRA 1",      ":/help/button_r.svg" },
 		{ "l5",               true,  "LEFT EXTRA 2",       ":/help/button_l.svg" },
 		{ "r5",               true,  "RIGHT EXTRA 2",      ":/help/button_r.svg" },
+		{ "l0",               true,  "LEFT SUPER",         ":/help/button_l.svg" },
+		{ "r0",               true,  "RIGHT SUPER",        ":/help/button_r.svg" },
 
 		{ "g1",               true,  "G1",                 ":/help/button_g.svg" },
 		{ "g2",               true,  "G2",                 ":/help/button_g.svg" },
@@ -85,8 +87,6 @@ void GuiInputConfig::initInputConfigStructure()
 		{ "g4",               true,  "G4",                 ":/help/button_g.svg" },
 		{ "g5",               true,  "G5",                 ":/help/button_g.svg" },
 		{ "g6",               true,  "G6",                 ":/help/button_g.svg" },
-		{ "g7",               true,  "G7",                 ":/help/button_g.svg" },
-		{ "g8",               true,  "G8",                 ":/help/button_g.svg" },
 
 		{ "menu",             true,  "MENU",               ":/help/button_menu.svg" },
 		{ "hotkey",           true,  "HOTKEY",             ":/help/button_hotkey.svg" }

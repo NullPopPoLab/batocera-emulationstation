@@ -63,6 +63,8 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "r4",              "RIGHT EXTRA 1",      ":/help/button_r.svg" },
 		{ "l5",              "LEFT EXTRA 2",       ":/help/button_l.svg" },
 		{ "r5",              "RIGHT EXTRA 2",      ":/help/button_r.svg" },
+		{ "l0",              "LEFT SUPER",       ":/help/button_l.svg" },
+		{ "r0",              "RIGHT SUPER",      ":/help/button_r.svg" },
 
 		{ "g1",              "G1",      ":/help/button_g.svg" },
 		{ "g2",              "G2",      ":/help/button_g.svg" },
@@ -70,8 +72,6 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "g4",              "G4",      ":/help/button_g.svg" },
 		{ "g5",              "G5",      ":/help/button_g.svg" },
 		{ "g6",              "G6",      ":/help/button_g.svg" },
-		{ "g7",              "G7",      ":/help/button_g.svg" },
-		{ "g8",              "G8",      ":/help/button_g.svg" },
 
 		//{ "hotkey",          "HOTKEY",      ":/help/button_hotkey.svg" },
 
@@ -95,6 +95,8 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "hotkey + r4",      "HOTKEY + RIGHT EXTRA 1",   ":/help/button_hotkey.svg", ":/help/button_r.svg" },
 		{ "hotkey + l5",      "HOTKEY + LEFT EXTRA 2",   ":/help/button_hotkey.svg", ":/help/button_l.svg" },
 		{ "hotkey + r5",      "HOTKEY + RIGHT EXTRA 2",   ":/help/button_hotkey.svg", ":/help/button_r.svg" },
+		{ "hotkey + l0",      "HOTKEY + LEFT SUPER",   ":/help/button_hotkey.svg", ":/help/button_l.svg" },
+		{ "hotkey + r0",      "HOTKEY + RIGHT SUPER",   ":/help/button_hotkey.svg", ":/help/button_r.svg" },
 
 		{ "hotkey + g1",      "HOTKEY + G1",   ":/help/button_hotkey.svg", ":/help/button_g.svg" },
 		{ "hotkey + g2",      "HOTKEY + G2",   ":/help/button_hotkey.svg", ":/help/button_g.svg" },
@@ -102,8 +104,6 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "hotkey + g4",      "HOTKEY + G4",   ":/help/button_hotkey.svg", ":/help/button_g.svg" },
 		{ "hotkey + g5",      "HOTKEY + G5",   ":/help/button_hotkey.svg", ":/help/button_g.svg" },
 		{ "hotkey + g6",      "HOTKEY + G6",   ":/help/button_hotkey.svg", ":/help/button_g.svg" },
-		{ "hotkey + g7",      "HOTKEY + G7",   ":/help/button_hotkey.svg", ":/help/button_g.svg" },
-		{ "hotkey + g8",      "HOTKEY + G8",   ":/help/button_hotkey.svg", ":/help/button_g.svg" },
 	};
 }
 
