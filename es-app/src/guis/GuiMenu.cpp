@@ -913,8 +913,12 @@ void GuiMenu::openUpdatesSettings()
 		// Start update
 		updateGui->addEntry(GuiUpdate::state == GuiUpdateState::State::UPDATE_READY ? _("APPLY UPDATE") : _("START UPDATE"), true, [this]
 		{
-			if (GuiUpdate::state == GuiUpdateState::State::UPDATE_READY)
-				Utils::Platform::quitES(Utils::Platform::QuitMode::RESTART);
+			if (GuiUpdate::state == GuiUpdateState::State::UPDATE_READY) {
+//				Utils::Platform::quitES(Utils::Platform::QuitMode::RESTART);
+				mWindow->pushGui(new GuiMsgBox(mWindow, _("REALLY RESTART?"), 
+					_("YES"), [] { Utils::Platform::quitES(Utils::Platform::QuitMode::REBOOT); },
+					_("NO"), nullptr));
+			}
 			else if (GuiUpdate::state == GuiUpdateState::State::UPDATER_RUNNING)
 				mWindow->pushGui(new GuiMsgBox(mWindow, _("UPDATER IS ALREADY RUNNING")));
 			else
