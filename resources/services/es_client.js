@@ -426,7 +426,7 @@ function es_init(){
 				return true;
 			},
 		},
-		Runa:xsv_proc_bool('runable',{import_true:'true',import_false:'false'}),
+		Runa:xsv_proc_bool('runnable',{import_true:'true',import_false:'false'}),
 		Favo:xsv_proc_bool('favorite',{import_true:'true',import_false:'false'}),
 		Hide:xsv_proc_bool('hidden',{import_true:'true',import_false:'false'}),
 		Kids:xsv_proc_bool('kidgame',{import_true:'true',import_false:'false'}),
