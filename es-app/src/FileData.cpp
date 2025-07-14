@@ -1635,10 +1635,7 @@ void FileData::checkCheevosHash(bool force)
 
 std::string FileData::getKeyboardMappingFilePath()
 {
-	if (Utils::FileSystem::isDirectory(getSourceFileData()->getPath()))
-		return getSourceFileData()->getPath() + "/padto.keys";
-
-	return getSourceFileData()->getPath() + ".keys";
+	return std::string("/userdata/saves/")+getSystemName()+"/"+getPathKey()+"/padto.keys";
 }
 
 bool FileData::hasP2kFile()
