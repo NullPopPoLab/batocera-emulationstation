@@ -48,33 +48,48 @@ void GuiInputConfig::initInputConfigStructure(InputConfig* target)
 {
 	GUI_INPUT_CONFIG_LIST =
 	{
-		{ "b",               false, "SOUTH",			  ":/help/buttons_south.svg" },
-		{ "a",               false, "EAST",			      ":/help/buttons_east.svg" },
-		{ "x",               true,  "NORTH",              ":/help/buttons_north.svg" },
-		{ "y",               true,  "WEST",               ":/help/buttons_west.svg" },
-
-		{ "start",           true,  "START",              ":/help/button_start.svg" },
-		{ "select",          true,  "SELECT",             ":/help/button_select.svg" },
-
 		{ "up",              false, "D-PAD UP",           ":/help/dpad_up.svg" },
 		{ "down",            false, "D-PAD DOWN",         ":/help/dpad_down.svg" },
 		{ "left",            false, "D-PAD LEFT",         ":/help/dpad_left.svg" },
 		{ "right",           false, "D-PAD RIGHT",        ":/help/dpad_right.svg" },
 
-		{ "pageup",          true,  "LEFT SHOULDER",      ":/help/button_l.svg" },
-		{ "pagedown",        true,  "RIGHT SHOULDER",     ":/help/button_r.svg" },
+		{ "a",               false, "A",			      ":/help/buttons_east.svg" },
+		{ "b",               true, "B",			          ":/help/buttons_south.svg" },
+		{ "c",               true, "C",			          ":/help/button_c.svg" },
+		{ "x",               true,  "X",                  ":/help/buttons_north.svg" },
+		{ "y",               true,  "Y",                  ":/help/buttons_west.svg" },
+		{ "z",               true,  "Z",                  ":/help/button_z.svg" },
+
+		{ "start",           true,  "START",              ":/help/button_start.svg" },
+		{ "select",          true,  "SELECT",             ":/help/button_select.svg" },
 
 		{ "joystick1up",     true,  "LEFT ANALOG UP",     ":/help/analog_up.svg" },
 		{ "joystick1left",   true,  "LEFT ANALOG LEFT",   ":/help/analog_left.svg" },
 		{ "joystick2up",     true,  "RIGHT ANALOG UP",    ":/help/analog_up.svg" },
 		{ "joystick2left",   true,  "RIGHT ANALOG LEFT",  ":/help/analog_left.svg" },
 
+		{ "pageup",          true,  "LEFT SHOULDER",      ":/help/button_l.svg" },
+		{ "pagedown",        true,  "RIGHT SHOULDER",     ":/help/button_r.svg" },
 		{ "l2",              true,  "LEFT TRIGGER",       ":/help/button_lt.svg" },
 		{ "r2",              true,  "RIGHT TRIGGER",      ":/help/button_rt.svg" },
 		{ "l3",              true,  "LEFT STICK PRESS",   ":/help/analog_thumb.svg" },
 		{ "r3",              true,  "RIGHT STICK PRESS",  ":/help/analog_thumb.svg" },
+		{ "l4",              true,  "LEFT EXTRA 1",       ":/help/button_l.svg" },
+		{ "r4",              true,  "RIGHT EXTRA 1",      ":/help/button_r.svg" },
+		{ "l5",              true,  "LEFT EXTRA 2",       ":/help/button_l.svg" },
+		{ "r5",              true,  "RIGHT EXTRA 2",      ":/help/button_r.svg" },
+		{ "l0",              true,  "LEFT SUPER",       ":/help/button_l.svg" },
+		{ "r0",              true,  "RIGHT SUPER",      ":/help/button_r.svg" },
 
-		{ "hotkey",          false, "HOTKEY",             ":/help/button_hotkey.svg" }
+		{ "g1",              true,  "G1",      ":/help/button_g.svg" },
+		{ "g2",              true,  "G2",      ":/help/button_g.svg" },
+		{ "g3",              true,  "G3",      ":/help/button_g.svg" },
+		{ "g4",              true,  "G4",      ":/help/button_g.svg" },
+		{ "g5",              true,  "G5",      ":/help/button_g.svg" },
+		{ "g6",              true,  "G6",      ":/help/button_g.svg" },
+
+		{ "menu",          true, "MENU",             ":/help/button_menu.svg" },
+		{ "hotkey",          true, "HOTKEY",             ":/help/button_hotkey.svg" }
 	};
 	
 #ifdef INVERTEDINPUTCONFIG

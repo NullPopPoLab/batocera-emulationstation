@@ -31,14 +31,17 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "down",    "D-PAD DOWN",         ":/help/dpad_down.svg" },
 		{ "left",    "D-PAD LEFT",         ":/help/dpad_left.svg" },
 		{ "right",   "D-PAD RIGHT",        ":/help/dpad_right.svg" },
+
 		{ "start",   "START",        ":/help/button_start.svg" },
 		{ "select",  "SELECT",       ":/help/button_select.svg" },
+		{ "menu",     "MENU",        ":/help/button_menu.svg" },
 
 		{ "a",				 InputConfig::buttonDisplayName("a"),    InputConfig::buttonImage("a") },
 		{ "b",				 InputConfig::buttonDisplayName("b"),    InputConfig::buttonImage("b") },
-
-		{ "x",               "NORTH",   ":/help/buttons_north.svg" },
-		{ "y",               "WEST",    ":/help/buttons_west.svg" },
+		{ "c",               "C",   ":/help/button_c.svg" },
+		{ "x",               "X",   ":/help/buttons_north.svg" },
+		{ "y",               "Y",    ":/help/buttons_west.svg" },
+		{ "z",               "Z",   ":/help/button_z.svg" },
 
 		{ "joystick1up",     "LEFT ANALOG UP",     ":/help/analog_up.svg" },
 		{ "joystick1down",   "LEFT ANALOG DOWN",     ":/help/analog_down.svg" },
@@ -49,21 +52,59 @@ void GuiKeyMappingEditor::initMappingNames()
 		{ "joystick2down",   "RIGHT ANALOG DOWN",     ":/help/analog_down.svg" },
 		{ "joystick2left",   "RIGHT ANALOG LEFT",   ":/help/analog_left.svg" },
 		{ "joystick2right",  "RIGHT ANALOG RIGHT",   ":/help/analog_right.svg" },
+
 		{ "pageup",          "LEFT SHOULDER",      ":/help/button_l.svg" },
 		{ "pagedown",        "RIGHT SHOULDER",     ":/help/button_r.svg" },
 		{ "l2",              "LEFT TRIGGER",       ":/help/button_lt.svg" },
 		{ "r2",              "RIGHT TRIGGER",      ":/help/button_rt.svg" },
 		{ "l3",              "LEFT STICK PRESS",       ":/help/analog_thumb.svg" },
 		{ "r3",              "RIGHT STICK PRESS",      ":/help/analog_thumb.svg" },
+		{ "l4",              "LEFT EXTRA 1",       ":/help/button_l.svg" },
+		{ "r4",              "RIGHT EXTRA 1",      ":/help/button_r.svg" },
+		{ "l5",              "LEFT EXTRA 2",       ":/help/button_l.svg" },
+		{ "r5",              "RIGHT EXTRA 2",      ":/help/button_r.svg" },
+		{ "l0",              "LEFT SUPER",       ":/help/button_l.svg" },
+		{ "r0",              "RIGHT SUPER",      ":/help/button_r.svg" },
+
+		{ "g1",              "G1",       ":/help/button_g.svg" },
+		{ "g2",              "G2",       ":/help/button_g.svg" },
+		{ "g3",              "G3",       ":/help/button_g.svg" },
+		{ "g4",              "G4",       ":/help/button_g.svg" },
+		{ "g5",              "G5",       ":/help/button_g.svg" },
+		{ "g6",              "G6",       ":/help/button_g.svg" },
 
 		//{ "hotkey",          "HOTKEY",      ":/help/button_hotkey.svg" },
 
-		{ "hotkey + start",          "HOTKEY + START",      ":/help/button_hotkey.svg", ":/help/button_start.svg" },
+		{ "hotkey + start",         "HOTKEY + START",      ":/help/button_hotkey.svg", ":/help/button_start.svg" },
+		{ "hotkey + select",        "HOTKEY + SELECT",      ":/help/button_hotkey.svg", ":/help/button_select.svg" },
+		{ "hotkey + menu",          "HOTKEY + MENU",      ":/help/button_hotkey.svg", ":/help/button_menu.svg" },
 
 		{ "hotkey + a",       "HOTKEY + " + InputConfig::buttonDisplayName("a"),    ":/help/button_hotkey.svg", InputConfig::buttonImage("a") },
 		{ "hotkey + b",       "HOTKEY + " + InputConfig::buttonDisplayName("b"),   ":/help/button_hotkey.svg", InputConfig::buttonImage("b") },
-		{ "hotkey + x",       "HOTKEY + NORTH",    ":/help/button_hotkey.svg", ":/help/buttons_north.svg" },
-		{ "hotkey + y",       "HOTKEY + WEST",   ":/help/button_hotkey.svg", ":/help/buttons_west.svg" }
+		{ "hotkey + c",       "HOTKEY + C",    ":/help/button_hotkey.svg", ":/help/button_c.svg" },
+		{ "hotkey + x",       "HOTKEY + X",    ":/help/button_hotkey.svg", ":/help/buttons_north.svg" },
+		{ "hotkey + y",       "HOTKEY + Y",   ":/help/button_hotkey.svg", ":/help/buttons_west.svg" },
+		{ "hotkey + z",       "HOTKEY + Z",    ":/help/button_hotkey.svg", ":/help/button_z.svg" },
+
+		{ "hotkey + pageup",          "HOTKEY + LEFT SHOULDER",      ":/help/button_hotkey.svg", ":/help/button_l.svg" },
+		{ "hotkey + pagedown",        "HOTKEY + RIGHT SHOULDER",     ":/help/button_hotkey.svg", ":/help/button_r.svg" },
+		{ "hotkey + l2",              "HOTKEY + LEFT TRIGGER",       ":/help/button_hotkey.svg", ":/help/button_lt.svg" },
+		{ "hotkey + r2",              "HOTKEY + RIGHT TRIGGER",      ":/help/button_hotkey.svg", ":/help/button_rt.svg" },
+		{ "hotkey + l3",              "HOTKEY + LEFT STICK PRESS",       ":/help/button_hotkey.svg", ":/help/analog_thumb.svg" },
+		{ "hotkey + r3",              "HOTKEY + RIGHT STICK PRESS",      ":/help/button_hotkey.svg", ":/help/analog_thumb.svg" },
+		{ "hotkey + l4",              "HOTKEY + LEFT EXTRA 1",       ":/help/button_hotkey.svg", ":/help/button_l.svg" },
+		{ "hotkey + r4",              "HOTKEY + RIGHT EXTRA 1",      ":/help/button_hotkey.svg", ":/help/button_r.svg" },
+		{ "hotkey + l5",              "HOTKEY + LEFT EXTRA 2",       ":/help/button_hotkey.svg", ":/help/button_l.svg" },
+		{ "hotkey + r5",              "HOTKEY + RIGHT EXTRA 2",      ":/help/button_hotkey.svg", ":/help/button_r.svg" },
+		{ "hotkey + l0",              "HOTKEY + LEFT SUPER",       ":/help/button_hotkey.svg", ":/help/button_l.svg" },
+		{ "hotkey + r0",              "HOTKEY + RIGHT SUPER",      ":/help/button_hotkey.svg", ":/help/button_r.svg" },
+
+		{ "hotkey + g1",              "HOTKEY + G1",       ":/help/button_hotkey.svg", ":/help/button_g.svg" },
+		{ "hotkey + g2",              "HOTKEY + G2",       ":/help/button_hotkey.svg", ":/help/button_g.svg" },
+		{ "hotkey + g3",              "HOTKEY + G3",       ":/help/button_hotkey.svg", ":/help/button_g.svg" },
+		{ "hotkey + g4",              "HOTKEY + G4",       ":/help/button_hotkey.svg", ":/help/button_g.svg" },
+		{ "hotkey + g5",              "HOTKEY + G5",       ":/help/button_hotkey.svg", ":/help/button_g.svg" },
+		{ "hotkey + g6",              "HOTKEY + G6",       ":/help/button_hotkey.svg", ":/help/button_g.svg" },
 	};
 }
 
