@@ -920,7 +920,7 @@ bool ApiSystem::downloadGitRepository(const std::string& url, const std::string&
 			}
 		}
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(20));
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 	}
 
 	if (httpreq.status() != HttpReq::REQ_SUCCESS)
